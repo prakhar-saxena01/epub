@@ -35,9 +35,9 @@ function init_taps() {
 			function(event) {
 				if (event.button == 0) {
 					var doc = document.documentElement;
-					var margin_x = 45;
-					var margin_y_top = 40;
-					var margin_y_bottom = 60;
+					var margin_x = 64;
+					var margin_y_top = 48;
+					var margin_y_bottom = 48;
 
 					//console.log(event.clientY + " " + doc.clientHeight);
 
