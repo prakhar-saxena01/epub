@@ -86,7 +86,7 @@
 		$author_link = "?" . http_build_query(["query" => $line["author_sort"]]);
 		$read_link = $line["epub_id"] ? "read.html?" . http_build_query(["id" => $line["epub_id"]]) : "";
 
-		print "<div class='col-xs-6 col-md-2' style='height : 250px'>";
+		print "<div class='col-xs-6 col-sm-3 col-md-2' style='height : 250px'>";
 		print "<div class='thumb'>";
 
 		if ($read_link) print "<a href=\"$read_link\">";
