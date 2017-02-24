@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="lib/bootstrap/v3/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="lib/bootstrap/v3/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src="lib/bootstrap/v3/js/jquery.js"></script>
+	<script src="lib/bootstrap/v3/js/bootstrap.min.js"></script>
+
+	<script src="lib/zip.min.js"></script>
+	<script src="lib/localforage.min.js"></script>
+	<script src="lib/epub.js"></script>
+	<script src="lib/smartimages.js"></script> 
+	<script src="js/read.js"></script>
+
+	<link type="text/css" rel="stylesheet" media="screen" href="css/read.css" />
+</head>
+<body>
+
+<div class="modal fade" id="settings-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Settings</h4>
+      </div>
+      <div class="modal-body">
+			<form name="settings-form" onsubmit="return false" class="form-horizontal">
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Font</label>
+					<div class="col-sm-9">
+						<select class="font_family form-control" onchange="apply_font(this)">
+							<option>Arial</option>
+						 	<option>Times New Roman</option>
+							<option>Georgia</option>
+						</select>
+					</div>
+  				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Text size</label>
+					<div class="col-sm-9">
+						<div class="btn-group" role="group" aria-label="...">
+						  <button type="button" onclick="zoom(2)" class="btn btn-default">+</button>
+						  <button type="button" onclick="zoom(-2)" class="btn btn-default">-</button>
+						</div>
+					</div>
+  				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Line margins</label>
+					<div class="col-sm-9">
+						<div class="btn-group" role="group" aria-label="...">
+						  <button type="button" onclick="lmargin(20)" class="btn btn-default">+</button>
+						  <button type="button" onclick="lmargin(-20)" class="btn btn-default">-</button>
+						</div>
+					</div>
+  				</div>
+
+				<hr/>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Last read page</label>
+					<div class="col-sm-9">
+
+						<div class="input-group">
+							<input type="numeric" disabled="disabled" class="form-control lastread_input">
+							<span class="input-group-btn">
+								<button class="btn btn-danger" type="button" onclick="clear_lastread()">Clear</button>
+							</span>
+						</div>
+					</div>
+  				</div>
+
+			</form>      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>		  	
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="toc-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Table of Contents</h4>
+      </div>
+      <div class="modal-body">
+			<ul class="toc_list list-unstyled"> </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>		  	
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="header">
+	<span>
+		<a href="index.php">&laquo;&nbsp;Exit</a>
+		<span class="title"></span>
+	</span>
+	<span class="toolbar">
+
+		<button class="btn btn-default btn-xs" 
+			data-toggle="modal" data-target="#toc-modal">
+			<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+		</button>
+
+		<button class="btn btn-default btn-xs" 
+			data-toggle="modal" data-target="#settings-modal">
+			<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+		</button>
+
+		<button class="btn btn-default btn-xs hidden-xs" onclick="zoom(2)">
+			<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+		</button>
+
+		<button class="btn btn-default btn-xs hidden-xs" onclick="zoom(-2)">
+			<span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
+		</button> 
+
+	</span>
+</div>
+
+<div class="footer">
+	<div class="location">
+		<span id="cur_page">-1</span> / <span id="total_pages">-1</span>
+	</div>
+</div>
+
+<div id="reader"></div>
+
+<div class="loading">
+	<div>
+		Opening book...
+	</div>
+</div>
+
+<script>
+	var _pagination_cached = 0;
+
+	$.urlParam = function(name){
+		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+		return results[1] || 0;
+	}
+
+	$(document).ready(function() {
+	   EPUBJS.cssPath = "css/";
+
+		var book_url = "getbook/" + $.urlParam("id") + ".epub";
+
+		console.log("init: " + book_url);
+
+		init_taps();
+		document.onkeydown = hotkey_handler;
+
+		var book = ePub({
+			restore: true,
+		});
+
+		book.open(book_url);
+
+		$.get("backend.php", { op: "getsettings" }, function(data) {
+			console.log(data);
+
+			book.setStyle("fontSize", data.fontSize + "px");
+			book.setStyle("fontFamily", data.fontFamily);
+			book.setStyle("lineHeight", data.lineHeight + "%");
+		});
+
+		//styles: { fontSize: '24px', lineHeight: '130%', fontFamily: 'Georgia' }
+
+		window.book = book;
+
+		var rendered = book.renderTo("reader");
+
+		$('#settings-modal').on('shown.bs.modal', function() {
+			var font = book.settings.styles.fontFamily;
+			
+			$("select.font_family").val(font);
+
+			var bookId = book.generateBookKey(book.metadata.identifier);
+
+			$.get("backend.php", { op: "getlastread", id: bookId }, function(data) {
+
+				$(".lastread_input").val(data.lastread);
+
+			});
+	
+			
+		})
+
+		$('#toc-modal').on('shown.bs.modal', function() {
+			book.getToc().then(function(toc) { 
+	
+				var list = $(".toc_list");
+				list.html("");
+
+				$.each(toc, function(i, row) {
+
+					var a = $("<a>")
+						.attr('href', '#')
+						.html(row.label)
+						.attr('data-cfi', row.cfi)
+						.attr('data-id', row.id)
+						.click(function() {
+							book.gotoCfi(a.attr('data-cfi'));
+						});
+						
+					list.append($("<li>").append(a));
+				});
+			});					
+		})
+
+		book.on("renderer:keydown", hotkey_handler);
+
+		book.getMetadata().then(function(meta){
+			document.title = meta.bookTitle + " – " + meta.creator;
+			$(".title").html("<b>" + meta.bookTitle + "</b> - " + meta.creator);
+		});
+
+		rendered.then(function() {
+			console.log("book ready");
+
+			var bookId = book.generateBookKey(book.metadata.identifier);
+			var url = "backend.php?op=getpagination&id=" + encodeURIComponent(bookId);
+		
+			EPUBJS.core.request(url).then(function(storedPageList){
+
+				pageList = storedPageList;
+
+				if (book.loadPagination(pageList).length > 0) {					
+					_pagination_cached = 1;
+				} else {
+					book.generatePagination();
+				}
+	      });
+
+		});
+
+		book.pageListReady.then(function(pageList) {
+			console.log("page list ready");
+
+			var bookId = book.generateBookKey(book.metadata.identifier);
+
+			if (!_pagination_cached) {
+				console.log("storing pagination on server");
+
+				$.post("backend.php", { op: "storepagination", id: bookId, payload: JSON.stringify(pageList) });
+			}
+
+			$.get("backend.php", { op: "getlastread", id: bookId }, function(data) {
+				if (data.lastread) book.gotoPage(data.lastread);
+			});
+
+			$("#total_pages").html(book.pagination.totalPages);
+			$("#cur_page").html(book.pagination.pageFromCfi(book.getCurrentLocationCfi()));
+
+			window.setTimeout(function() {
+				$(".loading").hide();
+			}, 1000);
+
+			$(".location").click(function() {
+				var current = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
+				var total = book.pagination.totalPages;
+
+				var page = prompt("Jump to location [1-" + total + "]", current);
+
+				if (page) {
+					book.gotoPage(page);
+				}
+
+			});
+
+		});
+
+		book.on('book:pageChanged', function(location) {
+			//console.log(location);
+			$(".loading").hide();
+			$("#cur_page").html(location.anchorPage);
+
+			var bookId = book.generateBookKey(book.metadata.identifier);
+
+			if (_store_position) {
+				console.log("storing lastread");
+	
+				$.post("backend.php", { op: "storelastread", id: bookId, page: location.anchorPage });
+				_store_position = 0;
+			}
+		});
+		
+	});
+</script>
+
+</body>
+</html>

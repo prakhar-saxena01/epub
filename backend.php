@@ -1,0 +1,212 @@
+<?php
+
+	require_once "config.php";
+	require_once "include/functions.php";
+
+	$op = $_REQUEST["op"];
+
+	header("Content-type: text/json");
+
+	$link = db_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+	init_connection($link);
+
+	$owner = db_escape_string($_SERVER["PHP_AUTH_USER"]);
+
+	if (!$owner) {
+		print json_encode(["error" => "NOT_AUTHENTICATED"]);
+		die;
+	}
+
+	ob_start("ob_gzhandler");
+
+	switch ($op) {
+	case "cover":
+		$id = (int) $_REQUEST["id"];
+
+		$db = new SQLite3(CALIBRE_DB, SQLITE3_OPEN_READONLY);
+		$result = $db->query("SELECT has_cover, path FROM books WHERE id = " . $id);
+
+		while ($line = $result->fetchArray(SQLITE3_ASSOC)) {
+			$filename = BOOKS_DIR . "/" . $line["path"] . "/" . "cover.jpg";
+
+			if (file_exists($filename)) {
+				$base_filename = basename($filename);
+
+				header("Content-type: " . mime_content_type($filename));
+
+				readfile($filename);
+			} else {
+				header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+				echo "File not found.";
+			}
+		}
+
+		break;
+
+	case "download":
+		$id = (int) $_REQUEST["id"];
+
+		$db = new SQLite3(CALIBRE_DB, SQLITE3_OPEN_READONLY);
+		$result = $db->query("SELECT path, name, format FROM data LEFT JOIN books ON (data.book = books.id) WHERE data.id = " . $id);
+
+		while ($line = $result->fetchArray(SQLITE3_ASSOC)) {
+			$filename = BOOKS_DIR . "/" . $line["path"] . "/" . $line["name"] . "." . strtolower($line["format"]);
+
+			if (file_exists($filename)) {
+				$base_filename = basename($filename);
+
+				header("Content-type: " . mime_content_type($filename));
+				header("Content-Disposition: attachment; filename=\"$base_filename\"");
+
+				readfile($filename);
+			} else {
+				header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+				echo "File not found.";
+			}
+		}
+
+		break;
+
+	case "setsetting":
+		$key_map = [
+			"fontSize" => "font_size",
+			"fontFamily" => "font_family",
+			"lineHeight" => "line_height"
+		];
+
+		print $key;
+
+		$key = $key_map[$_REQUEST["key"]];
+		$value = db_escape_string($_REQUEST["value"]);
+
+		if ($key && $value) {
+			db_query($link, "UPDATE epube_settings SET $key = '$value' WHERE owner = '$owner'");
+		}
+
+		break;
+
+	case "getsettings":
+
+		$settings = [
+			"fontSize" => "16",
+			"fontFamily" => "Georgia",
+			"lineHeight" => "100",
+		];
+
+		$result = db_query($link, "SELECT * FROM epube_settings WHERE owner = '$owner' LIMIT 1");
+
+		if (db_num_rows($result) != 0) {
+
+			$line = db_fetch_assoc($result);
+
+			$settings["fontSize"] = (int)$line["font_size"];
+			$settings["fontFamily"] = $line["font_family"];
+			$settings["lineHeight"] = (int)$line["line_height"];
+
+		} else {
+			db_query($link, "INSERT INTO epube_settings (owner, font_family, font_size, line_height) VALUES
+				('$owner', '".$settings["fontFamily"]."','".$settings["fontSize"]."','".$settings["lineHeight"]."')");
+
+		}
+
+		print json_encode($settings);
+
+		break;
+
+	case "getpagination":
+		$bookid = db_escape_string($_REQUEST["id"]);
+
+		if ($bookid) {
+			$result = db_query($link, "SELECT pagination FROM epube_pagination WHERE bookid = '$bookid' LIMIT 1");
+
+			if (db_num_rows($result) != 0) {
+				print db_fetch_result($result, 0, "pagination");
+			} else {
+				print json_encode(["error" => "NOT_FOUND"]);
+			}
+		}
+
+		break;
+	case "storepagination":
+		$payload = db_escape_string($_REQUEST["payload"]);
+		$bookid = db_escape_string($_REQUEST["id"]);
+
+		if ($bookid && $payload) {
+
+			db_query($link, "BEGIN");
+
+			$result = db_query($link, "SELECT id FROM epube_pagination WHERE bookid = '$bookid' LIMIT 1");
+
+			if (db_num_rows($result) != 0) {
+				$id = db_fetch_result($result, 0, "id");
+
+				db_query($link, "UPDATE epube_pagination SET pagination = '$payload' WHERE id = '$id'");
+
+			} else {
+				db_query($link, "INSERT INTO epube_pagination (bookid, pagination) VALUES
+					('$bookid', '$payload')");
+
+			}
+
+			db_query($link, "COMMIT");
+		}
+
+		break;
+	case "getlastread":
+		$bookid = db_escape_string($_REQUEST["id"]);
+		$lastread = -1;
+
+		if ($bookid) {
+
+			$result = db_query($link, "SELECT id, lastread FROM epube_books
+				WHERE bookid = '$bookid' AND owner = '$owner' LIMIT 1");
+
+			if (db_num_rows($result) != 0) {
+				$lastread = (int) db_fetch_result($result, 0, "lastread");
+			}
+		}
+
+		print json_encode(["lastread" => $lastread]);
+
+		break;
+
+	case "storelastread":
+		$page = (int) $_REQUEST["page"];
+		$bookid = db_escape_string($_REQUEST["id"]);
+
+		if ($page && $bookid) {
+
+			db_query($link, "BEGIN");
+
+			$result = db_query($link, "SELECT id, lastread FROM epube_books
+				WHERE bookid = '$bookid' AND owner = '$owner' LIMIT 1");
+
+			if (db_num_rows($result) != 0) {
+				$id = db_fetch_result($result, 0, "id");
+				$lastread = (int) db_fetch_result($result, 0, "lastread");
+
+				if ($lastread < $page || $page == -1) {
+
+					if ($page == -1) $page = 0;
+
+					db_query($link, "UPDATE epube_books SET lastread = '$page' WHERE id = '$id'");
+				}
+			} else {
+				db_query($link, "INSERT INTO epube_books (bookid, owner, lastread) VALUES
+					('$bookid', '$owner', '$page')");
+
+			}
+
+			db_query($link, "COMMIT");
+		}
+
+		print $page;
+
+		break;
+
+	default:
+		print json_encode(["error" => "UNKNOWN_METHOD"]);
+	}
+
+
+?>

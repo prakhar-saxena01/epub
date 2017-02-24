@@ -1,0 +1,9 @@
+.thumb img {
+	max-height : 180px;
+}
+
+.caption div {
+	overflow : hidden;
+	text-overflow: ellipsis;
+	white-space : nowrap;
+}
