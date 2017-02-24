@@ -144,6 +144,7 @@
 
 <script>
 	var _pagination_cached = 0;
+	var _last_position_sync = 0;
 
 	$.urlParam = function(name){
 		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -285,11 +286,12 @@
 
 			var bookId = book.generateBookKey(book.metadata.identifier);
 
-			if (_store_position) {
+			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 60) {
 				console.log("storing lastread");
 	
 				$.post("backend.php", { op: "storelastread", id: bookId, page: location.anchorPage });
 				_store_position = 0;
+				_last_position_sync = new Date().getTime()/1000;
 			}
 		});
 		
