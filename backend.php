@@ -67,52 +67,6 @@
 
 		break;
 
-	case "setsetting":
-		$key_map = [
-			"fontSize" => "font_size",
-			"fontFamily" => "font_family",
-			"lineHeight" => "line_height"
-		];
-
-		print $key;
-
-		$key = $key_map[$_REQUEST["key"]];
-		$value = db_escape_string($_REQUEST["value"]);
-
-		if ($key && $value) {
-			db_query($link, "UPDATE epube_settings SET $key = '$value' WHERE owner = '$owner'");
-		}
-
-		break;
-
-	case "getsettings":
-
-		$settings = [
-			"fontSize" => "16",
-			"fontFamily" => "Georgia",
-			"lineHeight" => "100",
-		];
-
-		$result = db_query($link, "SELECT * FROM epube_settings WHERE owner = '$owner' LIMIT 1");
-
-		if (db_num_rows($result) != 0) {
-
-			$line = db_fetch_assoc($result);
-
-			$settings["fontSize"] = (int)$line["font_size"];
-			$settings["fontFamily"] = $line["font_family"];
-			$settings["lineHeight"] = (int)$line["line_height"];
-
-		} else {
-			db_query($link, "INSERT INTO epube_settings (owner, font_family, font_size, line_height) VALUES
-				('$owner', '".$settings["fontFamily"]."','".$settings["fontSize"]."','".$settings["lineHeight"]."')");
-
-		}
-
-		print json_encode($settings);
-
-		break;
-
 	case "getpagination":
 		$bookid = db_escape_string($_REQUEST["id"]);
 

@@ -165,13 +165,14 @@
 
 		book.open(book_url);
 
-		$.get("backend.php", { op: "getsettings" }, function(data) {
-			console.log(data);
+		var settings = {
+			fontSize: localStorage['epube:fontSize'] ? localStorage['epube:fontSize'] : '16px',
+			fontFamily: localStorage['epube:fontFamily'] ? localStorage['epube:fontFamily'] : 'Georgia',
+			lineHeight: localStorage['epube:lineHeight'] ? localStorage['epube:lineHeight'] : '140%' };
 
-			book.setStyle("fontSize", data.fontSize + "px");
-			book.setStyle("fontFamily", data.fontFamily);
-			book.setStyle("lineHeight", data.lineHeight + "%");
-		});
+		book.setStyle("fontSize", settings.fontSize + "px");
+		book.setStyle("fontFamily", settings.fontFamily);
+		book.setStyle("lineHeight", settings.lineHeight + "%");
 
 		//styles: { fontSize: '24px', lineHeight: '130%', fontFamily: 'Georgia' }
 
