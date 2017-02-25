@@ -17,7 +17,10 @@
 	<script src="lib/holder.min.js"></script>
 	<title>The Epube</title>
 	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css" />
-	<link id="favicon" rel="shortcut icon" type="image/png" href="img/favicon.png" />
+	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
+	<link rel="shortcut icon" sizes="192x192" href="img/favicon_hires.png">
+	<link rel="manifest" href="manifest.json">
+	<meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
 
