@@ -1,12 +1,7 @@
 <?php
 	// vim:ft=php:
 
-	define('DB_TYPE', "pgsql"); // or mysql
-	define('DB_HOST', "localhost");
-	define('DB_USER', "fox");
-	define('DB_NAME', "fox");
-	define('DB_PASS', "pass");
-
+	define('SCRATCH_DB', 'db/scratch.db');
 	define('BOOKS_DIR', '/home/fox/Books');
 	define('CALIBRE_DB', BOOKS_DIR . "/metadata.db");
 

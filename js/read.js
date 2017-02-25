@@ -91,9 +91,9 @@ function zoom(incr) {
 }
 
 function clear_lastread() {
-	if (confirm("Clear stored last read page?")) {
-		$.post("backend.php", { op: "storelastread", page: -1, id: $.urlParam("id") }, function(data) {
-			$(".lastread_input").val(data.lastread);
+	if (confirm("Clear stored last read location?")) {
+		$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
+			$(".lastread_input").val(data.page);
 		});
 	}
 }
@@ -101,9 +101,10 @@ function clear_lastread() {
 function mark_as_read() {
 	if (confirm("Mark book as read?")) {
 		var total = window.book.pagination.totalPages;
+		var lastCfi = book.pagination.cfiFromPage(total);
 
-		$.post("backend.php", { op: "storelastread", page: total, id: $.urlParam("id") }, function(data) {
-			$(".lastread_input").val(data.lastread);
+		$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
+			$(".lastread_input").val(data.page);
 		});
 	}
 }

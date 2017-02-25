@@ -1,9 +1,16 @@
 <?php
 	require_once "config.php";
-	require_once "include/functions.php";
 
-	$link = db_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-	init_connection($link);
+	if (!is_writable(SCRATCH_DB)) {
+		die(SCRATCH_DB . " is not writable");
+	}
+
+	if (!is_writable(dirname(SCRATCH_DB))) {
+		die(dirname(SCRATCH_DB) . " directory is not writable");
+	}
+
+	$ldb = new SQLite3(SCRATCH_DB);
+	$ldb->busyTimeout(10*1000);
 ?>
 <!DOCTYPE html>
 <html>
@@ -64,9 +71,8 @@
 <?php
 
 	require_once "config.php";
-	require_once "include/functions.php";
 
-	$owner = db_escape_string($_SERVER["PHP_AUTH_USER"]);
+	$owner = SQLite3::escapeString($_SERVER["PHP_AUTH_USER"]);
 
 	if (!$owner) {
 		print "<h1>Not authenticated</h1>";
@@ -76,7 +82,7 @@
 	$db = new SQLite3(CALIBRE_DB, SQLITE3_OPEN_READONLY);
 
 	if ($query) {
-		$query_esc = db_escape_string($query);
+		$query_esc = SQLite3::escapeString($query);
 		$search_qpart = "(LOWER(books.author_sort) LIKE LOWER('%$query_esc%') OR
 			LOWER(books.title) LIKE LOWER('%$query_esc%') OR
 			LOWER(series_name) LIKE LOWER('%$query_esc%'))";
@@ -111,13 +117,13 @@
 		if ($line["epub_id"]) {
 			$read_link = "read.html?" . http_build_query(["id" => $line["epub_id"]]);
 
-			$lastread_result = db_query($link, "SELECT lastread, total_pages FROM epube_books, epube_pagination
+			$lastread_result = $ldb->query("SELECT lastread, total_pages FROM epube_books, epube_pagination
 				WHERE epube_pagination.bookid = epube_books.bookid AND
 					epube_books.bookid = " . $line["epub_id"] . " AND owner = '$owner'");
 
-			if (db_num_rows($lastread_result) > 0) {
-				$lastread = db_fetch_result($lastread_result, 0, "lastread");
-				$total_pages = db_fetch_result($lastread_result, 0, "total_pages");
+			if ($lastread_line = $lastread_result->fetchArray(SQLITE3_ASSOC)) {
+				$lastread = $lastread_line["lastread"];
+				$total_pages = $lastread_line["total_pages"];
 
 				$is_read = $total_pages - $lastread < 5;
 				$in_progress = $lastread > 1;

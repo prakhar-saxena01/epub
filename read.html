@@ -63,7 +63,7 @@
 				<hr/>
 
 				<div class="form-group">
-					<label class="col-sm-3 control-label">Last read page</label>
+					<label class="col-sm-3 control-label">Last location</label>
 					<div class="col-sm-9">
 
 						<div class="input-group">
@@ -195,7 +195,7 @@
 
 			$.get("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
 
-				$(".lastread_input").val(data.lastread);
+				$(".lastread_input").val(data.page);
 
 			});
 	
@@ -260,7 +260,7 @@
 			}
 
 			$.get("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
-				if (data.lastread) book.gotoPage(data.lastread);
+				if (data.cfi) book.gotoCfi(data.cfi);
 			});
 
 			$("#total_pages").html(book.pagination.totalPages);
@@ -292,7 +292,8 @@
 			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 60) {
 				console.log("storing lastread");
 	
-				$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: location.anchorPage });
+				$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: location.anchorPage,
+					cfi: book.getCurrentLocationCfi() });
 				_store_position = 0;
 				_last_position_sync = new Date().getTime()/1000;
 			}
