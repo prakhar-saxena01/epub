@@ -2,6 +2,14 @@
 	max-height : 180px;
 }
 
+.thumb.read img {
+	opacity : 0.25;
+}
+
+.in_progress {
+	font-style : italic;
+}
+
 .caption div {
 	overflow : hidden;
 	text-overflow: ellipsis;

@@ -93,7 +93,17 @@ function zoom(incr) {
 function clear_lastread() {
 	if (confirm("Clear stored last read page?")) {
 		$.post("backend.php", { op: "storelastread", page: -1, id: $.urlParam("id") }, function(data) {
-			$(".lastread_input").val(data);
+			$(".lastread_input").val(data.lastread);
+		});
+	}
+}
+
+function mark_as_read() {
+	if (confirm("Mark book as read?")) {
+		var total = window.book.pagination.totalPages;
+
+		$.post("backend.php", { op: "storelastread", page: total, id: $.urlParam("id") }, function(data) {
+			$(".lastread_input").val(data.lastread);
 		});
 	}
 }

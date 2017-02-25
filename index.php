@@ -1,3 +1,10 @@
+<?php
+	require_once "config.php";
+	require_once "include/functions.php";
+
+	$link = db_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+	init_connection($link);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -85,27 +92,53 @@
 
 		$cover_link = "backend.php?" . http_build_query(["op" => "cover", "id" => $line["id"]]);
 		$author_link = "?" . http_build_query(["query" => $line["author_sort"]]);
-		$read_link = $line["epub_id"] ? "read.html?" . http_build_query(["id" => $line["epub_id"]]) : "";
+
+		$in_progress = false;
+		$is_read = false;
+
+		if ($line["epub_id"]) {
+			$read_link = "read.html?" . http_build_query(["id" => $line["epub_id"]]);
+
+			$lastread_result = db_query($link, "SELECT lastread, total_pages FROM epube_books, epube_pagination
+				WHERE epube_pagination.bookid = epube_books.bookid AND
+					epube_books.bookid = " . $line["epub_id"] . " AND owner = '$owner'");
+
+			if (db_num_rows($lastread_result) > 0) {
+				$lastread = db_fetch_result($lastread_result, 0, "lastread");
+				$total_pages = db_fetch_result($lastread_result, 0, "total_pages");
+
+				$is_read = $total_pages - $lastread < 5;
+				$in_progress = $lastread > 1;
+
+			}
+
+		} else {
+			$read_link = "";
+		}
+
+		$cover_read = $is_read ? "read" : "";
 
 		print "<div class='col-xs-6 col-sm-3 col-md-2' style='height : 250px'>";
-		print "<div class='thumb'>";
+		print "<div class=\"thumb $cover_read\">";
 
 		if ($read_link) print "<a href=\"$read_link\">";
 
 		if ($line["has_cover"]) {
 			print "<img src='$cover_link'>";
 		} else {
-			print "<img src='holder.js/120x180'>";
+			print "<img data-src='holder.js/120x180'>";
 		}
 
 		if ($read_link) print "</a>";
 
 		print "<div class='caption'>";
 
+		$title_class = $in_progress ? "in_progress" : "";
+
 		if ($read_link) {
-			print "<div><a href=\"$read_link\">" . $line["title"] . "</a></div>";
+			print "<div class=\"$title_class\"><a href=\"$read_link\">" . $line["title"] . "</a></div>";
 		} else {
-			print "<div>" . $line["title"] . "</div>";
+			print "<div class=\"$title_class\">" . $line["title"] . "</div>";
 		}
 
 		print "<div><a href=\"$author_link\">" . $line["author_sort"] . "</a></div>";

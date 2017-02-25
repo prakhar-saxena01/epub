@@ -33,6 +33,7 @@
 				$base_filename = basename($filename);
 
 				header("Content-type: " . mime_content_type($filename));
+				header('Cache-control: max-age= ' . (86400*24));
 
 				readfile($filename);
 			} else {
@@ -110,7 +111,7 @@
 		break;
 	case "getlastread":
 		$bookid = (int) $_REQUEST["id"];
-		$lastread = -1;
+		$lastread = 0;
 
 		if ($bookid) {
 
@@ -156,7 +157,7 @@
 			db_query($link, "COMMIT");
 		}
 
-		print $page;
+		print json_encode(["lastread" => $page]);
 
 		break;
 
