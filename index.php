@@ -10,6 +10,7 @@
 	<script src="lib/holder.min.js"></script>
 	<title>The Epube</title>
 	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css" />
+	<link id="favicon" rel="shortcut icon" type="image/png" href="img/favicon.png" />
 </head>
 <body>
 

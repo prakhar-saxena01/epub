@@ -82,10 +82,11 @@
 
 		break;
 	case "storepagination":
-		$payload = db_escape_string($_REQUEST["payload"]);
 		$bookid = (int) $_REQUEST["id"];
+		$payload = db_escape_string($_REQUEST["payload"]);
+		$total_pages = (int) $_REQUEST["total"];
 
-		if ($bookid && $payload) {
+		if ($bookid && $payload && $total_pages) {
 
 			db_query($link, "BEGIN");
 
@@ -94,11 +95,12 @@
 			if (db_num_rows($result) != 0) {
 				$id = db_fetch_result($result, 0, "id");
 
-				db_query($link, "UPDATE epube_pagination SET pagination = '$payload' WHERE id = '$id'");
+				db_query($link, "UPDATE epube_pagination SET pagination = '$payload',
+					total_pages = '$total_pages' WHERE id = '$id'");
 
 			} else {
-				db_query($link, "INSERT INTO epube_pagination (bookid, pagination) VALUES
-					('$bookid', '$payload')");
+				db_query($link, "INSERT INTO epube_pagination (bookid, pagination, total_pages) VALUES
+					('$bookid', '$payload', '$total_pages')");
 
 			}
 

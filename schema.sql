@@ -12,6 +12,7 @@ drop table if exists epube_books;
 create table epube_pagination(
 	id serial not null primary key,
 	bookid integer not null,
+	total_pages integer not null,
 	pagination text not null);
 
 create table epube_books(
