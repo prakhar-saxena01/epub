@@ -36,13 +36,19 @@
 	padding-left : 10px;
 	padding-right : 10px;
 	color : #999;
+
+	table-layout : fixed;
 }
 .header > *, .footer > * {
 	display : table-cell;
 	vertical-align : middle;
+
+	overflow : hidden;
+	text-overflow: ellipsis;
+	white-space : nowrap;
 }
 .header .title {
-	margin-left : 30px;
+	margin-left : 16px;
 }
 .footer .location {
 	cursor : pointer;
@@ -62,10 +68,19 @@
 	right : 96px;	
 }
 
+@media (max-width: 992px) {
+	.toolbar {
+		width : 128px;
+	}
+}
+
 @media (max-width: 767px) {
 	#reader {
 		left : 32px;
 		right : 32px;
+	}
+	.toolbar {
+		width : 64px;
 	}
 }
 
