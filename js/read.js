@@ -108,3 +108,13 @@ function mark_as_read() {
 		});
 	}
 }
+
+function save_and_close() {
+
+	var curPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
+
+	$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: curPage,
+		cfi: book.getCurrentLocationCfi() }, function(data) {
+			window.location = "index.php";
+		});
+}
