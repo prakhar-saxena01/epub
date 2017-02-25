@@ -125,6 +125,10 @@
 			<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
 		</button>
 
+		<button class="btn btn-default btn-xs" onclick="invert()">
+			<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+		</button>
+
 		<button class="btn btn-default btn-xs hidden-xs" onclick="zoom(2)">
 			<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
 		</button>
@@ -185,6 +189,7 @@
 		//styles: { fontSize: '24px', lineHeight: '130%', fontFamily: 'Georgia' }
 
 		window.book = book;
+		apply_night_mode();
 
 		var rendered = book.renderTo("reader");
 

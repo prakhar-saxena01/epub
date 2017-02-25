@@ -118,3 +118,25 @@ function save_and_close() {
 			window.location = "index.php";
 		});
 }
+
+function invert() {
+	localStorage["night_mode"] = localStorage["night_mode"] == "0" ? 1 : 0;
+
+	apply_night_mode();
+}
+
+function apply_night_mode() {
+	if (localStorage["night_mode"] == "1") {
+		window.book.setStyle("background", "black");
+		window.book.setStyle("color", "#ccc");
+
+		$("body").css("background", "black");
+
+	} else {
+		window.book.setStyle("background", "white");
+		window.book.setStyle("color", "black");
+
+		$("body").css("background", "white");
+
+	}
+}
