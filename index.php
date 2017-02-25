@@ -28,6 +28,7 @@
 	<link rel="shortcut icon" sizes="192x192" href="img/favicon_hires.png">
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
+	<script src="js/index.js"></script>
 </head>
 <body>
 
@@ -65,6 +66,23 @@
 </div>
 </div>
 
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		if ('serviceWorker' in navigator) {
+ 			 navigator.serviceWorker
+           .register('worker.js')
+           .then(function() {
+					console.log("service worker registered");
+			  });
+
+			 $(window).on('offline', function() {
+				 window.location.reload();
+			 });
+		}
+
+	});
+</script>
 
 <div class="container">
 
@@ -176,17 +194,51 @@
 
 		$data_result = $db->query("SELECT * FROM data WHERE book = " . $line["id"] . " LIMIT 3");
 
-		while ($data_line = $data_result->fetchArray(SQLITE3_ASSOC)) {
-			if ($data_line["format"] != "ORIGINAL_EPUB") {
-				$label_class = $data_line["format"] == "EPUB" ? "label-success" : "label-primary";
-
-				$download_link = "backend.php?op=download&id=" . $data_line["id"];
-				print "<a target=\"_blank\" href=\"$download_link\"><span class=\"label $label_class\">" . $data_line["format"] . "</span></a> ";
-			}
-		}
-
+		/*print "<span class=\"label label-default\">
+			<span class=\"glyphicon glyphicon-download-alt\">
+			</span>";*/
 
 		print "</div>";
+
+		?>
+		<div class="dropdown" style="white-space : nowrap">
+		  <a href="#" data-toggle="dropdown" role="button">
+		  		More...
+				<span class="caret"></span>
+  			</a>
+
+			<ul class="dropdown-menu" aria-labelledby="dLabel">
+
+				<!-- <?php if ($line["series_name"]) {
+					$series_link = "?" . http_build_query(["query" => $line["series_name"]]);
+					$series_full = $line["series_name"] . " [" . $line["series_index"] . "]";
+
+					print "<li><a title=\"".htmlspecialchars($series_full)."\"
+						href=\"$series_link\">$series_full</a></li>";
+				}
+				?> -->
+
+				<?php if ($line["epub_id"]) { ?>
+				<li><a href="#" onclick="return offline_cache(this)"
+					data-book-id="<?php echo $line["id"] ?>" class="offline" title="">Make available offline</a></li>
+				<li class="divider"></li>
+				<?php } ?>
+
+				<?php while ($data_line = $data_result->fetchArray(SQLITE3_ASSOC)) {
+					if ($data_line["format"] != "ORIGINAL_EPUB") {
+						$label_class = $data_line["format"] == "EPUB" ? "label-success" : "label-primary";
+
+						$download_link = "backend.php?op=download&id=" . $data_line["id"];
+
+						print "<li><a target=\"_blank\" href=\"$download_link\">Download: <span class=\"label $label_class\">" .
+							$data_line["format"] . "</span></a></li>";
+					}
+				} ?>
+			</ul>
+		</div>
+
+		<?php
+
 		print "</div>";
 		print "</div>";
 

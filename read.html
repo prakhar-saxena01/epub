@@ -164,6 +164,15 @@
 	}
 
 	$(document).ready(function() {
+
+		if ('serviceWorker' in navigator) {
+ 			 navigator.serviceWorker
+           .register('worker.js')
+           .then(function() { 
+					console.log("service worker registered");
+				});
+		}
+
 		var book_url = "getbook/" + $.urlParam("id") + ".epub";
 
 		console.log("init: " + book_url);
@@ -199,11 +208,8 @@
 			$("select.font_family").val(font);
 
 			$.get("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
-
 				$(".lastread_input").val(data.page);
-
 			});
-	
 			
 		})
 
@@ -264,9 +270,21 @@
 					payload: JSON.stringify(pageList), total: book.pagination.totalPages });
 			}
 
-			$.get("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
-				if (data.cfi) book.gotoCfi(data.cfi);
-			});
+			var localCfi = localStorage["cfipoint." + $.urlParam("id")];
+
+			if (localCfi) {
+
+				window.setTimeout(function() {
+					book.gotoCfi(localCfi);
+				}, 250);
+
+			} else {
+
+				$.get("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
+					if (data.cfi) book.gotoCfi(data.cfi);
+				});
+
+			}
 
 			$("#total_pages").html(book.pagination.totalPages);
 			$("#cur_page").html(book.pagination.pageFromCfi(book.getCurrentLocationCfi()));
@@ -296,11 +314,22 @@
 
 			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 60) {
 				console.log("storing lastread");
+
+				var currentCfi = book.getCurrentLocationCfi();
 	
-				$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: location.anchorPage,
-					cfi: book.getCurrentLocationCfi() });
-				_store_position = 0;
-				_last_position_sync = new Date().getTime()/1000;
+				if (navigator.onLine) {
+
+					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: location.anchorPage,
+						cfi: currentCfi });
+					_store_position = 0;
+					_last_position_sync = new Date().getTime()/1000;
+
+					localStorage.removeItem("cfipoint." + $.urlParam("id"));
+				} else {
+					localStorage["cfipoint." + $.urlParam("id")] = currentCfi;
+					_last_position_sync = 0;
+				}
+
 			}
 		});
 		

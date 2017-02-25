@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="lib/bootstrap/v3/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="lib/bootstrap/v3/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src="lib/bootstrap/v3/js/jquery.js"></script>
+	<script src="lib/bootstrap/v3/js/bootstrap.min.js"></script>
+	<script src="lib/holder.min.js"></script>
+	<title>The Epube</title>
+	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css" />
+	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
+	<link rel="shortcut icon" sizes="192x192" href="img/favicon_hires.png">
+	<link rel="manifest" href="manifest.json">
+	<meta name="mobile-web-app-capable" content="yes">
+	<script src="js/offline.js"></script>
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-static-top">
+<div class="container">
+	<div class="navbar-header">
+		<span class="navbar-brand"><a href="offline.html">The Epube</a> (offline)</span>
+
+		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-collapse" aria-expanded="false">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+
+	</div>
+
+	<div class="collapse navbar-collapse" id="nav-collapse">
+
+		<ul class="nav navbar-nav">
+		</ul>
+
+		<form class="navbar-form navbar-right">
+			<input type="text" name="query" class="form-control"
+				value="">
+			<button type="submit" class="btn btn-default">Search</button>
+		</form>
+
+	</div>
+
+</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		if ('serviceWorker' in navigator) {
+ 			 navigator.serviceWorker
+           .register('worker.js')
+           .then(function() {
+					console.log("service worker registered");
+				});
+
+		}
+
+		populate_list();
+
+	});
+</script>
+
+<div class="container">
+
+	<div class="row" id="books_container">
+
+
+	</div>
+
+</div>
+</body>
+</html>

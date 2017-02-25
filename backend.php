@@ -43,6 +43,23 @@
 
 		break;
 
+	case "getinfo":
+		$id = (int) $_REQUEST["id"];
+
+		$db = new SQLite3(CALIBRE_DB, SQLITE3_OPEN_READONLY);
+
+		$result = $db->query("SELECT books.*, s.name AS series_name,
+			(SELECT id FROM data WHERE book = books.id AND format = 'EPUB' LIMIT 1) AS epub_id FROM books
+			LEFT JOIN books_series_link AS bsl ON (bsl.book = books.id)
+			LEFT JOIN series AS s ON (bsl.series = s.id)
+			WHERE books.id = " . $id);
+
+		if ($line = $result->fetchArray(SQLITE3_ASSOC)) {
+			print json_encode($line);
+		}
+
+		break;
+
 	case "download":
 		$id = (int) $_REQUEST["id"];
 
