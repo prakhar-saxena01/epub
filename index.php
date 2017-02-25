@@ -169,8 +169,10 @@
 
 		while ($data_line = $data_result->fetchArray(SQLITE3_ASSOC)) {
 			if ($data_line["format"] != "ORIGINAL_EPUB") {
+				$label_class = $data_line["format"] == "EPUB" ? "label-success" : "label-primary";
+
 				$download_link = "backend.php?op=download&id=" . $data_line["id"];
-				print "<a target=\"_blank\" href=\"$download_link\"><span class='label label-primary'>" . $data_line["format"] . "</span></a> ";
+				print "<a target=\"_blank\" href=\"$download_link\"><span class=\"label $label_class\">" . $data_line["format"] . "</span></a> ";
 			}
 		}
 
