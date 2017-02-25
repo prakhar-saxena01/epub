@@ -10,9 +10,9 @@ due to EPUB.js strangeness, some URL rewriting is required (nginx config include
 Acknowledgements
 ================
 
-1. Hires favicon from Flaticon
+1. Hires favicon by Vectors Market from Flaticon (CC 3.0 BY)
 
-https://www.shareicon.net/school-material-education-tools-and-utensils-reader-open-leisure-open-book-reading-book-803832
+http://www.flaticon.com/authors/vectors-market
 
 2. Normal favicon from Silk icon pack
 
