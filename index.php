@@ -84,7 +84,7 @@
 	$limit = 60;
 	$offset = (int) $_REQUEST["offset"];
 
-	$order_by = $query ? "author_sort, series_index, title, books.id" : "books.id DESC";
+	$order_by = $query ? "author_sort, series_name, series_index, title, books.id" : "books.id DESC";
 
 	$result = $db->query("SELECT books.*, s.name AS series_name,
 		(SELECT id FROM data WHERE book = books.id AND format = 'EPUB' LIMIT 1) AS epub_id FROM books
@@ -144,18 +144,26 @@
 
 		$title_class = $in_progress ? "in_progress" : "";
 
+		print "<div title=\"".htmlspecialchars($line["title"])."\" class=\"$title_class\">";
+
 		if ($read_link) {
-			print "<div class=\"$title_class\"><a href=\"$read_link\">" . $line["title"] . "</a></div>";
+			print "<a href=\"$read_link\">" . $line["title"] . "</a>";
 		} else {
-			print "<div class=\"$title_class\">" . $line["title"] . "</div>";
+			print $line["title"];
 		}
+
+		print "</div>";
 
 		if ($line["series_name"]) {
 			$series_link = "?" . http_build_query(["query" => $line["series_name"]]);
-			print "<div><a href=\"$series_link\">" . $line["series_name"] . " [" . $line["series_index"] . "]</a></div>";
+			$series_full = $line["series_name"] . " [" . $line["series_index"] . "]";
+
+			print "<div><a title=\"".htmlspecialchars($series_full)."\"
+				href=\"$series_link\">$series_full</a></div>";
 		}
 
-		print "<div><a href=\"$author_link\">" . $line["author_sort"] . "</a></div>";
+		print "<div><a title=\"".htmlspecialchars($line["author_sort"])."\"
+			href=\"$author_link\">" . $line["author_sort"] . "</a></div>";
 
 		$data_result = $db->query("SELECT * FROM data WHERE book = " . $line["id"] . " LIMIT 3");
 
