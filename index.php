@@ -10,7 +10,7 @@
 	}
 
 	$ldb = new SQLite3(SCRATCH_DB);
-	$ldb->busyTimeout(10*1000);
+	$ldb->busyTimeout(30*1000);
 ?>
 <!DOCTYPE html>
 <html>

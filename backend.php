@@ -7,7 +7,7 @@
 	header("Content-type: text/json");
 
 	$ldb = new SQLite3(SCRATCH_DB);
-	$ldb->busyTimeout(10*1000);
+	$ldb->busyTimeout(30*1000);
 
 	$owner = SQLite3::escapeString($_SERVER["PHP_AUTH_USER"]);
 
