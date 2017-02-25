@@ -74,7 +74,9 @@
 
 	if ($query) {
 		$query_esc = db_escape_string($query);
-		$search_qpart = "(LOWER(author_sort) LIKE LOWER('%$query_esc%') OR LOWER(title) LIKE LOWER('%$query_esc%'))";
+		$search_qpart = "(LOWER(books.author_sort) LIKE LOWER('%$query_esc%') OR
+			LOWER(books.title) LIKE LOWER('%$query_esc%') OR
+			LOWER(series_name) LIKE LOWER('%$query_esc%'))";
 	} else {
 		$search_qpart = "1";
 	}
@@ -82,13 +84,20 @@
 	$limit = 60;
 	$offset = (int) $_REQUEST["offset"];
 
-	$result = $db->query("SELECT books.*,
+	$order_by = $query ? "author_sort, series_index, title, books.id" : "books.id DESC";
+
+	$result = $db->query("SELECT books.*, s.name AS series_name,
 		(SELECT id FROM data WHERE book = books.id AND format = 'EPUB' LIMIT 1) AS epub_id FROM books
-		WHERE $search_qpart ORDER BY books.id DESC LIMIT $limit OFFSET $offset");
+		LEFT JOIN books_series_link AS bsl ON (bsl.book = books.id)
+		LEFT JOIN series AS s ON (bsl.series = s.id)
+		WHERE $search_qpart ORDER BY $order_by LIMIT $limit OFFSET $offset");
 
 	print "<div class='row'>";
 
+	$rows = 0;
+
 	while ($line = $result->fetchArray(SQLITE3_ASSOC)) {
+		++$rows;
 
 		$cover_link = "backend.php?" . http_build_query(["op" => "cover", "id" => $line["id"]]);
 		$author_link = "?" . http_build_query(["query" => $line["author_sort"]]);
@@ -118,7 +127,7 @@
 
 		$cover_read = $is_read ? "read" : "";
 
-		print "<div class='col-xs-6 col-sm-3 col-md-2' style='height : 250px'>";
+		print "<div class='col-xs-6 col-sm-3 col-md-2 index_cell'>";
 		print "<div class=\"thumb $cover_read\">";
 
 		if ($read_link) print "<a href=\"$read_link\">";
@@ -139,6 +148,11 @@
 			print "<div class=\"$title_class\"><a href=\"$read_link\">" . $line["title"] . "</a></div>";
 		} else {
 			print "<div class=\"$title_class\">" . $line["title"] . "</div>";
+		}
+
+		if ($line["series_name"]) {
+			$series_link = "?" . http_build_query(["query" => $line["series_name"]]);
+			print "<div><a href=\"$series_link\">" . $line["series_name"] . " [" . $line["series_index"] . "]</a></div>";
 		}
 
 		print "<div><a href=\"$author_link\">" . $line["author_sort"] . "</a></div>";
@@ -164,13 +178,22 @@
 	</div>
 
 	<?php
-		$prev_link = http_build_query(["query" => $query, "offset" => $offset > 0 ? $offset - $limit : 0]);
+		$prev_link = http_build_query(["query" => $query, "offset" => $offset - $limit]);
 		$next_link = http_build_query(["query" => $query, "offset" => $offset + $limit]);
 	?>
 
 	<ul class="pager">
+		<?php if ($offset > 0) { ?>
 		<li class="previous"><a href="?<?php echo $prev_link ?>">&larr; Previous</a></li>
-		<li class="next"><a href="?<?php echo $next_link ?>">Next&rarr;</a></li>
+		<?php } else { ?>
+		<li class="previous disabled"><a href="#">&larr; Previous</a></li>
+		<?php } ?>
+
+		<?php if ($rows == $limit) { ?>
+			<li class="next"><a href="?<?php echo $next_link ?>">Next&rarr;</a></li>
+		<?php } else { ?>
+			<li class="next disabled"><a href="#">Next&rarr;</a></li>
+		<?php } ?>
 	</ul>
 
 </div>
