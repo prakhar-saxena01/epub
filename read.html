@@ -185,9 +185,7 @@
 			
 			$("select.font_family").val(font);
 
-			var bookId = book.generateBookKey(book.metadata.identifier);
-
-			$.get("backend.php", { op: "getlastread", id: bookId }, function(data) {
+			$.get("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
 
 				$(".lastread_input").val(data.lastread);
 
@@ -228,8 +226,7 @@
 		rendered.then(function() {
 			console.log("book ready");
 
-			var bookId = book.generateBookKey(book.metadata.identifier);
-			var url = "backend.php?op=getpagination&id=" + encodeURIComponent(bookId);
+			var url = "backend.php?op=getpagination&id=" + encodeURIComponent($.urlParam("id"));
 		
 			EPUBJS.core.request(url).then(function(storedPageList){
 
@@ -247,15 +244,14 @@
 		book.pageListReady.then(function(pageList) {
 			console.log("page list ready");
 
-			var bookId = book.generateBookKey(book.metadata.identifier);
-
 			if (!_pagination_cached) {
 				console.log("storing pagination on server");
 
-				$.post("backend.php", { op: "storepagination", id: bookId, payload: JSON.stringify(pageList) });
+				$.post("backend.php", { op: "storepagination", id: $.urlParam("id"), 
+					payload: JSON.stringify(pageList) });
 			}
 
-			$.get("backend.php", { op: "getlastread", id: bookId }, function(data) {
+			$.get("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
 				if (data.lastread) book.gotoPage(data.lastread);
 			});
 
@@ -285,12 +281,10 @@
 			$(".loading").hide();
 			$("#cur_page").html(location.anchorPage);
 
-			var bookId = book.generateBookKey(book.metadata.identifier);
-
 			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 60) {
 				console.log("storing lastread");
 	
-				$.post("backend.php", { op: "storelastread", id: bookId, page: location.anchorPage });
+				$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: location.anchorPage });
 				_store_position = 0;
 				_last_position_sync = new Date().getTime()/1000;
 			}

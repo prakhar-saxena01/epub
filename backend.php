@@ -68,7 +68,7 @@
 		break;
 
 	case "getpagination":
-		$bookid = db_escape_string($_REQUEST["id"]);
+		$bookid = (int) $_REQUEST["id"];
 
 		if ($bookid) {
 			$result = db_query($link, "SELECT pagination FROM epube_pagination WHERE bookid = '$bookid' LIMIT 1");
@@ -83,7 +83,7 @@
 		break;
 	case "storepagination":
 		$payload = db_escape_string($_REQUEST["payload"]);
-		$bookid = db_escape_string($_REQUEST["id"]);
+		$bookid = (int) $_REQUEST["id"];
 
 		if ($bookid && $payload) {
 
@@ -107,7 +107,7 @@
 
 		break;
 	case "getlastread":
-		$bookid = db_escape_string($_REQUEST["id"]);
+		$bookid = (int) $_REQUEST["id"];
 		$lastread = -1;
 
 		if ($bookid) {
@@ -126,7 +126,7 @@
 
 	case "storelastread":
 		$page = (int) $_REQUEST["page"];
-		$bookid = db_escape_string($_REQUEST["id"]);
+		$bookid = (int) $_REQUEST["id"];
 
 		if ($page && $bookid) {
 

@@ -92,9 +92,7 @@ function zoom(incr) {
 
 function clear_lastread() {
 	if (confirm("Clear stored last read page?")) {
-		var bookId = book.generateBookKey(book.metadata.identifier);
-
-		$.post("backend.php", { op: "storelastread", page: -1, id: bookId }, function(data) {
+		$.post("backend.php", { op: "storelastread", page: -1, id: $.urlParam("id") }, function(data) {
 			$(".lastread_input").val(data);
 		});
 	}
