@@ -19,12 +19,9 @@ Acknowledgements
 ================
 
 1. Hires favicon by Vectors Market from Flaticon (CC 3.0 BY)
-
-http://www.flaticon.com/authors/vectors-market
-
+   http://www.flaticon.com/authors/vectors-market
 2. Normal favicon from Silk icon pack
-
-http://www.famfamfam.com/lab/icons/silk/
+   http://www.famfamfam.com/lab/icons/silk/
 
 License
 =======
