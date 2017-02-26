@@ -12,7 +12,8 @@
 	$owner = SQLite3::escapeString($_SERVER["PHP_AUTH_USER"]);
 
 	if (!$owner) {
-		print json_encode(["error" => "NOT_AUTHENTICATED"]);
+		header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
+		echo "Unauthorized";
 		die;
 	}
 

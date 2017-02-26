@@ -1,6 +1,14 @@
 <?php
 	require_once "config.php";
 
+	$owner = SQLite3::escapeString($_SERVER["PHP_AUTH_USER"]);
+
+	if (!$owner) {
+		header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
+		echo "Unauthorized";
+		die;
+	}
+
 	if (!is_writable(SCRATCH_DB)) {
 		die(SCRATCH_DB . " is not writable");
 	}
@@ -94,13 +102,6 @@
 <?php
 
 	require_once "config.php";
-
-	$owner = SQLite3::escapeString($_SERVER["PHP_AUTH_USER"]);
-
-	if (!$owner) {
-		print "<h1>Not authenticated</h1>";
-		die;
-	}
 
 	$db = new SQLite3(CALIBRE_DB, SQLITE3_OPEN_READONLY);
 
