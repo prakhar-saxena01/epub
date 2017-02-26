@@ -32,7 +32,7 @@ function populate_list() {
 					if (lastread) {
 
 						in_progress = lastread.page > 0;
-						is_read = lastread.total - lastread.page < 5;
+						is_read = lastread.total > 0 && lastread.total - lastread.page < 5;
 					}
 
 					var cell = "<div class='col-xs-6 col-sm-3 col-md-2 index_cell'>";
