@@ -64,7 +64,7 @@
 
 		<ul class="nav navbar-nav">
 			<li class="active"><a href="index.php">All</a></li>
-			<li><a href="offline.html">Offline</a></li>
+			<li><a href="offline.html">Local</a></li>
 		</ul>
 
 		<form class="navbar-form navbar-right">
