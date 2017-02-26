@@ -59,7 +59,7 @@ function populate_list() {
 						"More..." + "<span class=\"caret\"></span></a>";
 
 					cell += "<ul class=\"dropdown-menu\">";
-					cell += "<li><a href=\"#\" data-book-id=\""+info.id+"\" onclick=\"offline_remove2(this)\">Remove download</a></li>";
+					cell += "<li><a href=\"#\" data-book-id=\""+info.id+"\" onclick=\"offline_remove2(this)\">Remove offline data</a></li>";
 					cell += "</ul>";
 
 					cell += "</div>";
