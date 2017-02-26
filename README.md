@@ -4,8 +4,10 @@ The Epube
 responsive web EPUB reader using EPUB.js and Calibre database
 
 relies on HTTP Authentication provided by httpd
+has transparent offline mode via service workers
 
 due to EPUB.js strangeness, some URL rewriting is required (nginx config included)
+
 
 Acknowledgements
 ================

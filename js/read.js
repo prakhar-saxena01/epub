@@ -92,9 +92,17 @@ function zoom(incr) {
 
 function clear_lastread() {
 	if (confirm("Clear stored last read location?")) {
-		$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
-			$(".lastread_input").val(data.page);
-		});
+		var total = window.book.pagination.totalPages;
+
+		if (navigator.onLine) {
+			$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
+				$(".lastread_input").val(data.page);
+			});
+		}
+
+		localforage.setItem(cacheId("lastread"),
+			{cfi: "", page: 0, total: total});
+
 	}
 }
 
@@ -103,9 +111,15 @@ function mark_as_read() {
 		var total = window.book.pagination.totalPages;
 		var lastCfi = book.pagination.cfiFromPage(total);
 
-		$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
-			$(".lastread_input").val(data.page);
-		});
+		if (navigator.onLine) {
+			$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
+				$(".lastread_input").val(data.page);
+			});
+		}
+
+		localforage.setItem(cacheId("lastread"),
+			{cfi: lastCfi, page: total, total: total});
+
 	}
 }
 
@@ -115,7 +129,7 @@ function save_and_close() {
 		var currentCfi = book.getCurrentLocationCfi();
 		var totalPages = book.pagination.totalPages;
 
-		localforage.setItem("epube-book." + $.urlParam("b") + ".lastread",
+		localforage.setItem(cacheId("lastread"),
 			{cfi: currentCfi, page: currentPage, total: totalPages});
 
 		$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,

@@ -372,7 +372,12 @@
 
 			if (navigator.onLine) {
 				$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
-					if (navigator.onLine && data && data.cfi) {
+					console.log(data);
+
+					if (navigator.onLine && data) {
+						localforage.setItem(cacheId("lastread"),
+							{cfi: data.cfi, page: data.page, total: data.total});
+
 						book.gotoCfi(data.cfi);
 					} else {
 						localforage.getItem(cacheId("lastread")).then(function(item) {
