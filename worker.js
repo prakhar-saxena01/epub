@@ -11,6 +11,7 @@ self.addEventListener('activate', function(event) {
 			'js/read.js',
 			'js/offline.js',
 			'css/read.css',
+			'css/index.css',
 			'offline.html',
 			'lib/zip.min.js',
 			'lib/epub.js',
@@ -32,9 +33,9 @@ self.addEventListener('activate', function(event) {
 this.addEventListener('fetch', function(event) {
 	var req = event.request.clone();
 
-	event.respondWith(
-		caches.match(req).then(function(resp) {
-			if (!navigator.onLine) {
+	if (!navigator.onLine) {
+		event.respondWith(
+			caches.match(req).then(function(resp) {
 
 				if (resp) return resp;
 
@@ -45,9 +46,7 @@ this.addEventListener('fetch', function(event) {
 				if (req.url.match("index.php")) {
 					return caches.match("offline.html");
 				}
-			}
-
-			return fetch(req);
-		})
-	);
+			})
+		);
+	}
 });
