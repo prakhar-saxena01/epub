@@ -42,7 +42,7 @@ function offline_cache(bookId, callback) {
 
 				console.log(cacheId + ' got data');
 
-				fetch('getbook/' + data.epub_id + ".epub", {credentials: 'same-origin'}).then(function(resp) {
+				fetch('backend.php?op=download&id=' + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
 					if (resp.status == 200) {
 						console.log(cacheId + ' got book');
 
