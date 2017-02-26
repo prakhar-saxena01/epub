@@ -130,19 +130,21 @@
 		$bookid = (int) $_REQUEST["id"];
 		$lastread = 0;
 		$lastcfi = "";
+		$totalpages = 0;
 
 		if ($bookid) {
 
-			$result = $ldb->query("SELECT id, lastread, lastcfi FROM epube_books
-				WHERE bookid = '$bookid' AND owner = '$owner' LIMIT 1");
+			$result = $ldb->query("SELECT b.lastread, b.lastcfi, p.total_pages FROM epube_books AS b, epube_pagination AS p
+				WHERE b.bookid = p.bookid AND b.bookid = '$bookid' AND b.owner = '$owner' LIMIT 1");
 
 			if ($line = $result->fetchArray()) {
 				$lastread = (int) $line["lastread"];
 				$lastcfi = $line["lastcfi"];
+				$totalpages = (int) $line["total_pages"];
 			}
 		}
 
-		print json_encode(["page" => $lastread, "cfi" => $lastcfi]);
+		print json_encode(["page" => $lastread, "cfi" => $lastcfi, "total" => $totalpages]);
 
 		break;
 

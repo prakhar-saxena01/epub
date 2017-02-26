@@ -343,10 +343,10 @@
 					var url = "backend.php?op=getpagination&id=" + encodeURIComponent($.urlParam("id"));
 
 					EPUBJS.core.request(url).then(function(pageList) {
-						console.log("pagination: requesting remote");
+						console.log("pagination: requesting remote: ");
 	
 						if (book.loadPagination(pageList).length > 0) {
-							localforage.setItem(cacheId("pagination"), pageList);
+							localforage.setItem(cacheId("pagination"), JSON.parse(pageList));
 							_pagination_stored = 1;
 						} else {
 							book.generatePagination();
@@ -417,7 +417,8 @@
 
 				var currentCfi = book.getCurrentLocationCfi();
 				var currentPage = location.anchorPage;
-	
+				var totalPages = book.pagination.totalPages;
+
 				if (navigator.onLine) {
 
 					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
@@ -436,7 +437,7 @@
 				}
 
 				localforage.setItem(cacheId("lastread"), 
-					{cfi: currentCfi, page: currentPage});
+					{cfi: currentCfi, page: currentPage, total: totalPages});
 
 			}
 		});
