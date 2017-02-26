@@ -22,6 +22,7 @@
 	<script src="lib/bootstrap/v3/js/jquery.js"></script>
 	<script src="lib/bootstrap/v3/js/bootstrap.min.js"></script>
 	<script src="lib/holder.min.js"></script>
+	<script src="lib/localforage.min.js"></script>
 	<title>The Epube</title>
 	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css" />
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
@@ -29,6 +30,7 @@
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
 	<script src="js/index.js"></script>
+	<script src="js/common.js"></script>
 </head>
 <body>
 
@@ -75,11 +77,12 @@
            .then(function() {
 					console.log("service worker registered");
 			  });
-
-			 $(window).on('offline', function() {
+			 /*$(window).on('offline', function() {
 				 window.location.reload();
-			 });
+			});*/
 		}
+
+		mark_offline_books();
 
 	});
 </script>
@@ -133,7 +136,7 @@
 		$is_read = false;
 
 		if ($line["epub_id"]) {
-			$read_link = "read.html?" . http_build_query(["id" => $line["epub_id"]]);
+			$read_link = "read.html?" . http_build_query(["id" => $line["epub_id"], "b" => $line["id"]]);
 
 			$lastread_result = $ldb->query("SELECT lastread, total_pages FROM epube_books, epube_pagination
 				WHERE epube_pagination.bookid = epube_books.bookid AND
@@ -219,8 +222,8 @@
 				?> -->
 
 				<?php if ($line["epub_id"]) { ?>
-				<li><a href="#" onclick="return offline_cache(this)"
-					data-book-id="<?php echo $line["id"] ?>" class="offline" title="">Make available offline</a></li>
+				<li><a href="#" onclick=""
+					data-book-id="<?php echo $line["id"] ?>" class="offline_dropitem"></a></li>
 				<li class="divider"></li>
 				<?php } ?>
 

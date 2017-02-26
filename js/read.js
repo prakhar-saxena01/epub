@@ -111,10 +111,14 @@ function mark_as_read() {
 
 function save_and_close() {
 	if (navigator.onLine) {
-		var curPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
+		var currentPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
+		var currentCfi = book.getCurrentLocationCfi();
 
-		$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: curPage,
-			cfi: book.getCurrentLocationCfi() }, function(data) {
+		localforage.setItem("epube-book." + $.urlParam("b") + ".lastread",
+			{cfi: currentCfi, page: currentPage});
+
+		$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
+			cfi: currentCfi }, function(data) {
 				window.location = "index.php";
 			});
 	} else {

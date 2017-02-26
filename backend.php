@@ -93,7 +93,8 @@
 			if ($line = $result->fetchArray()) {
 				print $line["pagination"];
 			} else {
-				print json_encode(["error" => "NOT_FOUND"]);
+				header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+				echo "File not found.";
 			}
 		}
 

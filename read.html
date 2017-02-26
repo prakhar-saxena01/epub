@@ -13,6 +13,7 @@
 	<script src="lib/epub.js"></script>
 	<script src="lib/smartimages.js"></script> 
 	<script src="js/read.js"></script>
+	<script src="js/common.js"></script>
 
 	<link id="favicon" rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link type="text/css" rel="stylesheet" media="screen" href="css/read.css" />
@@ -149,13 +150,13 @@
 <div id="reader"></div>
 
 <div class="loading">
-	<div>
+	<div class="loading_message">
 		Opening book...
 	</div>
 </div>
 
 <script>
-	var _pagination_cached = 0;
+	var _pagination_stored = 0;
 	var _last_position_sync = 0;
 
 	$.urlParam = function(name){
@@ -163,7 +164,26 @@
 		return results[1] || 0;
 	}
 
+	function cacheId(suffix) {
+		return "epube-book." + $.urlParam("b") + (suffix ? "." + suffix : "");
+	}
+
 	$(document).ready(function() {
+
+		$(window).on('online', function() {
+			console.log("we're online, storing lastread");
+		
+			var currentPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
+			var currentCfi = book.getCurrentLocationCfi();
+
+			$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
+				cfi: currentCfi }, function(data) {
+
+					if (data.cfi) {
+						_last_position_sync = new Date().getTime()/1000;
+					}
+				});
+		});
 
 		if ('serviceWorker' in navigator) {
  			 navigator.serviceWorker
@@ -173,18 +193,89 @@
 				});
 		}
 
-		var book_url = "getbook/" + $.urlParam("id") + ".epub";
+		localforage.getItem(cacheId("book")).then(function(item) {
+			if (item) {
+	
+				console.log("loading from local storage");
 
-		console.log("init: " + book_url);
+				var fileReader = new FileReader();
+
+				fileReader.onload = function() {
+					book.open(this.result);
+				};
+
+				fileReader.readAsArrayBuffer(item);							
+
+			} else {
+
+				console.log("loading from network");
+
+				if (navigator.onLine) {
+					var book_url = "getbook/" + $.urlParam("id") + ".epub";
+
+					RSVP.on('error', function(error) {
+						if ($(".loading").is(":visible")) {
+							$(".loading_message").html("Unable to download book.");
+						}
+						console.log(error);
+					});
+
+					fetch(book_url, {credentials: 'same-origin'}).then(function(resp) {
+
+						if (resp.status == 200) {
+							var bookId = $.urlParam("b");
+
+							// let's store this for later
+							localforage.setItem(cacheId('book'), resp.clone().blob());
+
+							// if there's no base information cached yet, let's do that too
+							localforage.getItem(cacheId()).then(function(info) {
+								if (!info) {
+									$.post("backend.php", {op: "getinfo", id: bookId }, function(data) {
+										if (data) {
+											localforage.setItem(cacheId(), data);
+
+											if (data.has_cover) {
+												fetch("backend.php?op=cover&id=" + bookId, {credentials: 'same-origin'}).then(function(resp) {
+													if (resp.status == 200) {
+														localforage.setItem(cacheId('cover'), resp.blob());
+													}	
+												});
+											}
+										}
+									});
+								}	
+							});
+
+							resp.blob().then(function(blob) {
+
+								var fileReader = new FileReader();
+
+								fileReader.onload = function() {
+									book.open(this.result);
+								};
+
+								fileReader.readAsArrayBuffer(blob);
+
+							});
+						} else {
+							$(".loading_message").html("Unable to download book: " + resp.status + ".");
+						}
+					});
+				
+				} else {
+					$(".loading_message").html("Unable to download books while offline.");
+				}
+			}
+
+		});
 
 		init_taps();
 		document.onkeydown = hotkey_handler;
 
 		var book = ePub({
-			restore: true,
+			restore: false,
 		});
-
-		book.open(book_url);
 
 		var settings = {
 			fontSize: localStorage['epube:fontSize'] ? localStorage['epube:fontSize'] : '16px',
@@ -243,47 +334,56 @@
 		});
 
 		rendered.then(function() {
-			console.log("book ready");
+			
+			localforage.getItem(cacheId("pagination")).then(function(pageList) {
 
-			var url = "backend.php?op=getpagination&id=" + encodeURIComponent($.urlParam("id"));
-		
-			EPUBJS.core.request(url).then(function(storedPageList){
-
-				pageList = storedPageList;
-
-				if (book.loadPagination(pageList).length > 0) {					
-					_pagination_cached = 1;
+				if (pageList && book.loadPagination(pageList).length > 0) {
+					_pagination_stored = 1;
 				} else {
-					book.generatePagination();
+					var url = "backend.php?op=getpagination&id=" + encodeURIComponent($.urlParam("id"));
+
+					EPUBJS.core.request(url).then(function(pageList) {
+						console.log("pagination: requesting remote");
+	
+						if (book.loadPagination(pageList).length > 0) {
+							localforage.setItem(cacheId("pagination"), pageList);
+							_pagination_stored = 1;
+						} else {
+							book.generatePagination();
+						}
+						
+					}).catch(function() {
+						book.generatePagination();
+					});
 				}
-	      });
+			});
 
 		});
 
 		book.pageListReady.then(function(pageList) {
-			console.log("page list ready");
+			if (!_pagination_stored) {
+				if (navigator.onLine) {
+					$.post("backend.php", { op: "storepagination", id: $.urlParam("id"), 
+						payload: JSON.stringify(pageList), total: book.pagination.totalPages });
+				}
 
-			if (!_pagination_cached) {
-				console.log("storing pagination on server");
-
-				$.post("backend.php", { op: "storepagination", id: $.urlParam("id"), 
-					payload: JSON.stringify(pageList), total: book.pagination.totalPages });
+				localforage.setItem(cacheId("pagination"), pageList);
 			}
 
-			var localCfi = localStorage["cfipoint." + $.urlParam("id")];
-
-			if (localCfi) {
-
-				window.setTimeout(function() {
-					book.gotoCfi(localCfi);
-				}, 250);
-
-			} else {
-
-				$.get("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
-					if (data.cfi) book.gotoCfi(data.cfi);
+			if (navigator.onLine) {
+				$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
+					if (navigator.onLine && data && data.cfi) {
+						book.gotoCfi(data.cfi);
+					} else {
+						localforage.getItem(cacheId("lastread")).then(function(item) {
+							if (item) book.gotoCfi(item.cfi);
+						});					
+					}
 				});
-
+			} else {
+				localforage.getItem(cacheId("lastread")).then(function(item) {
+					if (item) book.gotoCfi(item.cfi);
+				});					
 			}
 
 			$("#total_pages").html(book.pagination.totalPages);
@@ -316,19 +416,27 @@
 				console.log("storing lastread");
 
 				var currentCfi = book.getCurrentLocationCfi();
+				var currentPage = location.anchorPage;
 	
 				if (navigator.onLine) {
 
-					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: location.anchorPage,
-						cfi: currentCfi });
-					_store_position = 0;
-					_last_position_sync = new Date().getTime()/1000;
+					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
+						cfi: currentCfi }, function(data) {
 
-					localStorage.removeItem("cfipoint." + $.urlParam("id"));
+						if (data.cfi) {
+							_last_position_sync = new Date().getTime()/1000;
+						}
+
+					});
+
+					_store_position = 0;
+
 				} else {
-					localStorage["cfipoint." + $.urlParam("id")] = currentCfi;
 					_last_position_sync = 0;
 				}
+
+				localforage.setItem(cacheId("lastread"), 
+					{cfi: currentCfi, page: currentPage});
 
 			}
 		});

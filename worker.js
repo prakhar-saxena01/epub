@@ -1,10 +1,13 @@
-var CACHE_NAME = 'epube-test';
+//importScripts('lib/localforage.min.js');
+
+var CACHE_NAME = 'epube-v1';
 
 self.addEventListener('activate', function(event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
 		var urls = [
 			'read.html',
+			'js/common.js',
 			'js/read.js',
 			'js/offline.js',
 			'css/read.css',
@@ -35,8 +38,6 @@ this.addEventListener('fetch', function(event) {
 
 				if (resp) return resp;
 
-				console.log(req.url);
-
 				if (req.url.match("read.html")) {
 					return caches.match("read.html");
 				}
@@ -46,27 +47,7 @@ this.addEventListener('fetch', function(event) {
 				}
 			}
 
-			return fetch(req)
-				.then(function(resp) {
-
-				if (req.url.match(/(getlastread|getpagination|\.epub)/)) {
-					caches.open(CACHE_NAME).then(function(cache) {
-						cache.put(event.request, resp.clone());
-					});
-				} /*else {
-					caches.match(req.url).then(function(cached) {
-						if (cached) {
-							console.log('refreshing ' + req.url);
-
-							caches.open(CACHE_NAME).then(function(cache) {
-								cache.put(event.request, resp.clone());
-							});
-						}
-					});
-				} */
-
-				return resp.clone();
-			});
+			return fetch(req);
 		})
 	);
 });
