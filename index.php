@@ -35,7 +35,7 @@
 <body>
 
 <?php
-	$query = $_REQUEST["query"];
+	$query = @$_REQUEST["query"];
 ?>
 
 <div class="navbar navbar-default navbar-static-top">
