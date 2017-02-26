@@ -16,7 +16,10 @@
 	display : table-cell;
 	vertical-align : middle;
 }
-
+.notice {
+	width : 120px;
+	padding-left : 5px;
+}
 .header {
 	top : 5px;
 	left : 0px;

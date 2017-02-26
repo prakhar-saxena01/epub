@@ -142,6 +142,7 @@
 </div>
 
 <div class="footer">
+	<div class="notice bg-warning text-warning" style="display : none"></div>
 	<div class="location">
 		Loc: <span id="cur_page">-1</span> / <span id="total_pages">-1</span>
 	</div>
@@ -325,6 +326,15 @@
 				});
 			});					
 		})
+
+		book.on("renderer:chapterUnloaded", function() {
+			$(".notice").html("Loading...").show();
+
+		});
+
+		book.on("renderer:chapterDisplayed", function() {
+			$(".notice").hide();
+		});
 
 		book.on("renderer:chapterDisplayed", function() {
 			$("#reader iframe")[0].contentWindow.onmousewheel = function(event) {
