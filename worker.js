@@ -33,12 +33,10 @@ self.addEventListener('install', function(event) {
 this.addEventListener('fetch', function(event) {
 	var req = event.request.clone();
 
-	if (req.method != "GET") return;
+	if (!navigator.onLine) {
+		event.respondWith(
+			caches.match(req).then(function(resp) {
 
-	event.respondWith(
-		caches.match(req).then(function(resp) {
-
-			if (!navigator.onLine) {
 				if (resp) return resp;
 
 				if (req.url.match("read.html")) {
@@ -48,22 +46,7 @@ this.addEventListener('fetch', function(event) {
 				if (req.url.match("index.php")) {
 					return caches.match("offline.html");
 				}
-
-				return;
-			}
-
-			//console.log("<<<", req.url);
-
-			// refresh cached files
-			return caches.open(CACHE_NAME).then(function(cache) {
-				return fetch(req.url,{credentials: 'include'}).then(function(resp) {
-					return caches.match(req).then(function(match) {
-						if (match) cache.put(req.url, resp.clone());
-						return resp;
-					});
-				});
-			});
-		})
-	);
-
+			})
+		);
+	}
 });
