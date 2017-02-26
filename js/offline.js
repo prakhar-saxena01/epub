@@ -1,5 +1,9 @@
 function offline_remove2(elem) {
-	return offline_remove(elem, populate_list);
+	var bookId = elem.getAttribute("data-book-id");
+
+	return offline_remove(bookId, function() {
+		$("#cell-" + bookId).remove();
+	});
 }
 
 function populate_list() {
@@ -35,7 +39,7 @@ function populate_list() {
 						is_read = lastread.total > 0 && lastread.total - lastread.page < 5;
 					}
 
-					var cell = "<div class='col-xs-6 col-sm-3 col-md-2 index_cell'>";
+					var cell = "<div class='col-xs-6 col-sm-3 col-md-2 index_cell' id=\"cell-"+info.id+"\">";
 
 					var cover_read = is_read ? "read" : "";
 					var title_class = in_progress ? "in_progress" : "";

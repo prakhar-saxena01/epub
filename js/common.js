@@ -1,8 +1,7 @@
-function offline_remove(elem, callback) {
+function offline_remove(id, callback) {
 
 	if (confirm("Remove download?")) {
 
-		var id = elem.getAttribute("data-book-id");
 		var cacheId = "epube-book." + id;
 		var promises = [];
 

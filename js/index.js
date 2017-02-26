@@ -9,7 +9,7 @@ function mark_offline_books() {
 			if (book) {
 
 				elem.onclick = function() {
-					offline_remove(elem, function() {
+					offline_remove(bookId, function() {
 						mark_offline_books();
 					});
 				};
