@@ -4,6 +4,9 @@
 
 .thumb img {
 	max-height : 180px;
+	max-width : 120px;
+	height : auto;
+	width : auto;
 }
 
 .thumb.read img {
