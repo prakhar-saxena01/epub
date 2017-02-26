@@ -298,7 +298,7 @@
 			
 			$("select.font_family").val(font);
 
-			$.get("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
+			$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
 				$(".lastread_input").val(data.page);
 			});
 			
