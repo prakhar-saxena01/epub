@@ -35,7 +35,7 @@
 <body>
 
 <?php
-	$query = @$_REQUEST["query"];
+	@$query = $_REQUEST["query"];
 ?>
 
 <div class="navbar navbar-default navbar-static-top">
@@ -114,7 +114,7 @@
 	}
 
 	$limit = 60;
-	$offset = (int) $_REQUEST["offset"];
+	@$offset = (int) $_REQUEST["offset"];
 
 	$order_by = $query ? "author_sort, series_name, series_index, title, books.id" : "books.id DESC";
 
