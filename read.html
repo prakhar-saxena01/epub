@@ -216,7 +216,7 @@
 
 					RSVP.on('error', function(error) {
 						if ($(".loading").is(":visible")) {
-							$(".loading_message").html("Unable to download book.");
+							$(".loading_message").html("Unable to load book.");
 						}
 						console.log(error);
 					});
@@ -265,7 +265,7 @@
 					});
 				
 				} else {
-					$(".loading_message").html("Unable to download books while offline.");
+					$(".loading_message").html("This book is not available offline.");
 				}
 			}
 
