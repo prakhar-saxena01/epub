@@ -41,7 +41,7 @@
 <div class="navbar navbar-default navbar-static-top">
 <div class="container">
 	<div class="navbar-header">
-		<span class="navbar-brand"><a href="?">The Epube</a> (<?php echo $_SERVER["PHP_AUTH_USER"] ?>)</span>
+		<span class="navbar-brand"><a href="?">The Epube</a></span>
 
 		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-collapse" aria-expanded="false">
 			<span class="sr-only">Toggle navigation</span>
@@ -55,6 +55,8 @@
 	<div class="collapse navbar-collapse" id="nav-collapse">
 
 		<ul class="nav navbar-nav">
+			<li class="active"><a href="index.php">All</a></li>
+			<li><a href="offline.html">Offline</a></li>
 		</ul>
 
 		<form class="navbar-form navbar-right">
