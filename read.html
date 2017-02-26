@@ -326,6 +326,18 @@
 			});					
 		})
 
+		book.on("renderer:chapterDisplayed", function() {
+			$("#reader iframe")[0].contentWindow.onmousewheel = function(event) {
+
+				if (event.deltaY > 0) {
+					book.nextPage();
+				} else if (event.deltaY < 0) {
+					book.prevPage();
+				}
+
+			};
+		});
+
 		book.on("renderer:keydown", hotkey_handler);
 
 		book.getMetadata().then(function(meta){
@@ -334,7 +346,7 @@
 		});
 
 		rendered.then(function() {
-			
+
 			localforage.getItem(cacheId("pagination")).then(function(pageList) {
 
 				if (pageList && book.loadPagination(pageList).length > 0) {
@@ -413,6 +425,7 @@
 		});
 
 		book.on('book:pageChanged', function(location) {
+
 			//console.log(location);
 			$(".loading").hide();
 			$("#cur_page").html(location.anchorPage);
