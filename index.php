@@ -159,7 +159,7 @@
 
 		$cover_read = $is_read ? "read" : "";
 
-		print "<div class='col-xs-6 col-sm-3 col-md-2 index_cell'>";
+		print "<div class='col-xs-6 col-sm-3 col-md-2 index_cell' id=\"cell-".$line["id"]."\">";
 		print "<div class=\"thumb $cover_read\">";
 
 		if ($read_link) print "<a href=\"$read_link\">";

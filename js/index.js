@@ -1,32 +1,36 @@
+function mark_offline(elem) {
+
+	var bookId = elem.getAttribute("data-book-id");
+	var cacheId = "epube-book." + bookId;
+
+	localforage.getItem(cacheId).then(function(book) {
+		if (book) {
+			elem.onclick = function() {
+				offline_remove(bookId, function() {
+					mark_offline(elem);
+				});
+			};
+
+			elem.innerHTML = "Remove offline data";
+
+
+		} else {
+			elem.onclick = function() {
+				offline_cache(bookId, function() {
+					mark_offline(elem);
+				});
+			};
+
+			elem.innerHTML = "Make available offline";
+		}
+	});
+}
+
 function mark_offline_books() {
 	var elems = $(".offline_dropitem");
 
 	$.each(elems, function (i, elem) {
-		var bookId = elem.getAttribute("data-book-id");
-		var cacheId = "epube-book." + bookId;
-
-		localforage.getItem(cacheId).then(function(book) {
-			if (book) {
-
-				elem.onclick = function() {
-					offline_remove(bookId, function() {
-						mark_offline_books();
-					});
-				};
-
-				elem.innerHTML = "Remove offline data";
-
-
-			} else {
-				elem.onclick = function() {
-					offline_cache(bookId, function() {
-						mark_offline_books();
-					});
-				};
-
-				elem.innerHTML = "Make available offline";
-			}
-		});
+		mark_offline(elem);
 	});
 }
 
