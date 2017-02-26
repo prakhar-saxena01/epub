@@ -184,7 +184,8 @@
 		break;
 
 	default:
-		print json_encode(["error" => "UNKNOWN_METHOD"]);
+		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+		echo "Method not found.";
 	}
 
 

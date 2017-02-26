@@ -211,7 +211,7 @@
 				console.log("loading from network");
 
 				if (navigator.onLine) {
-					var book_url = "getbook/" + $.urlParam("id") + ".epub";
+					var book_url = "backend.php?op=download&id=" + $.urlParam("id");
 
 					RSVP.on('error', function(error) {
 						if ($(".loading").is(":visible")) {

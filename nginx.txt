@@ -1,9 +1,0 @@
-   location /books {
-      auth_basic "bookz";
-      auth_basic_user_file /etc/apache2/users.shared;
-
-      rewrite /books/getbook/([0-9]+) /books/backend.php?op=download&id=$1 last;
-
-      include php_params;
-   }
-
