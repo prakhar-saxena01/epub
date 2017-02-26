@@ -25,3 +25,8 @@ http://www.flaticon.com/authors/vectors-market
 2. Normal favicon from Silk icon pack
 
 http://www.famfamfam.com/lab/icons/silk/
+
+License
+=======
+
+GNU GPL version 3.
