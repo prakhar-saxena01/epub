@@ -13,12 +13,12 @@ function populate_list() {
 			Promise.all([
 				localforage.getItem(key),
 				localforage.getItem(key + ".cover"),
-				localforage.getItem(key + ".lastread")
+				localforage.getItem(key + ".lastread"),
+				localforage.getItem(key + ".book")
 			]).then(function(results) {
 
-				var info = results[0];
-				if (info) {
-
+				if (results[0] && results[3]) {
+					var info = results[0];
 					var cover = false;
 
 					if (results && results[1]) {
