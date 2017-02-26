@@ -1,13 +1,19 @@
 The Epube
 =========
 
-responsive web EPUB reader using EPUB.js and Calibre database
+web EPUB reader using EPUB.js, Bootstrap, and Calibre.
 
-relies on HTTP Authentication provided by httpd
-has transparent offline mode via service workers
+* responsive design
+* relies on HTTP Authentication provided by httpd
+* has transparent offline mode via service workers
+* can optionally store files locally for later reading
+* supports Chrome homescreen "app mode"
 
-due to EPUB.js strangeness, some URL rewriting is required (nginx config included)
+Requirements
+============
 
+* php-sqlite
+* Calibre books directory and metadata.db
 
 Acknowledgements
 ================
