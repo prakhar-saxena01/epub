@@ -373,17 +373,45 @@
 
 				$.each(toc, function(i, row) {
 
-					var a = $("<a>")
-						.attr('href', '#')
-						.html(row.label)
+					// if anything fails here the toc entry is likely useless anyway (i.e. no cfi)
+					try {
+						var a = $("<a>")
+							.attr('href', '#')
+							.html(row.label + " <b>(Loc. " + 
+								book.pagination.pageFromCfi(row.cfi) + ")</b>")
 						.attr('data-cfi', row.cfi)
-						.attr('data-id', row.id)
-						.click(function() {
-							book.gotoCfi(a.attr('data-cfi'));
-						});
-						
-					list.append($("<li>").append(a));
+								.click(function() {
+								book.gotoCfi(a.attr('data-cfi'));
+							});
+							
+						list.append($("<li>").append(a));
+					} catch (e) {
+						console.warn(e);
+					}
 				});
+
+				// well the toc didn't work out, might as well generate one
+				if (list.children().length <= 1) {
+
+					list.html("");
+
+					$.each(book.spine, function (i, row) {
+						
+						var a = $("<a>")
+							.attr('href', '#')
+							.attr('title', row.url)
+							.html("Section " + (i+1) + " <b>(Loc. " + 
+								book.pagination.pageFromCfi(row.cfi) + ")</b>")
+							.attr('data-cfi', row.cfi)
+							.click(function() {
+								book.gotoCfi(a.attr('data-cfi'));
+							});
+	
+						list.append($("<li>").append(a));
+	
+					});
+				}
+
 			});					
 		})
 
