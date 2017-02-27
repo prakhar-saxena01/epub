@@ -455,11 +455,11 @@
 							localforage.setItem(cacheId("pagination"), JSON.parse(pageList));
 							_pagination_stored = 1;
 						} else {
-							book.generatePagination(600, 600);
+							book.generatePagination(600, 1200);
 						}
 						
 					}).catch(function() {
-						book.generatePagination(600, 600);
+						book.generatePagination(600, 1200);
 					});
 				}
 			});
