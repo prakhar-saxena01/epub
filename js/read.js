@@ -141,24 +141,33 @@ function save_and_close() {
 	}
 }
 
-function invert() {
-	localStorage["night_mode"] = localStorage["night_mode"] == "0" ? 1 : 0;
+function toggle_night_mode() {
+	localforage.getItem("epube.night_mode").then(function(night) {
+		night = !night;
 
-	apply_night_mode();
+		localforage.setItem("epube.night_mode", night).then(function() {
+			apply_night_mode();
+		});
+
+	});
 }
 
 function apply_night_mode() {
-	if (localStorage["night_mode"] == "1") {
-		window.book.setStyle("background", "black");
-		window.book.setStyle("color", "#ccc");
+	localforage.getItem("epube.night_mode").then(function(night) {
+		if (night) {
 
-		$("body").css("background", "black");
+			window.book.setStyle("background", "black");
+			window.book.setStyle("color", "#ccc");
 
-	} else {
-		window.book.setStyle("background", "white");
-		window.book.setStyle("color", "black");
+			$("body").css("background", "black");
 
-		$("body").css("background", "white");
+		} else {
 
-	}
+			window.book.setStyle("background", "white");
+			window.book.setStyle("color", "black");
+
+			$("body").css("background", "white");
+		}
+	});
+
 }
