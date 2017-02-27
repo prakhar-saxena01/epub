@@ -93,6 +93,7 @@
 		}
 
 		mark_offline_books();
+		cache_refresh();
 
 	});
 </script>
