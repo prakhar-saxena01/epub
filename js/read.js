@@ -66,7 +66,7 @@ function lmargin(incr) {
 	var cur = parseInt(window.book.settings.styles.lineHeight.replace("%", ""));
 	var size = cur + incr;
 
-	localStorage["epube:lineHeight"] = size;
+	localforage.setItem("epube.lineHeight", size);
 
 	window.book.setStyle("lineHeight", size + "%");
 
@@ -75,7 +75,7 @@ function lmargin(incr) {
 function apply_font(elem) {
 	var font = elem[elem.selectedIndex].value;
 
-	localStorage["epube:fontFamily"] = font;
+	localforage.setItem("epube.fontFamily", font);
 
 	window.book.setStyle("fontFamily", font);
 
@@ -84,7 +84,7 @@ function zoom(incr) {
 	var cur = parseInt(window.book.settings.styles.fontSize.replace("px", ""));
 	var size = cur + incr;
 
-	localStorage["epube:fontSize"] = size;
+	localforage.setItem("epube.fontSize", size);
 
 	window.book.setStyle("fontSize", size + "px");
 

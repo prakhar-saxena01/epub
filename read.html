@@ -278,14 +278,21 @@
 			restore: false,
 		});
 
-		var settings = {
-			fontSize: localStorage['epube:fontSize'] ? localStorage['epube:fontSize'] : '16px',
-			fontFamily: localStorage['epube:fontFamily'] ? localStorage['epube:fontFamily'] : 'Georgia',
-			lineHeight: localStorage['epube:lineHeight'] ? localStorage['epube:lineHeight'] : '140%' };
+		Promise.all([
+			localforage.getItem("epube.fontSize"),
+			localforage.getItem("epube.fontFamily"),
+			localforage.getItem("epube.lineHeight")
+		]).then(function(res) {
+			var fontSize = res[0] ? res[0] + "px" : "16px";
+			var fontFamily = res[1] ? res[1] : "Georgia";
+			var lineHeight = res[2] ? res[2] + "%" : "140%";
 
-		book.setStyle("fontSize", settings.fontSize + "px");
-		book.setStyle("fontFamily", settings.fontFamily);
-		book.setStyle("lineHeight", settings.lineHeight + "%");
+			book.setStyle("fontSize", fontSize);
+			book.setStyle("fontFamily", fontFamily);
+			book.setStyle("lineHeight", lineHeight);
+		
+		});
+
 
 		//styles: { fontSize: '24px', lineHeight: '130%', fontFamily: 'Georgia' }
 
