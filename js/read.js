@@ -12,7 +12,10 @@ function prev_page() {
 
 function hotkey_handler(e) {
 	try {
-		console.log('K:' + e.which);
+		//console.log('K:' + e.which);
+
+		if ($(".modal").is(":visible"))
+			return;
 
 		// right
 		if (e.which == 39) {
@@ -34,6 +37,10 @@ function init_taps() {
 		window.addEventListener("mouseup",
 			function(event) {
 				if (event.button == 0) {
+
+					if ($(".modal").is(":visible"))
+						return;
+
 					var doc = document.documentElement;
 					var margin_x = 64;
 					var margin_y_top = 48;
