@@ -344,7 +344,7 @@
 		});
 
 		book.on("renderer:chapterDisplayed", function() {
-			$("#reader iframe")[0].contentWindow.onmousewheel = function(event) {
+			$("#reader iframe")[0].contentWindow.onwheel = function(event) {
 
 				if (event.deltaY > 0) {
 					book.nextPage();
