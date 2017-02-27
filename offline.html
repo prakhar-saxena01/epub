@@ -42,7 +42,13 @@
 		</ul>
 
 		<form onsubmit="return false;" class="navbar-form navbar-right">
-			<button type="submit" onclick="offline_clear()" class="btn btn-default">Remove all</button>
+			<button type="submit" onclick="offline_clear()" class="btn btn-danger">Remove all</button>
+		</form>
+
+		<form onsubmit="return offline_search(this)" class="navbar-form navbar-right">
+			<input type="text" class="form-control search_query" name="query" class="form-control"
+				value="">
+			<button type="submit" class="btn btn-default">Search</button>
 		</form>
 
 	</div>
@@ -59,10 +65,14 @@
            .then(function() {
 					console.log("service worker registered");
 				});
-
 		}
 
-		populate_list();
+		localforage.getItem("epube.search-query").then(function(query) {
+
+			if (query) $(".search_query").val(query);
+
+			populate_list();
+		});
 
 	});
 </script>
