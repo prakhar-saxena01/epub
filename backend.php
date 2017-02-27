@@ -184,6 +184,41 @@
 
 		break;
 
+	case "define":
+
+		if (defined('DICT_ENABLED') && DICT_ENABLED) {
+
+			$word = escapeshellarg($_REQUEST["word"]);
+
+			exec(DICT_CLIENT . " -h ". DICT_SERVER ." $word 2>&1", $output, $rc);
+
+			if ($rc == 0) {
+				print json_encode(["result" => $output]);
+
+			} else if ($rc == 21) {
+
+				$word_match = "";
+
+				foreach ($output as $line) {
+					if (preg_match('/^[^ ]+: *([^ ]+)$/', $line, $match)) {
+						if ($match[1]) {
+							$word_match = escapeshellarg($match[1]);
+							break;
+						}
+					}
+				}
+
+				unset($output);
+				exec(DICT_CLIENT . " -h ". DICT_SERVER ." $word_match 2>&1", $output, $rc);
+
+				if ($rc == 0) {
+					print json_encode(["result" => $output]);
+				}
+			}
+		}
+
+		break;
+
 	default:
 		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 		echo "Method not found.";

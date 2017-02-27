@@ -92,4 +92,8 @@ ul.toc_list {
 	overflow : auto;
 }
 
-
+.dict_result {
+	max-height : 300px;
+	height : auto;
+	overflow : auto;
+}
