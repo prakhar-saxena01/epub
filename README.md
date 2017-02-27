@@ -7,6 +7,7 @@ web EPUB reader using EPUB.js, Bootstrap, and Calibre.
 * relies on HTTP Authentication provided by httpd
 * has transparent offline mode via service workers
 * can optionally store files locally for later reading
+* supports word definition lookups using dictd
 * supports Chrome homescreen "app mode"
 
 Requirements
