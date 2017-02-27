@@ -126,6 +126,36 @@
   </div>
 </div>
 
+<div class="modal fade" id="search-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search</h4>
+      </div>
+      <div class="modal-body">
+
+			<form class="form-horizontal" onsubmit="return false;">			
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Search (active chapter)</label>
+					<div class="col-sm-8">
+						<input type="search" class="form-control search_input">
+					</div>
+  				</div>
+
+				<ol class="search_results"> </ol>
+
+			</form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="search()">Search</button>		  	
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>		  	
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="header">
 	<span>
 		<a href="#" onclick="save_and_close()">&laquo;&nbsp;Exit</a>
@@ -145,6 +175,11 @@
 
 		<button class="btn btn-default btn-xs" onclick="toggle_night_mode()">
 			<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+		</button>
+
+		<button class="btn btn-default btn-xs"
+			data-toggle="modal" data-target="#search-modal">
+			<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 		</button>
 
 		<!-- <button class="btn btn-default btn-xs hidden-xs" onclick="zoom(2)">

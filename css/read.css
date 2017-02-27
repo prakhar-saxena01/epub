@@ -83,16 +83,11 @@
 		right : 32px;
 	}
 	.toolbar {
-		width : 96px;
+		width : 128px;
 	}
 }
 
-ul.toc_list {
-	height : 250px;
-	overflow : auto;
-}
-
-.dict_result {
+.toc_list, .search_results, .dict_result {
 	max-height : 300px;
 	height : auto;
 	overflow : auto;

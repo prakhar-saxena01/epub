@@ -169,5 +169,32 @@ function apply_night_mode() {
 			$("body").css("background", "white");
 		}
 	});
-
 }
+
+function search() {
+	var query = $(".search_input").val();
+	var list = $(".search_results");
+
+	list.html("");
+
+	if (query) {
+		var results = window.book.currentChapter.find(query);
+
+		$.each(results, function (i, row) {
+			var a = $("<a>")
+				.attr('href', '#')
+				.html(row.excerpt +
+					" <b>(Loc.&nbsp;" + window.book.pagination.pageFromCfi(row.cfi) + ")</b>")
+				.attr('data-cfi', row.cfi)
+				.attr('data-id', row.id)
+				.click(function() {
+						window.book.gotoCfi(a.attr('data-cfi'));
+				});
+
+			list.append($("<li>").append(a));
+
+		});
+	}
+}
+
+
