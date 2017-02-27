@@ -144,7 +144,8 @@
 <div class="footer">
 	<div class="notice bg-warning text-warning" style="display : none"></div>
 	<div class="location">
-		Loc: <span id="cur_page">-1</span> / <span id="total_pages">-1</span>
+		Loc: <span id="cur_page">?</span> / <span id="total_pages">?</span>
+		(<span id="page_pct">?</span>)
 	</div>
 </div>
 
@@ -420,8 +421,15 @@
 				});					
 			}
 
+			var curPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
+
 			$("#total_pages").html(book.pagination.totalPages);
-			$("#cur_page").html(book.pagination.pageFromCfi(book.getCurrentLocationCfi()));
+			$("#cur_page").html(curPage);
+
+			if (book.pagination.totalPages > 0) {
+				var pct = parseInt(curPage / book.pagination.totalPages * 100);
+				$("#page_pct").html(pct + "%");
+			}
 
 			window.setTimeout(function() {
 				$(".loading").hide();
@@ -446,6 +454,13 @@
 			//console.log(location);
 			$(".loading").hide();
 			$("#cur_page").html(location.anchorPage);
+
+			var total = book.pagination.totalPages;
+
+			if (book.pagination.totalPages > 0) {
+				var pct = parseInt(location.anchorPage / book.pagination.totalPages * 100);
+				$("#page_pct").html(pct + "%");
+			}
 
 			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 60) {
 				console.log("storing lastread");
