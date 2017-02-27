@@ -6,6 +6,28 @@ function offline_remove2(elem) {
 	});
 }
 
+function offline_clear() {
+
+	if (confirm("Remove all offline data?")) {
+
+		var promises = [];
+
+		localforage.iterate(function(value, key, i) {
+
+			if (key.match("epube-book")) {
+				promises.push(localforage.removeItem(key));
+			}
+		});
+
+		Promise.all(promises).then(function() {
+			window.setTimeout(function() {
+				populate_list();
+			}, 500);
+		});
+	}
+}
+
+
 function populate_list() {
 
 	var books = $("#books_container");

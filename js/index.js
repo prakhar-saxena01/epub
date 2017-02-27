@@ -24,6 +24,7 @@ function mark_offline(elem) {
 				offline_remove(bookId, function() {
 					mark_offline(elem);
 				});
+				return false;
 			};
 
 			elem.innerHTML = "Remove offline data";
@@ -34,6 +35,7 @@ function mark_offline(elem) {
 				offline_cache(bookId, function() {
 					mark_offline(elem);
 				});
+				return false;
 			};
 
 			elem.innerHTML = "Make available offline";
