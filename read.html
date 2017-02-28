@@ -11,7 +11,7 @@
 	<script src="lib/zip.min.js"></script>
 	<script src="lib/localforage.min.js"></script>
 	<script src="lib/epub.js"></script>
-	<script src="lib/smartimages.js"></script> 
+	<script src="lib/smartimages.js"></script>
 	<script src="js/read.js"></script>
 	<script src="js/common.js"></script>
 
@@ -83,10 +83,10 @@
 					</div>
   				</div>
 
-			</form>      
+			</form>
       </div>
       <div class="modal-footer">
-             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>		  	
+             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -103,7 +103,7 @@
 			<div class="dict_result"> </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>		  	
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -120,7 +120,7 @@
 			<ul class="toc_list list-unstyled"> </ul>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>		  	
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -135,7 +135,7 @@
       </div>
       <div class="modal-body">
 
-			<form class="form-horizontal" onsubmit="return false;">			
+			<form class="form-horizontal" onsubmit="return false;">
 				<div class="form-group">
 					<label class="col-sm-4 control-label">Search (active chapter)</label>
 					<div class="col-sm-8">
@@ -149,8 +149,8 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="search()">Search</button>		  	
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>		  	
+        <button type="button" class="btn btn-primary" onclick="search()">Search</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -163,12 +163,12 @@
 	</span>
 	<span class="toolbar">
 
-		<button class="btn btn-default btn-xs" 
+		<button class="btn btn-default btn-xs"
 			data-toggle="modal" data-target="#toc-modal">
 			<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 		</button>
 
-		<button class="btn btn-default btn-xs" 
+		<button class="btn btn-default btn-xs"
 			data-toggle="modal" data-target="#settings-modal">
 			<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
 		</button>
@@ -221,7 +221,7 @@
 
 		$(window).on('online', function() {
 			console.log("we're online, storing lastread");
-		
+
 			var currentPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
 			var currentCfi = book.getCurrentLocationCfi();
 
@@ -237,14 +237,14 @@
 		if ('serviceWorker' in navigator) {
  			 navigator.serviceWorker
            .register('worker.js')
-           .then(function() { 
+           .then(function() {
 					console.log("service worker registered");
 				});
 		}
 
 		localforage.getItem(cacheId("book")).then(function(item) {
 			if (item) {
-	
+
 				console.log("loading from local storage");
 
 				var fileReader = new FileReader();
@@ -253,7 +253,7 @@
 					book.open(this.result);
 				};
 
-				fileReader.readAsArrayBuffer(item);							
+				fileReader.readAsArrayBuffer(item);
 
 			} else {
 
@@ -288,12 +288,12 @@
 												fetch("backend.php?op=cover&id=" + bookId, {credentials: 'same-origin'}).then(function(resp) {
 													if (resp.status == 200) {
 														localforage.setItem(cacheId('cover'), resp.blob());
-													}	
+													}
 												});
 											}
 										}
 									});
-								}	
+								}
 							});
 
 							resp.blob().then(function(blob) {
@@ -311,7 +311,7 @@
 							$(".loading_message").html("Unable to download book: " + resp.status + ".");
 						}
 					});
-				
+
 				} else {
 					$(".loading_message").html("This book is not available offline.");
 				}
@@ -338,7 +338,7 @@
 			book.setStyle("fontSize", fontSize);
 			book.setStyle("fontFamily", fontFamily);
 			book.setStyle("lineHeight", lineHeight);
-		
+
 		});
 
 
@@ -351,18 +351,23 @@
 
 		$('#settings-modal').on('shown.bs.modal', function() {
 			var font = book.settings.styles.fontFamily;
-			
+
 			$("select.font_family").val(font);
 
 			$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
 				$(".lastread_input").val(data.page);
 			});
-			
+
 		})
 
+		$('#dict-modal').on('shown.bs.modal', function() {
+			$(".dict_result").scrollTop(0);
+		})
+
+
 		$('#toc-modal').on('shown.bs.modal', function() {
-			book.getToc().then(function(toc) { 
-	
+			book.getToc().then(function(toc) {
+
 				var list = $(".toc_list");
 				list.html("");
 
@@ -372,13 +377,13 @@
 					try {
 						var a = $("<a>")
 							.attr('href', '#')
-							.html(row.label + " <b>(Loc. " + 
+							.html(row.label + " <b>(Loc. " +
 								book.pagination.pageFromCfi(row.cfi) + ")</b>")
 						.attr('data-cfi', row.cfi)
 								.click(function() {
 								book.gotoCfi(a.attr('data-cfi'));
 							});
-							
+
 						list.append($("<li>").append(a));
 					} catch (e) {
 						console.warn(e);
@@ -391,23 +396,23 @@
 					list.html("");
 
 					$.each(book.spine, function (i, row) {
-						
+
 						var a = $("<a>")
 							.attr('href', '#')
 							.attr('title', row.url)
-							.html("Section " + (i+1) + " <b>(Loc. " + 
+							.html("Section " + (i+1) + " <b>(Loc. " +
 								book.pagination.pageFromCfi(row.cfi) + ")</b>")
 							.attr('data-cfi', row.cfi)
 							.click(function() {
 								book.gotoCfi(a.attr('data-cfi'));
 							});
-	
+
 						list.append($("<li>").append(a));
-	
+
 					});
 				}
 
-			});					
+			});
 		})
 
 		book.on("renderer:chapterUnloaded", function() {
@@ -473,14 +478,14 @@
 
 					EPUBJS.core.request(url).then(function(pageList) {
 						console.log("pagination: requesting remote: ");
-	
+
 						if (book.loadPagination(pageList).length > 0) {
 							localforage.setItem(cacheId("pagination"), JSON.parse(pageList));
 							_pagination_stored = 1;
 						} else {
 							book.generatePagination(600, 1200);
 						}
-						
+
 					}).catch(function() {
 						book.generatePagination(600, 1200);
 					});
@@ -492,7 +497,7 @@
 		book.pageListReady.then(function(pageList) {
 			if (!_pagination_stored) {
 				if (navigator.onLine) {
-					$.post("backend.php", { op: "storepagination", id: $.urlParam("id"), 
+					$.post("backend.php", { op: "storepagination", id: $.urlParam("id"),
 						payload: JSON.stringify(pageList), total: book.pagination.totalPages });
 				}
 
@@ -511,13 +516,13 @@
 					} else {
 						localforage.getItem(cacheId("lastread")).then(function(item) {
 							if (item) book.gotoCfi(item.cfi);
-						});					
+						});
 					}
 				});
 			} else {
 				localforage.getItem(cacheId("lastread")).then(function(item) {
 					if (item) book.gotoCfi(item.cfi);
-				});					
+				});
 			}
 
 			var curPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
@@ -585,12 +590,12 @@
 					_last_position_sync = 0;
 				}
 
-				localforage.setItem(cacheId("lastread"), 
+				localforage.setItem(cacheId("lastread"),
 					{cfi: currentCfi, page: currentPage, total: totalPages});
 
 			}
 		});
-		
+
 	});
 </script>
 
