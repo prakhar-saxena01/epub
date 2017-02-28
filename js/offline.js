@@ -44,8 +44,6 @@ function populate_list() {
 
 	if (query) query = query.toLowerCase();
 
-	console.log(query);
-
 	var books = $("#books_container");
 	books.html("");
 
@@ -125,7 +123,25 @@ function populate_list() {
 					var cell = $(cell);
 
 					if (cover) {
-						cell.find("img").attr("src", cover);
+						cell.find("img").attr("src", cover).qtip({
+							position: {
+								target: 'mouse',
+								adjust: {
+									mouse: false
+								}
+							},
+							style: {
+								classes: 'qtip-light qtip-custom'
+							},
+							show: {
+								delay: 1000
+							},
+							hide: 'unfocus mouseleave',
+							content: {
+								text: info.comment ? info.comment : "No description available",
+								title: info.title
+							}
+						});
 
 						cell.find(".series_link")
 							.attr("title", info.series_name + " [" + info.series_index  + "]")

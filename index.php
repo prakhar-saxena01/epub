@@ -26,11 +26,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="lib/bootstrap/v3/css/bootstrap.min.css" rel="stylesheet" media="screen">
 	<link href="lib/bootstrap/v3/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
+	<link href="lib/qtip2/jquery.qtip.min.css" rel="stylesheet" media="screen">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<script src="lib/bootstrap/v3/js/jquery.js"></script>
 	<script src="lib/bootstrap/v3/js/bootstrap.min.js"></script>
 	<script src="lib/holder.min.js"></script>
 	<script src="lib/localforage.min.js"></script>
+	<script src="lib/qtip2/jquery.qtip.min.js"></script>
 	<title>The Epube</title>
 	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css" />
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
@@ -94,6 +96,7 @@
 
 		mark_offline_books();
 		cache_refresh();
+		init_tooltips();
 
 	});
 </script>
@@ -167,9 +170,9 @@
 		if ($read_link) print "<a href=\"$read_link\">";
 
 		if ($line["has_cover"]) {
-			print "<img src='$cover_link'>";
+			print "<img data-book-id='".$line["id"]."' src='$cover_link'>";
 		} else {
-			print "<img data-src='holder.js/120x180'>";
+			print "<img data-book-id='".$line["id"]."' data-src='holder.js/120x180'>";
 		}
 
 		if ($read_link) print "</a>";

@@ -50,6 +50,7 @@
 		$db = new SQLite3(CALIBRE_DB, SQLITE3_OPEN_READONLY);
 
 		$result = $db->query("SELECT books.*, s.name AS series_name,
+			(SELECT text FROM comments WHERE book = books.id) AS comment,
 			(SELECT id FROM data WHERE book = books.id AND format = 'EPUB' LIMIT 1) AS epub_id FROM books
 			LEFT JOIN books_series_link AS bsl ON (bsl.book = books.id)
 			LEFT JOIN series AS s ON (bsl.series = s.id)

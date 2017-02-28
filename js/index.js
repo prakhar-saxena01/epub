@@ -110,3 +110,46 @@ function offline_cache(bookId, callback) {
 
 	});
 }
+
+function init_tooltips() {
+
+	$('.index_cell img').qtip({
+		position: {
+			target: 'mouse',
+			adjust: {
+				mouse: false
+			}
+		},
+		style: {
+			classes: 'qtip-light qtip-custom'
+		},
+		show: {
+			delay: 1000
+		},
+		hide: 'unfocus mouseleave',
+		content: {
+			text: function(event, api) {
+				$.ajax({
+					url: 'backend.php?op=getinfo&id=' + $(this).attr('data-book-id')
+				})
+				.then(function(content) {
+
+					api.set('content.title', content.title);
+
+					if (content.comment) {
+						api.set('content.text',
+						  	content.comment);
+					} else {
+						api.set('content.text', 'No description available');
+					}
+				}, function(xhr, status, error) {
+					api.set('content.text', status + ': ' + error);
+				});
+
+				return 'Loading...';
+			}
+		}
+	});
+
+
+}

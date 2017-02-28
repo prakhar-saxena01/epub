@@ -23,3 +23,8 @@
 	text-overflow: ellipsis;
 	white-space : nowrap;
 }
+
+.qtip-custom {
+	max-height : 250px;
+	overflow : auto;
+}

@@ -23,6 +23,8 @@ self.addEventListener('install', function(event) {
 			'lib/bootstrap/v3/js/jquery.js',
 			'lib/bootstrap/v3/js/bootstrap.min.js',
 			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
+			'lib/qtip2/jquery.qtip.min.css',
+			'lib/qtip2/jquery.qtip.min.js',
 		];
 
 		return cache.addAll(urls.map(url => new Request(url, {credentials: 'same-origin'})));
