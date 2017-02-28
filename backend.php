@@ -197,23 +197,34 @@
 
 			} else if ($rc == 21) {
 
-				$word_match = "";
+				$word_matches = [];
 
 				foreach ($output as $line) {
-					if (preg_match('/^[^ ]+: *([^ ]+)$/', $line, $match)) {
+					if (preg_match('/^[^ ]+: *(.*)/', $line, $match)) {
+
 						if ($match[1]) {
-							$word_match = escapeshellarg($match[1]);
+							$word_matches = explode("  ", $match[1]);
 							break;
 						}
 					}
 				}
 
+				$word_matches = implode(" ", array_map("escapeshellarg", $word_matches));
+
 				unset($output);
-				exec(DICT_CLIENT . " -h ". DICT_SERVER ." $word_match 2>&1", $output, $rc);
+				exec(DICT_CLIENT . " -h ". DICT_SERVER ." $word_matches 2>&1", $output, $rc);
 
 				if ($rc == 0) {
 					print json_encode(["result" => $output]);
 				}
+			} else if ($rc == 20) {
+
+				exec(DICT_CLIENT . " -s soundex -h ". DICT_SERVER ." $word 2>&1", $output, $rc);
+
+				print json_encode(["result" => $output]);
+
+			} else {
+				print json_encode(["result" => $output]);
 			}
 		}
 
