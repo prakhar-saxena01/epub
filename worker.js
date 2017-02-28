@@ -63,6 +63,10 @@ this.addEventListener('fetch', function(event) {
 					return caches.match("read.html");
 				}
 
+				if (req.url.match("offline.html")) {
+					return caches.match("offline.html");
+				}
+
 				if (req.url.match("index.php")) {
 					return caches.match("offline.html");
 				}

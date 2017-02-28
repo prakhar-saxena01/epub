@@ -213,11 +213,6 @@
 	var _pagination_stored = 0;
 	var _last_position_sync = 0;
 
-	$.urlParam = function(name){
-		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-		return results[1] || 0;
-	}
-
 	function cacheId(suffix) {
 		return "epube-book." + $.urlParam("b") + (suffix ? "." + suffix : "");
 	}

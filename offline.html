@@ -45,7 +45,7 @@
 			<button type="submit" onclick="offline_clear()" class="btn btn-danger">Remove all</button>
 		</form>
 
-		<form onsubmit="return offline_search(this)" class="navbar-form navbar-right">
+		<form class="navbar-form navbar-right">
 			<input type="text" class="form-control search_query" name="query" class="form-control"
 				value="">
 			<button type="submit" class="btn btn-default">Search</button>
@@ -67,12 +67,14 @@
 				});
 		}
 
-		localforage.getItem("epube.search-query").then(function(query) {
+		var query = $.urlParam("query");
 
-			if (query) $(".search_query").val(query);
+		console.log(query);
 
-			populate_list();
-		});
+		if (query)
+			$(".search_query").val(query);
+
+		populate_list();
 
 	});
 </script>
