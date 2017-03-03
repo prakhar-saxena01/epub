@@ -320,6 +320,16 @@
 		init_taps();
 		document.onkeydown = hotkey_handler;
 
+		EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback, renderer) {
+
+        EPUBJS.core.addScripts(["/books/lib/bootstrap/v3/js/jquery.js",
+					"/books/lib/jquery.mobile-1.4.5.js",
+					"/books/js/swipes.js" ], null, renderer.doc.head);
+
+        if (callback) callback();
+		}
+
+
 		var book = ePub({
 			restore: false,
 		});
