@@ -328,7 +328,13 @@
 					baseUrl + "lib/jquery.mobile-1.4.5.js",
 					baseUrl + "js/swipes.js" ], null, renderer.doc.head);
 
+			EPUBJS.core.addCss(baseUrl + "css/transitions.css", null, renderer.doc.head);
+
         if (callback) callback();
+		}
+
+		EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
+ 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
 		}
 
 		var book = ePub({

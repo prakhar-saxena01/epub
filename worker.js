@@ -13,6 +13,7 @@ self.addEventListener('install', function(event) {
 			'js/swipes.js',
 			'css/read.css',
 			'css/index.css',
+			'css/transitions.css',
 			'offline.html',
 			'lib/zip.min.js',
 			'lib/epub.js',
