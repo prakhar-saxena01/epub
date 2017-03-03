@@ -341,6 +341,9 @@
 					baseUrl + "lib/jquery.mobile.custom.js",
 					baseUrl + "js/swipes.js" ], null, renderer.doc.head);
 
+			EPUBJS.core.addCss(baseUrl + "lib/bootstrap/v3/css/bootstrap.css", null, renderer.doc.head);
+			EPUBJS.core.addCss(baseUrl + "lib/bootstrap/v3/css/bootstrap-theme.css", null, renderer.doc.head);
+
 			localforage.getItem("epube.disable-transitions").then(function(disable) {
 				if (!disable) {
 					EPUBJS.core.addCss(baseUrl + "css/transitions.css", null, renderer.doc.head);
