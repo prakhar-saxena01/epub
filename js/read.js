@@ -202,4 +202,6 @@ function search() {
 	}
 }
 
-
+function toggle_transitions(elem) {
+	localforage.setItem("epube.disable-transitions", elem.checked);
+}
