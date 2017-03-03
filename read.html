@@ -44,20 +44,14 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Text size</label>
 					<div class="col-sm-9">
-						<div class="btn-group" role="group" aria-label="...">
-						  <button type="button" onclick="zoom(2)" class="btn btn-default">+</button>
-						  <button type="button" onclick="zoom(-2)" class="btn btn-default">-</button>
-						</div>
+						<select class="font_size form-control" onchange="apply_font_size(this)"></select>
 					</div>
   				</div>
 
 				<div class="form-group">
-					<label class="col-sm-3 control-label">Line margins</label>
+					<label class="col-sm-3 control-label">Line height</label>
 					<div class="col-sm-9">
-						<div class="btn-group" role="group" aria-label="...">
-						  <button type="button" onclick="lmargin(20)" class="btn btn-default">+</button>
-						  <button type="button" onclick="lmargin(-20)" class="btn btn-default">-</button>
-						</div>
+						<select class="line_height form-control" onchange="apply_line_height(this)"></select>
 					</div>
   				</div>
 
@@ -213,6 +207,10 @@
 	var _pagination_stored = 0;
 	var _last_position_sync = 0;
 
+	const DEFAULT_FONT_SIZE = 16;
+	const DEFAULT_FONT_FAMILY = "Georgia";
+	const DEFAULT_LINE_HEIGHT = 140;
+
 	function cacheId(suffix) {
 		return "epube-book." + $.urlParam("b") + (suffix ? "." + suffix : "");
 	}
@@ -331,9 +329,9 @@
 			localforage.getItem("epube.fontFamily"),
 			localforage.getItem("epube.lineHeight")
 		]).then(function(res) {
-			var fontSize = res[0] ? res[0] + "px" : "16px";
-			var fontFamily = res[1] ? res[1] : "Georgia";
-			var lineHeight = res[2] ? res[2] + "%" : "140%";
+			var fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
+			var fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
+			var lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
 
 			book.setStyle("fontSize", fontSize);
 			book.setStyle("fontFamily", fontFamily);
@@ -350,14 +348,48 @@
 		var rendered = book.renderTo("reader");
 
 		$('#settings-modal').on('shown.bs.modal', function() {
-			var font = book.settings.styles.fontFamily;
-
-			$("select.font_family").val(font);
 
 			$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
 				$(".lastread_input").val(data.page);
 			});
 
+			localforage.getItem("epube.fontFamily").then(function(font) {
+				if (!font) font = DEFAULT_FONT_FAMILY;
+
+				$(".font_family").val(font);
+			});
+
+			localforage.getItem("epube.fontSize").then(function(size) {
+
+				if (!size) size = DEFAULT_FONT_SIZE;
+
+				var zoom = $(".font_size").html("");
+
+				for (var i = 10; i <= 32; i++) {
+					var opt = $("<option>").val(i).html(i + " px");
+
+					if (i == size) opt.attr("selected", "1");
+
+					zoom.append(opt);
+				}
+
+			});
+
+			localforage.getItem("epube.lineHeight").then(function(height) {
+
+				if (!height) height = DEFAULT_LINE_HEIGHT;
+
+				var zoom = $(".line_height").html("");
+
+				for (var i = 100; i <= 220; i += 10) {
+					var opt = $("<option>").val(i).html(i + "%");
+
+					if (i == height) opt.attr("selected", "1");
+
+					zoom.append(opt);
+				}
+
+			});
 		})
 
 		$('#dict-modal').on('shown.bs.modal', function() {

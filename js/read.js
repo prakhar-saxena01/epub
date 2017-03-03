@@ -69,13 +69,12 @@ function init_taps() {
 	}
 }
 
-function lmargin(incr) {
-	var cur = parseInt(window.book.settings.styles.lineHeight.replace("%", ""));
-	var size = cur + incr;
+function apply_line_height(elem) {
+	var height = elem[elem.selectedIndex].value;
 
-	localforage.setItem("epube.lineHeight", size);
+	localforage.setItem("epube.lineHeight", height);
 
-	window.book.setStyle("lineHeight", size + "%");
+	window.book.setStyle("lineHeight", height + "%");
 
 }
 
@@ -87,12 +86,11 @@ function apply_font(elem) {
 	window.book.setStyle("fontFamily", font);
 
 }
-function zoom(incr) {
-	var cur = parseInt(window.book.settings.styles.fontSize.replace("px", ""));
-	var size = cur + incr;
+
+function apply_font_size(elem) {
+	var size = elem[elem.selectedIndex].value;
 
 	localforage.setItem("epube.fontSize", size);
-
 	window.book.setStyle("fontSize", size + "px");
 
 }
