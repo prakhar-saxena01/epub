@@ -416,15 +416,13 @@
 		})
 
 		book.on("renderer:chapterUnloaded", function() {
-			$(".notice").html("Loading...").show();
-
+			$(".loading_message").html("Loading...");
+			$(".loading").show();
 		});
 
 		book.on("renderer:chapterDisplayed", function() {
-			$(".notice").hide();
-		});
+			$(".loading").hide();
 
-		book.on("renderer:chapterDisplayed", function() {
 			$("#reader iframe")[0].contentWindow.onwheel = function(event) {
 
 				if (event.deltaY > 0) {
