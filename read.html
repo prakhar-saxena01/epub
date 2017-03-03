@@ -228,6 +228,7 @@
 	}
 
 	$(document).ready(function() {
+		apply_night_mode();
 
 		$(window).on('online', function() {
 			console.log("we're online, storing lastread");
@@ -376,7 +377,6 @@
 		//styles: { fontSize: '24px', lineHeight: '130%', fontFamily: 'Georgia' }
 
 		window.book = book;
-		apply_night_mode();
 
 		var rendered = book.renderTo("reader");
 

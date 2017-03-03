@@ -1,3 +1,11 @@
+body.night {
+	background : black;
+	color : #999;
+}
+
+body.night .loading {
+	background : black;
+}
 .loading {
 	position : absolute;
 	color : #999;
@@ -92,3 +100,4 @@
 	height : auto;
 	overflow : auto;
 }
+

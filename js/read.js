@@ -164,14 +164,14 @@ function apply_night_mode() {
 			window.book.setStyle("background", "black");
 			window.book.setStyle("color", "#ccc");
 
-			$("body").css("background", "black");
+			$("body").addClass("night");
 
 		} else {
 
 			window.book.setStyle("background", "white");
 			window.book.setStyle("color", "black");
 
-			$("body").css("background", "white");
+			$("body").removeClass("night");
 		}
 	});
 }
