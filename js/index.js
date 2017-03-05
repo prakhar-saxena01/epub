@@ -150,6 +150,21 @@ function init_tooltips() {
 			}
 		}
 	});
+}
+
+function show_summary(elem) {
+	var id = elem.getAttribute("data-book-id");
+
+	$.post("backend.php", {op: 'getinfo', id: id}, function(data) {
+
+		var comment = data.comment ? data.comment : 'No description available';
+
+		$("#summary-modal .modal-title").html(data.title);
+		$("#summary-modal .book-summary").html(comment);
+
+		$("#summary-modal").modal();
+
+	});
 
 
 }

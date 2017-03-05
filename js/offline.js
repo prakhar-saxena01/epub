@@ -112,6 +112,7 @@ function populate_list() {
 						"More..." + "<span class=\"caret\"></span></a>";
 
 					cell += "<ul class=\"dropdown-menu\">";
+					cell += "<li><a href=\"#\" data-book-id=\""+info.id+"\" onclick=\"show_summary(this)\">Summary</a></li>";
 					cell += "<li><a href=\"#\" data-book-id=\""+info.id+"\" onclick=\"offline_remove2(this)\">Remove offline data</a></li>";
 					cell += "</ul>";
 
@@ -162,4 +163,20 @@ function populate_list() {
 	});
 
 }
+
+function show_summary(elem) {
+	var bookId = elem.getAttribute("data-book-id");
+
+	localforage.getItem("epube-book." + bookId).then(function(data) {
+
+		var comment = data.comment ? data.comment : 'No description available';
+
+		$("#summary-modal .modal-title").html(data.title);
+		$("#summary-modal .book-summary").html(comment);
+
+		$("#summary-modal").modal();
+
+	});
+}
+
 

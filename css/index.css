@@ -24,7 +24,8 @@
 	white-space : nowrap;
 }
 
-.qtip-custom {
+.qtip-custom, .book-summary {
 	max-height : 250px;
 	overflow : auto;
 }
+

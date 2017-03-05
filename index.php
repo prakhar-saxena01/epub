@@ -103,6 +103,24 @@
 
 <div class="container">
 
+<div class="modal fade" id="summary-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Summary</h4>
+      </div>
+      <div class="modal-body">
+			<div class="book-summary"> </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <?php
 
 	require_once "config.php";
@@ -227,6 +245,9 @@
 						href=\"$series_link\">$series_full</a></li>";
 				}
 				?> -->
+
+				<li><a href="#" onclick="show_summary(this)"
+					data-book-id="<?php echo $line["id"] ?>">Summary</a></li>
 
 				<?php if ($line["epub_id"]) { ?>
 				<li><a href="#" onclick=""
