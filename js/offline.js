@@ -112,7 +112,7 @@ function populate_list() {
 						"More..." + "<span class=\"caret\"></span></a>";
 
 					cell += "<ul class=\"dropdown-menu\">";
-					cell += "<li><a href=\"#\" data-book-id=\""+info.id+"\" onclick=\"show_summary(this)\">Summary</a></li>";
+					cell += "<li><a href=\"#\" data-book-id=\""+info.id+"\" onclick=\"return show_summary(this)\">Summary</a></li>";
 					cell += "<li><a href=\"#\" data-book-id=\""+info.id+"\" onclick=\"offline_remove2(this)\">Remove offline data</a></li>";
 					cell += "</ul>";
 
@@ -177,6 +177,8 @@ function show_summary(elem) {
 		$("#summary-modal").modal();
 
 	});
+
+	return false;
 }
 
 

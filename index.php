@@ -246,7 +246,7 @@
 				}
 				?> -->
 
-				<li><a href="#" onclick="show_summary(this)"
+				<li><a href="#" onclick="return show_summary(this)"
 					data-book-id="<?php echo $line["id"] ?>">Summary</a></li>
 
 				<?php if ($line["epub_id"]) { ?>

@@ -166,5 +166,5 @@ function show_summary(elem) {
 
 	});
 
-
+	return false;
 }
