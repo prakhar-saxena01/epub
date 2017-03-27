@@ -10,6 +10,11 @@ web EPUB reader using EPUB.js, Bootstrap, and Calibre.
 * supports word definition lookups using dictd
 * supports Chrome homescreen "app mode"
 
+Discussion
+==========
+
+https://tt-rss.org/forum/viewtopic.php?f=11&t=4072
+
 Requirements
 ============
 
