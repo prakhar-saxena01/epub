@@ -26,11 +26,6 @@ application, normally this means chown-ing them as <code>www-data</code> or what
 
 4. Setup HTTP Basic authentication for epube directories. This is required, even if you're the only user.
 
-Discussion
-==========
-
-https://tt-rss.org/forum/viewtopic.php?f=11&t=4072
-
 Requirements
 ============
 
