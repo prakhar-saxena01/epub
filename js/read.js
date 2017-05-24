@@ -1,8 +1,4 @@
-var _store_position = 0;
-
 function next_page() {
-	_store_position = 1;
-
 	window.book.nextPage();
 }
 
