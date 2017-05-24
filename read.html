@@ -640,7 +640,7 @@
 				$("#page_pct").html(pct + "%");
 			}
 
-			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 60) {
+			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 15) {
 				console.log("storing lastread");
 
 				var currentCfi = book.getCurrentLocationCfi();
