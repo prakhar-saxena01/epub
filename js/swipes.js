@@ -1,8 +1,8 @@
 $(window).on("swipeleft", function() {
-	parent.book.nextPage();
+	parent.next_page();
 });
 
 $(window).on("swiperight", function() {
-	parent.book.prevPage();
+	parent.prev_page();
 });
 
