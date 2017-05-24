@@ -542,7 +542,6 @@
 		});
 
 		rendered.then(function() {
-			_last_position_sync = new Date().getTime()/1000;
 
 			localforage.getItem(cacheId("pagination")).then(function(pageList) {
 
@@ -641,7 +640,7 @@
 				$("#page_pct").html(pct + "%");
 			}
 
-			if (new Date().getTime()/1000 - _last_position_sync > 15) {
+			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 15) {
 				console.log("storing lastread");
 
 				var currentCfi = book.getCurrentLocationCfi();
@@ -658,6 +657,8 @@
 						}
 
 					});
+
+					_store_position = 0;
 
 				} else {
 					_last_position_sync = 0;
