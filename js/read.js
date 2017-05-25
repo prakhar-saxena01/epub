@@ -129,14 +129,14 @@ function mark_as_read() {
 }
 
 function save_and_close() {
+	var currentPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
+	var currentCfi = book.getCurrentLocationCfi();
+	var totalPages = book.pagination.totalPages;
+
+	localforage.setItem(cacheId("lastread"),
+		{cfi: currentCfi, page: currentPage, total: totalPages});
+
 	if (navigator.onLine) {
-		var currentPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
-		var currentCfi = book.getCurrentLocationCfi();
-		var totalPages = book.pagination.totalPages;
-
-		localforage.setItem(cacheId("lastread"),
-			{cfi: currentCfi, page: currentPage, total: totalPages});
-
 		$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
 			cfi: currentCfi }, function(data) {
 				window.location = "index.php";
