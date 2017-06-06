@@ -205,3 +205,17 @@ function search() {
 function toggle_transitions(elem) {
 	localforage.setItem("epube.disable-transitions", elem.checked);
 }
+
+function dict_lookup(word, callback) {
+	$.post("backend.php", {op: 'define', word: word}, function(data) {
+		if (data) {
+
+			$(".dict_result").html(data.result.join("<br/>"));
+			$("#dict-modal").modal('show');
+
+			if (callback) callback();
+		}
+	});
+}
+
+

@@ -6,3 +6,4 @@ $(window).on("swiperight", function() {
 	parent.prev_page();
 });
 
+

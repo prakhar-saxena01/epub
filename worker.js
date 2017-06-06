@@ -11,6 +11,7 @@ self.addEventListener('install', function(event) {
 			'js/read.js',
 			'js/offline.js',
 			'js/swipes.js',
+			'js/dict.js',
 			'css/read.css',
 			'css/index.css',
 			'css/transitions.css',

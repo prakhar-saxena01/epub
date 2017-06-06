@@ -339,6 +339,7 @@
 
 			EPUBJS.core.addScripts([baseUrl + "lib/bootstrap/v3/js/jquery.js",
 					baseUrl + "lib/jquery.mobile.custom.js",
+					baseUrl + "js/dict.js",
 					baseUrl + "js/swipes.js" ], null, renderer.doc.head);
 
 			EPUBJS.core.addCss(baseUrl + "lib/bootstrap/v3/css/bootstrap.css", null, renderer.doc.head);
@@ -509,7 +510,13 @@
 
 			};
 
-			$("#reader iframe")[0].contentWindow.onmouseup = function(event) {
+			$("#reader iframe")[0].contentWindow.ontouchend = function(event) {
+				console.log('ontouchend');
+
+
+			};
+
+			/*$("#reader iframe")[0].contentWindow.onmouseup = function(event) {
 
 				if (!navigator.onLine) return;
 
@@ -530,7 +537,7 @@
 						}
 					});
 				}
-			};
+			};*/
 
 		});
 
