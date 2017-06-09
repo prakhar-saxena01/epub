@@ -200,7 +200,7 @@
 </div>
 
 <div class="footer">
-	<div class="notice bg-warning text-warning" style="display : none"></div>
+	<div class="chapter"></div>
 	<div class="location">
 		Loc: <span id="cur_page">?</span> / <span id="total_pages">?</span>
 		(<span id="page_pct">?</span>)
@@ -491,12 +491,19 @@
 		})
 
 		book.on("renderer:chapterUnloaded", function() {
-			$(".notice").html("Loading...").show();
+			$(".chapter").html("Loading...");
 
 		});
 
 		book.on("renderer:chapterDisplayed", function() {
-			$(".notice").hide();
+			$(".chapter").html("");
+
+			var toc_entry = book.toc.filter(function(a)
+				{ if (a.href == book.currentChapter.href) return a })[0];
+
+			console.log(toc_entry);
+
+			if (toc_entry) $(".chapter").html(toc_entry.label);
 		});
 
 		book.on("renderer:chapterDisplayed", function() {
