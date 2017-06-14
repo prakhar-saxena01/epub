@@ -85,7 +85,24 @@ body.night .loading {
 	}
 }
 
+@media (max-width: 801px) {
+	#reader {
+		left : 64px;
+		right : 64px;
+	}
+}
+
 @media (max-width: 767px) {
+	#reader {
+		left : 48px;
+		right : 48px;
+	}
+	.toolbar {
+		width : 128px;
+	}
+}
+
+@media (max-width: 576px) {
 	#reader {
 		left : 32px;
 		right : 32px;
@@ -94,6 +111,7 @@ body.night .loading {
 		width : 128px;
 	}
 }
+
 
 .toc_list, .search_results, .dict_result {
 	max-height : 300px;
