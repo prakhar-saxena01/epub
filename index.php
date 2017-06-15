@@ -3,6 +3,11 @@
 
 	$owner = SQLite3::escapeString($_SERVER["PHP_AUTH_USER"]);
 
+	if (basename($_SERVER['REQUEST_URI']) != 'index.php') {
+		header('Location: index.php');
+		exit;
+	}
+
 	if (!$owner) {
 		header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
 		echo "Unauthorized";
