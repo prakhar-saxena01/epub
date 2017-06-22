@@ -3,7 +3,8 @@
 
 	$owner = SQLite3::escapeString($_SERVER["PHP_AUTH_USER"]);
 
-	if (basename($_SERVER['REQUEST_URI']) != 'index.php') {
+
+	if (basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) != 'index.php') {
 		header('Location: index.php');
 		exit;
 	}
