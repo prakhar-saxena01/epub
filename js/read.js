@@ -19,11 +19,13 @@ function hotkey_handler(e) {
 
 		// right
 		if (e.which == 39) {
+			e.preventDefault();
 			next_page();
 		}
 
 		// left
 		if (e.which == 37) {
+			e.preventDefault();;
 			prev_page();
 		}
 
