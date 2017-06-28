@@ -4,19 +4,19 @@
 	require_once "sessions.php";
 	require_once "db.php";
 
-	$ldb = Db::get();
-
-	$op = $_REQUEST["op"];
-
 	header("Content-type: text/json");
 
-	$owner = SQLite3::escapeString($_SESSION["owner"]);
+	@$owner = SQLite3::escapeString($_SESSION["owner"]);
 
 	if (!$owner) {
 		header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
 		echo "Unauthorized";
 		die;
 	}
+
+	$op = $_REQUEST["op"];
+
+	$ldb = Db::get();
 
 	ob_start("ob_gzhandler");
 
