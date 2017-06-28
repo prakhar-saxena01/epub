@@ -77,7 +77,7 @@ this.addEventListener('fetch', function(event) {
 			return fetch(req).then(function(resp) {
 
 				if (resp.status == 200) {
-					if (resp.url.match("backend.php\\?op=cover")) {
+					if (resp.url.match("backend.php\\?op=(cover|getinfo)")) {
 						return caches.open(CACHE_NAME).then(function(cache) {
 							cache.put(resp.url, resp.clone());
 							return resp;
