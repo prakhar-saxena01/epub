@@ -1,5 +1,9 @@
-#!/usr/bin/php
 <?php
+	if (!defined('STDIN')) {
+		print "Please run this script via PHP CLI interpreter (php ./useradm.php).";
+		exit;
+	}
+
 	require_once "config.php";
 	require_once "db.php";
 
