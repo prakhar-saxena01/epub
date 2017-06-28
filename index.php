@@ -4,9 +4,15 @@
 	}
 
 	require_once "config.php";
+	require_once "sessions.php";
+	require_once "db.php";
 
-	$owner = SQLite3::escapeString($_SERVER["PHP_AUTH_USER"]);
+	@$owner = SQLite3::escapeString($_SESSION["owner"]);
 
+	if (!$owner) {
+		header("Location: login.php");
+		exit;
+	}
 
 	if (basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) != 'index.php') {
 		header('Location: index.php');
@@ -27,8 +33,7 @@
 		die(dirname(SCRATCH_DB) . " directory is not writable");
 	}
 
-	$ldb = new SQLite3(SCRATCH_DB);
-	$ldb->busyTimeout(30*1000);
+	$ldb = Db::get();
 ?>
 <!DOCTYPE html>
 <html>
@@ -84,6 +89,10 @@
 				value="<?php echo htmlspecialchars($query) ?>">
 			<button type="submit" class="btn btn-default">Search</button>
 		</form>
+
+		<ul class="nav navbar-nav navbar-right">
+		<li><a href="logout.php">Logout</a></li>
+		</li>
 
 	</div>
 

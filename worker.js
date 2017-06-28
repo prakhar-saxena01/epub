@@ -44,7 +44,7 @@ self.addEventListener('message', function(event){
 			cache.keys().then(function(keys) {
 				for (var i = 0; i < keys.length; i++) {
 
-					fetch(keys[i],{credentials:'same-origin'}).then(function(resp) {
+					fetch(keys[i]).then(function(resp) {
 						if (resp.status == 200) {
 							cache.put(resp.url, resp);
 						}
@@ -59,24 +59,38 @@ self.addEventListener('message', function(event){
 this.addEventListener('fetch', function(event) {
 	var req = event.request.clone();
 
-	if (!navigator.onLine) {
-		event.respondWith(
-			caches.match(req).then(function(resp) {
+	event.respondWith(
+		caches.match(req).then(function(resp) {
 
-				if (resp) return resp;
+			if (resp) {
+				return resp;
+			}
 
-				if (req.url.match("read.html")) {
-					return caches.match("read.html");
+			if (req.url.match("read.html")) {
+				return caches.match("read.html");
+			}
+
+			if (req.url.match("offline.html")) {
+				return caches.match("offline.html");
+			}
+
+			return fetch(req).then(function(resp) {
+
+				if (resp.status == 200) {
+					if (resp.url.match("backend.php\\?op=cover")) {
+						return caches.open(CACHE_NAME).then(function(cache) {
+							cache.put(resp.url, resp.clone());
+							return resp;
+						});
+					}
 				}
 
-				if (req.url.match("offline.html")) {
+				return resp;
+			}).catch(function() {
+				if (req.url[req.url.length-1] == "/" || req.url.match("index.php")) {
 					return caches.match("offline.html");
 				}
-
-				if (req.url.match("index.php")) {
-					return caches.match("offline.html");
-				}
-			})
-		);
-	}
+			});
+		})
+	);
 });

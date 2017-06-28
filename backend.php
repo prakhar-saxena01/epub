@@ -1,15 +1,16 @@
 <?php
 
 	require_once "config.php";
+	require_once "sessions.php";
+	require_once "db.php";
+
+	$ldb = Db::get();
 
 	$op = $_REQUEST["op"];
 
 	header("Content-type: text/json");
 
-	$ldb = new SQLite3(SCRATCH_DB);
-	$ldb->busyTimeout(30*1000);
-
-	$owner = SQLite3::escapeString($_SERVER["PHP_AUTH_USER"]);
+	$owner = SQLite3::escapeString($_SESSION["owner"]);
 
 	if (!$owner) {
 		header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
@@ -43,7 +44,11 @@
 		}
 
 		break;
+	case "getowner":
+		$owner = SQLite3::escapeString($_SESSION["owner"]);;
 
+		print json_encode(["owner" => $owner]);
+		break;
 	case "getinfo":
 		$id = (int) $_REQUEST["id"];
 
