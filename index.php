@@ -3,6 +3,10 @@
 		die("Please copy config.php-dist to config.php and edit it.");
 	}
 
+	if (isset($_SERVER["PHP_AUTH_USER"])) {
+		die("HTTP Authentication is no longer supported, please see migration notes in git.");
+	}
+
 	require_once "config.php";
 	require_once "sessions.php";
 	require_once "db.php";
