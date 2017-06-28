@@ -4,7 +4,6 @@ The Epube
 web EPUB reader using EPUB.js, Bootstrap, and Calibre.
 
 * responsive design
-* relies on HTTP Authentication provided by httpd
 * has transparent offline mode via service workers
 * can optionally store files locally for later reading
 * supports word definition lookups using dictd
@@ -24,7 +23,17 @@ application, normally this means chown-ing them as <code>www-data</code> or what
 
 3. Copy <code>config.php-dist</code> to <code>config.php</code> and edit path to Calibre, etc.
 
-4. Setup HTTP Basic authentication for epube directories. This is required, even if you're the only user.
+4. Setup users via useradm.php (command line)
+
+Upgrading
+=========
+
+When upgrading from an older Git snapshot which used HTTP Authentication:
+
+1. Disable HTTP Authentication in httpd configuration
+2. Reopen browser to clear HTTP auth 
+3. Add two new tables to scratch.db (epube_users & epube_sessions)
+4. Add users via useradm.php (use same names as http auth, all data will be kept)
 
 Requirements
 ============
