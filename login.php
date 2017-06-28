@@ -5,8 +5,8 @@
 	@$op = $_REQUEST["op"];
 
 	if ($op == "perform-login") {
-		$user = SQLite3::escapeString($_REQUEST["user"]);
-		$password = SQLite3::escapeString('SHA256:' . hash('sha256', "$user:" . $_REQUEST["password"]));
+		$user = SQLite3::escapeString(trim(mb_strtolower($_REQUEST["user"])));
+		$password = SQLite3::escapeString('SHA256:' . hash('sha256', "$user:" . trim($_REQUEST["password"])));
 
 		$dbh = Db::get();
 

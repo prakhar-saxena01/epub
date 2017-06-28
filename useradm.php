@@ -44,8 +44,8 @@
 			exit;
 		}
 
-		$user = SQLite3::escapeString($user);
-		$pass_hash = SQLite3::escapeString('SHA256:' . hash('sha256', "$user:$pass"));
+		$user = SQLite3::escapeString(trim(mb_strtolower($user)));
+		$pass_hash = SQLite3::escapeString('SHA256:' . hash('sha256', "$user:" . trim($pass)));
 
 		print "Adding user $user with password $pass...\n";
 
