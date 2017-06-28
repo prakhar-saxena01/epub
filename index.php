@@ -1,4 +1,8 @@
 <?php
+	if (!file_exists("config.php")) {
+		die("Please copy config.php-dist to config.php and edit it.");
+	}
+
 	require_once "config.php";
 
 	$owner = SQLite3::escapeString($_SERVER["PHP_AUTH_USER"]);
