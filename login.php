@@ -53,7 +53,7 @@
 
 <div class="container">
 
-	<form>
+	<form method="post">
 		<input type="hidden" name="op" value="perform-login">
 
 		<div class="form-group">
