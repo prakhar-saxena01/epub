@@ -57,12 +57,16 @@
 
 		return true;
 	}
-	session_set_save_handler("s_open",
-		"s_close", "s_read", "s_write",
-		"s_destroy", "s_gc");
+
+	if (defined('SQLITE_SESSION_STORE') && SQLITE_SESSION_STORE) {
+		session_set_save_handler("s_open",
+			"s_close", "s_read", "s_write",
+			"s_destroy", "s_gc");
+	} else {
+		session_save_path(__DIR__ . "/sessions");
+	}
 
 	register_shutdown_function('session_write_close');
 
 	session_start();
-
 ?>

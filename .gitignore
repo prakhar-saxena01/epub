@@ -1,2 +1,3 @@
 config.php
 db/scratch.db
+sessions/sess*

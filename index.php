@@ -3,6 +3,10 @@
 		die("Please copy config.php-dist to config.php and edit it.");
 	}
 
+	if (!is_writable("sessions")) {
+		die("sessions/ directory is not writable.");
+	}
+
 	if (isset($_SERVER["PHP_AUTH_USER"])) {
 		die("HTTP Authentication is no longer supported, please see migration notes in git.");
 	}
