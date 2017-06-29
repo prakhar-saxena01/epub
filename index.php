@@ -11,6 +11,11 @@
 		die("HTTP Authentication is no longer supported, please see migration notes in git.");
 	}
 
+	if (!isset($_COOKIE['epube_sid'])) {
+		header("Location: login.php");
+		exit;
+	}
+
 	require_once "config.php";
 	require_once "sessions.php";
 	require_once "db.php";

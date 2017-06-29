@@ -1,6 +1,5 @@
 <?php
 	require_once "config.php";
-	require_once "sessions.php";
 
 	@$op = $_REQUEST["op"];
 
@@ -13,6 +12,8 @@
 		$res = $dbh->query("SELECT id FROM epube_users WHERE user = '$user' AND pass = '$password'");
 
 		if ($line = $res->fetchArray(SQLITE3_ASSOC)) {
+			require_once "sessions.php";
+
 			$_SESSION["owner"] = $user;
 			header("Location: index.php");
 		}

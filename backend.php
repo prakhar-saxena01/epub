@@ -1,10 +1,19 @@
 <?php
 
 	require_once "config.php";
-	require_once "sessions.php";
-	require_once "db.php";
 
 	header("Content-type: text/json");
+
+	// let's not start a session if there's no cookie, login is impossible
+	// via backend anyway
+	if (!isset($_COOKIE['epube_sid'])) {
+		header($_SERVER["SERVER_PROTOCOL"]." 402 Unauthorized");
+		echo "Unauthorized";
+		die;
+	}
+
+	require_once "sessions.php";
+	require_once "db.php";
 
 	@$owner = SQLite3::escapeString($_SESSION["owner"]);
 
