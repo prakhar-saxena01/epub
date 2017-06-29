@@ -47,6 +47,8 @@ self.addEventListener('message', function(event){
 					fetch(keys[i]).then(function(resp) {
 						if (resp.status == 200) {
 							cache.put(resp.url, resp);
+						} else if (resp.status != 401) {
+							cache.delete(resp.url);
 						}
 					});
 
