@@ -7,6 +7,8 @@
 		$user = SQLite3::escapeString(trim(mb_strtolower($_REQUEST["user"])));
 		$password = SQLite3::escapeString('SHA256:' . hash('sha256', "$user:" . trim($_REQUEST["password"])));
 
+		require_once "db.php";
+
 		$dbh = Db::get();
 
 		$res = $dbh->query("SELECT id FROM epube_users WHERE user = '$user' AND pass = '$password'");
