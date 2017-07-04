@@ -44,10 +44,15 @@ self.addEventListener('message', function(event){
 			cache.keys().then(function(keys) {
 				for (var i = 0; i < keys.length; i++) {
 
+					if (keys[i].url.match("backend.php"))
+						continue;
+
+					//console.log(keys[i]);
+
 					fetch(keys[i]).then(function(resp) {
 						if (resp.status == 200) {
 							cache.put(resp.url, resp);
-						} else if (resp.status != 401) {
+						} else if (resp.status == 404) {
 							cache.delete(resp.url);
 						}
 					});
