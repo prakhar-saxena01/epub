@@ -1,0 +1,15 @@
+a {
+	color : #337ab7;	
+	text-decoration : none;
+}
+
+a:visited {
+	text-decoration: underline;
+}
+
+a:hover,
+a:focus {
+	color: #23527c;
+	text-decoration: underline;
+}
+

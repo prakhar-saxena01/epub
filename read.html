@@ -342,6 +342,8 @@
 					baseUrl + "js/dict.js",
 					baseUrl + "js/swipes.js" ], null, renderer.doc.head);
 
+			EPUBJS.core.addCss(baseUrl + "css/reader.css", null, renderer.doc.head);
+
 			localforage.getItem("epube.disable-transitions").then(function(disable) {
 				if (!disable) {
 					EPUBJS.core.addCss(baseUrl + "css/transitions.css", null, renderer.doc.head);
