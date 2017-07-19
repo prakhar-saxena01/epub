@@ -169,10 +169,10 @@
 	</span>
 	<span class="toolbar">
 
-		<button class="btn btn-default btn-xs"
+		<!-- <button class="btn btn-default btn-xs"
 			data-toggle="modal" data-target="#toc-modal">
 			<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-		</button>
+		</button> -->
 
 		<button class="btn btn-default btn-xs"
 			data-toggle="modal" data-target="#settings-modal">
@@ -200,7 +200,7 @@
 </div>
 
 <div class="footer">
-	<div class="chapter"></div>
+	<div class="chapter" data-toggle="modal" data-target="#toc-modal"></div>
 	<div class="location">
 		<span id="cur_page">?</span> / <span id="total_pages">?</span>
 		(<span id="page_pct">?</span>)
@@ -498,7 +498,7 @@
 			$(".chapter").html("");
 
 			var toc_entry = book.toc.filter(function(a)
-				{ if (a.href == book.currentChapter.href) return a })[0];
+				{ if (a.spinePos == book.currentChapter.spinePos) return a })[0];
 
 			console.log(toc_entry);
 

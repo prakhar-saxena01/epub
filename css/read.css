@@ -112,6 +112,9 @@ body.night .loading {
 	}
 }
 
+.chapter {
+	cursor : pointer;
+}
 
 .toc_list, .search_results, .dict_result {
 	max-height : 300px;
