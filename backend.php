@@ -76,6 +76,29 @@
 
 		break;
 
+	case "togglefav":
+		$id = (int) $_REQUEST["id"];
+
+		$result = $ldb->query("SELECT id FROM epube_favorites WHERE bookid = '$id'
+			AND owner = '$owner' LIMIT 1");
+
+		$found_id = false;
+		$status = -1;
+
+		while ($line = $result->fetchArray(SQLITE3_ASSOC)) {
+			$found_id = $line["id"];
+		}
+
+		if ($found_id) {
+			$ldb->query("DELETE FROM epube_favorites WHERE id = " . $found_id);
+			$status = 0;
+		} else {
+			$ldb->query("INSERT INTO epube_favorites (bookid, owner) VALUES ($id, '$owner')");
+			$status = 1;
+		}
+
+		print json_encode(["id" => $id, "status" => $status]);
+
 	case "download":
 		$id = (int) $_REQUEST["id"];
 

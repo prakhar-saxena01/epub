@@ -28,4 +28,10 @@ create table epube_sessions (
 	data text,
 	expire integer not null);
 
+create table epube_favorites(
+	id integer not null primary key autoincrement,
+	bookid integer not null,
+	owner varchar(200) not null);
+
+
 create index epube_sessions_expire on epube_sessions(expire);

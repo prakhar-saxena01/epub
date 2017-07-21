@@ -46,6 +46,8 @@
 		die(dirname(SCRATCH_DB) . " directory is not writable");
 	}
 
+	@$mode = htmlspecialchars($_REQUEST["mode"]);
+
 	$ldb = Db::get();
 ?>
 <!DOCTYPE html>
@@ -90,16 +92,23 @@
 
 	</div>
 
+	<?php
+		$fav_active = $mode == "favorites" ? "active" : "";
+		$index_active = $mode != "favorites" ? "active" : "";
+	?>
+
 	<div class="collapse navbar-collapse" id="nav-collapse">
 
 		<ul class="nav navbar-nav">
-			<li class="active"><a href="index.php">All</a></li>
+			<li class="<?php echo $index_active ?>"><a href="index.php">All</a></li>
+			<li class="<?php echo $fav_active ?>"><a href="index.php?mode=favorites">Favorites</a></li>
 			<li><a href="offline.html">Local</a></li>
 		</ul>
 
 		<form class="navbar-form navbar-right">
 			<input type="text" name="query" class="form-control"
 				value="<?php echo htmlspecialchars($query) ?>">
+			<input type="hidden" name="mode" value="<?php echo $mode ?>">
 			<button type="submit" class="btn btn-default">Search</button>
 		</form>
 
@@ -113,8 +122,9 @@
 </div>
 
 <script type="text/javascript">
-	$(document).ready(function() {
+	var index_mode = "<?php echo $mode ?>";
 
+	$(document).ready(function() {
 		if ('serviceWorker' in navigator) {
  			 navigator.serviceWorker
            .register('worker.js')
@@ -168,6 +178,19 @@
 		$search_qpart = "1";
 	}
 
+	$ids_qpart = "1";
+
+	if ($mode == "favorites") {
+		$fav_result = $ldb->query("SELECT bookid FROM epube_favorites WHERE owner = '$owner'");
+		$fav_ids = [];
+
+		while ($line = $fav_result->fetchArray(SQLITE3_ASSOC)) {
+			array_push($fav_ids, $line["bookid"]);
+		}
+
+		$ids_qpart = "books.id IN (" . implode(",", $fav_ids) . ")";
+	}
+
 	$limit = 60;
 	@$offset = (int) $_REQUEST["offset"];
 
@@ -177,7 +200,7 @@
 		(SELECT id FROM data WHERE book = books.id AND format = 'EPUB' LIMIT 1) AS epub_id FROM books
 		LEFT JOIN books_series_link AS bsl ON (bsl.book = books.id)
 		LEFT JOIN series AS s ON (bsl.series = s.id)
-		WHERE $search_qpart ORDER BY $order_by LIMIT $limit OFFSET $offset");
+		WHERE $search_qpart AND $ids_qpart ORDER BY $order_by LIMIT $limit OFFSET $offset");
 
 	print "<div class='row'>";
 
@@ -278,8 +301,30 @@
 				}
 				?> -->
 
+				<?php
+
+					$fav_result = $ldb->query("SELECT id FROM epube_favorites WHERE bookid = ".
+						$line['id'] . " AND owner = '$owner' LIMIT 1");
+
+					$found_id = false;
+
+					while ($fav_line = $fav_result->fetchArray(SQLITE3_ASSOC)) {
+						$found_id = $fav_line["id"];
+					}
+
+					if ($found_id) {
+						$toggle_fav_prompt = "Remove from favorites";
+					} else {
+						$toggle_fav_prompt = "Add to favorites";
+					}
+				?>
+
 				<li><a href="#" onclick="return show_summary(this)"
 					data-book-id="<?php echo $line["id"] ?>">Summary</a></li>
+
+				<li><a href="#" onclick="return toggle_fav(this)"
+					class="fav_item" data-book-id="<?php echo $line["id"] ?>">
+					<?php echo $toggle_fav_prompt ?></a></li>
 
 				<?php if ($line["epub_id"]) { ?>
 				<li><a href="#" onclick=""
@@ -312,8 +357,8 @@
 	</div>
 
 	<?php
-		$prev_link = http_build_query(["query" => $query, "offset" => $offset - $limit]);
-		$next_link = http_build_query(["query" => $query, "offset" => $offset + $limit]);
+		$prev_link = http_build_query(["mode" => $mode, "query" => $query, "offset" => $offset - $limit]);
+		$next_link = http_build_query(["mode" => $mode, "query" => $query, "offset" => $offset + $limit]);
 	?>
 
 	<ul class="pager">

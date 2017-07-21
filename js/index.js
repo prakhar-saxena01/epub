@@ -13,6 +13,30 @@ function cache_refresh() {
 	}
 }
 
+function toggle_fav(elem) {
+	var bookId = elem.getAttribute("data-book-id");
+
+	$.post("backend.php", {op: "togglefav", id: bookId}, function(data) {
+		if (data) {
+			var msg = "[Error]";
+
+			if (data.status == 0) {
+				msg = "Add to favorites";
+			} else if (data.status == 1) {
+				msg = "Remove from favorites";
+			}
+
+			$(elem).html(msg);
+
+			if (index_mode == "favorites" && data.status == 0) {
+				$("#cell-" + bookId).remove();
+			}
+		}
+	});
+
+	return false;
+}
+
 function mark_offline(elem) {
 
 	var bookId = elem.getAttribute("data-book-id");
