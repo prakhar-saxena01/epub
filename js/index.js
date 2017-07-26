@@ -1,9 +1,9 @@
-function cache_refresh() {
+function cache_refresh(force) {
 	if ('serviceWorker' in navigator) {
 		localforage.getItem("epube.cache-timestamp").then(function(stamp) {
 			var ts = parseInt(new Date().getTime()/1000);
 
-			if (!stamp || ts - stamp > 3600) {
+			if (force || !stamp || ts - stamp > 3600) {
 				console.log('asking worker to refresh cache');
 				navigator.serviceWorker.controller.postMessage("refresh-cache");
 				localforage.setItem("epube.cache-timestamp", ts);
@@ -11,6 +11,8 @@ function cache_refresh() {
 
 		});
 	}
+
+	return false;
 }
 
 function toggle_fav(elem) {

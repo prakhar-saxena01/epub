@@ -131,9 +131,13 @@
            .then(function() {
 					console.log("service worker registered");
 			  });
-			 /*$(window).on('offline', function() {
-				 window.location.reload();
-			});*/
+
+			 navigator.serviceWorker.addEventListener('message', function(event) {
+			   // not used yet
+				if (event.data == 'client-reload') {
+					window.location.reload();
+				}
+			 });
 		}
 
 		mark_offline_books();
@@ -374,6 +378,11 @@
 			<li class="next disabled"><a href="#">Next&rarr;</a></li>
 		<?php } ?>
 	</ul>
+
+	<p class="text-center small">
+		<a class="text-muted" href="#" onclick="return cache_refresh(true)">Refresh cache</a>
+	</p>
+
 
 </div>
 </body>
