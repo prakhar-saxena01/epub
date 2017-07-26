@@ -18,23 +18,26 @@ function cache_refresh(force) {
 function toggle_fav(elem) {
 	var bookId = elem.getAttribute("data-book-id");
 
-	$.post("backend.php", {op: "togglefav", id: bookId}, function(data) {
-		if (data) {
-			var msg = "[Error]";
+	if (elem.getAttribute("data-is-fav") == "0" || confirm("Remove favorite?")) {
 
-			if (data.status == 0) {
-				msg = "Add to favorites";
-			} else if (data.status == 1) {
-				msg = "Remove from favorites";
+		$.post("backend.php", {op: "togglefav", id: bookId}, function(data) {
+			if (data) {
+				var msg = "[Error]";
+
+				if (data.status == 0) {
+					msg = "Add to favorites";
+				} else if (data.status == 1) {
+					msg = "Remove from favorites";
+				}
+
+				$(elem).html(msg).attr('data-is-fav', data.status);
+
+				if (index_mode == "favorites" && data.status == 0) {
+					$("#cell-" + bookId).remove();
+				}
 			}
-
-			$(elem).html(msg);
-
-			if (index_mode == "favorites" && data.status == 0) {
-				$("#cell-" + bookId).remove();
-			}
-		}
-	});
+		});
+	}
 
 	return false;
 }

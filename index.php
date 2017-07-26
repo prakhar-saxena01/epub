@@ -318,8 +318,10 @@
 
 					if ($found_id) {
 						$toggle_fav_prompt = "Remove from favorites";
+						$fav_attr = "1";
 					} else {
 						$toggle_fav_prompt = "Add to favorites";
+						$fav_attr = "0";
 					}
 				?>
 
@@ -327,6 +329,7 @@
 					data-book-id="<?php echo $line["id"] ?>">Summary</a></li>
 
 				<li><a href="#" onclick="return toggle_fav(this)"
+					data-is-fav="<?php echo $fav_attr ?>"
 					class="fav_item" data-book-id="<?php echo $line["id"] ?>">
 					<?php echo $toggle_fav_prompt ?></a></li>
 
