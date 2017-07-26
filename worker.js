@@ -37,11 +37,25 @@ self.addEventListener('install', function(event) {
   );
 });
 
+function send_message(client, msg) {
+	client.postMessage(msg);
+}
+
+function send_broadcast(msg) {
+	clients.matchAll().then(clients => {
+		clients.forEach(client => {
+			send_message(client, msg);
+		})
+	})
+}
+
 self.addEventListener('message', function(event){
 	if (event.data == 'refresh-cache') {
 		console.log("refreshing cache...");
 
 		caches.open(CACHE_NAME).then(function(cache) {
+			var promises = [];
+
 			cache.keys().then(function(keys) {
 				for (var i = 0; i < keys.length; i++) {
 
@@ -50,7 +64,7 @@ self.addEventListener('message', function(event){
 
 					//console.log(keys[i]);
 
-					fetch(keys[i]).then(function(resp) {
+					var promise = fetch(keys[i]).then(function(resp) {
 						if (resp.status == 200) {
 							cache.put(resp.url, resp);
 						} else if (resp.status == 404) {
@@ -58,8 +72,16 @@ self.addEventListener('message', function(event){
 						}
 					});
 
+					promises.push(promise);
+
 				}
 			});
+
+			Promise.all(promises).then(function() {
+				console.log('all done');
+				send_broadcast('client-reload');
+			});
+
 		});
 	}
 });
