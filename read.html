@@ -440,6 +440,33 @@
 
 
 		$('#toc-modal').on('shown.bs.modal', function() {
+			function process_toc_sublist(row, list) {
+
+				if (row.subitems) {
+
+					var sublist = $("<ul class='toc_sublist list-unstyled'>");
+
+					$.each(row.subitems, function(i, row) {
+
+						var a = $("<a>")
+							.attr('href', '#')
+							.html(row.label + " <b class='pull-right'>" +
+								book.pagination.pageFromCfi(row.cfi) + "</b>")
+								.attr('data-cfi', row.cfi)
+								.click(function() {
+								book.gotoCfi(a.attr('data-cfi'));
+							});
+
+						sublist.append($("<li>").append(a));
+
+						process_toc_sublist(row, sublist);
+
+					});
+
+					list.append(sublist);
+				}
+			}
+
 			book.getToc().then(function(toc) {
 
 				var list = $(".toc_list");
@@ -460,27 +487,8 @@
 
 						list.append($("<li>").append(a));
 
-						if (row.subitems) {
+						process_toc_sublist(row, list);
 
-							var sublist = $("<ul class='toc_sublist list-unstyled'>");
-
-							$.each(row.subitems, function(i, row) {
-
-								var a = $("<a>")
-									.attr('href', '#')
-									.html(row.label + " <b class='pull-right'>" +
-										book.pagination.pageFromCfi(row.cfi) + "</b>")
-										.attr('data-cfi', row.cfi)
-										.click(function() {
-										book.gotoCfi(a.attr('data-cfi'));
-									});
-
-								sublist.append($("<li>").append(a));
-
-							});
-
-							list.append(sublist);
-						}
 					} catch (e) {
 						console.warn(e);
 					}
@@ -521,21 +529,31 @@
 
 			var toc_entry = false;
 
+			function iterate_sublist(row) {
+				if (row.subitems) {
+					$.each(row.subitems, function (i, r) {
+
+						if (r.spinePos == book.currentChapter.spinePos) {
+							toc_entry = r;
+							return true;
+						}
+
+						if (iterate_sublist(r))
+							return true;
+					});
+				}
+
+				return false;
+			}
+
 			$.each(book.toc, function(i, a) {
 				if (a.spinePos == book.currentChapter.spinePos) {
 					toc_entry = a;
 					return;
 				}
 
-				if (a.subitems) {
-					$.each(a.subitems, function (i, b) {
+				if (iterate_sublist(a)) return;
 
-						if (b.spinePos == book.currentChapter.spinePos) {
-							toc_entry = b;
-							return;
-						}
-					});
-				}
 			});
 
 			console.log('toc', toc_entry);
