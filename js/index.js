@@ -207,9 +207,18 @@ function offline_get_all() {
 			var dropitem = $(row).find(".offline_dropitem")[0];
 
 			if (bookId) {
-				offline_cache(bookId, function() {
-					mark_offline(dropitem);
+
+				var cacheId = 'epube-book.' + bookId;
+				localforage.getItem(cacheId).then(function(book) {
+
+					if (!book) {
+						offline_cache(bookId, function() {
+							mark_offline(dropitem);
+						});
+					}
+
 				});
+
 			}
 		});
 	}
