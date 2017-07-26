@@ -122,3 +122,6 @@ body.night .loading {
 	overflow : auto;
 }
 
+.toc_sublist {
+	margin-left : 16px;
+}
