@@ -122,6 +122,10 @@ body.night .loading {
 	overflow : auto;
 }
 
+.toc_list b.pull-right {
+	margin-right : 8px;
+}
+
 .toc_sublist {
 	margin-left : 16px;
 }

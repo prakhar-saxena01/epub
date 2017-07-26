@@ -451,8 +451,8 @@
 					try {
 						var a = $("<a>")
 							.attr('href', '#')
-							.html(row.label + " <b>(Loc. " +
-								book.pagination.pageFromCfi(row.cfi) + ")</b>")
+							.html(row.label + " <b class='pull-right'>" +
+								book.pagination.pageFromCfi(row.cfi) + "</b>")
 								.attr('data-cfi', row.cfi)
 								.click(function() {
 								book.gotoCfi(a.attr('data-cfi'));
@@ -468,8 +468,8 @@
 
 								var a = $("<a>")
 									.attr('href', '#')
-									.html(row.label + " <b>(Loc. " +
-										book.pagination.pageFromCfi(row.cfi) + ")</b>")
+									.html(row.label + " <b class='pull-right'>" +
+										book.pagination.pageFromCfi(row.cfi) + "</b>")
 										.attr('data-cfi', row.cfi)
 										.click(function() {
 										book.gotoCfi(a.attr('data-cfi'));
