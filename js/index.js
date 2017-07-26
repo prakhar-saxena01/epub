@@ -197,3 +197,22 @@ function show_summary(elem) {
 
 	return false;
 }
+
+function offline_get_all() {
+
+	if (confirm("Download all books on this page?")) {
+
+		$(".index_cell").each(function (i, row) {
+			var bookId = $(row).attr("id").replace("cell-", "");
+			var dropitem = $(row).find(".offline_dropitem")[0];
+
+			if (bookId) {
+				offline_cache(bookId, function() {
+					mark_offline(dropitem);
+				});
+			}
+		});
+	}
+
+}
+

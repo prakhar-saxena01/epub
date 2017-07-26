@@ -105,6 +105,12 @@
 			<li><a href="offline.html">Local</a></li>
 		</ul>
 
+		<?php if ($mode == "favorites") { ?>
+			<form onsubmit="return false;" class="navbar-form navbar-right">
+				<button type="submit" onclick="offline_get_all()" class="btn btn-primary">Get all</button>
+			</form>
+		<?php } ?>
+
 		<form class="navbar-form navbar-right">
 			<input type="text" name="query" class="form-control"
 				value="<?php echo htmlspecialchars($query) ?>">
@@ -115,6 +121,7 @@
 		<ul class="nav navbar-nav navbar-right">
 		<li><a href="logout.php">Logout</a></li>
 		</li>
+
 
 	</div>
 
