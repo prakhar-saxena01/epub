@@ -118,10 +118,13 @@
 			<button type="submit" class="btn btn-default">Search</button>
 		</form>
 
-		<ul class="nav navbar-nav navbar-right">
-		<li><a href="logout.php">Logout</a></li>
-		</li>
+		<?php if ($mode != "favorites") { ?>
 
+			<ul class="nav navbar-nav navbar-right">
+			<li><a href="logout.php">Logout</a></li>
+			</li>
+
+		<?php } ?>
 
 	</div>
 
