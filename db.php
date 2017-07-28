@@ -4,7 +4,7 @@ class Db {
 	private $dbh;
 
 	private function __construct() {
-		$this->dbh = new SQLite3(__DIR__ . "/" . SCRATCH_DB);
+		$this->dbh = new SQLite3(SCRATCH_DB);
 		$this->dbh->busyTimeout(30*1000);
 		$this->dbh->exec('PRAGMA journal_mode = wal;');
 	}
