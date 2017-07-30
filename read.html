@@ -647,26 +647,26 @@
 				localforage.setItem(cacheId("pagination"), pageList);
 			}
 
-			if (navigator.onLine) {
-				$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
-					console.log(data);
+			localforage.getItem(cacheId("lastread")).then(function(item) {
+				console.log('lr local', item.cfi);
 
-					if (navigator.onLine && data) {
-						localforage.setItem(cacheId("lastread"),
-							{cfi: data.cfi, page: data.page, total: data.total});
+				if (item && item.cfi) book.gotoCfi(item.cfi);
 
-						if (data.cfi) book.gotoCfi(data.cfi);
-					} else {
-						localforage.getItem(cacheId("lastread")).then(function(item) {
-							if (item && item.cfi) book.gotoCfi(item.cfi);
-						});
-					}
-				});
-			} else {
-				localforage.getItem(cacheId("lastread")).then(function(item) {
-					if (item && item.cfi) book.gotoCfi(item.cfi);
-				});
-			}
+				if (navigator.onLine) {
+
+					$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
+						console.log('lr remote', data.cfi);
+
+						if (navigator.onLine && data) {
+							localforage.setItem(cacheId("lastread"),
+								{cfi: data.cfi, page: data.page, total: data.total});
+
+							if (data.cfi) book.gotoCfi(data.cfi);
+						}
+					});
+				}
+
+			});
 
 			var curPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
 
