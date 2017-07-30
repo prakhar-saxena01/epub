@@ -647,6 +647,11 @@
 				localforage.setItem(cacheId("pagination"), pageList);
 			}
 
+			// this might revert progress if server has older position stored
+			// because for example this client read further while offline
+			// probably need to compare item.page and data.page since those are
+			// uniform between devices now
+
 			localforage.getItem(cacheId("lastread")).then(function(item) {
 				console.log('lr local', item.cfi);
 
