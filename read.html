@@ -440,7 +440,9 @@
 
 
 		$('#toc-modal').on('shown.bs.modal', function() {
-			function process_toc_sublist(row, list) {
+			function process_toc_sublist(row, list, nest) {
+
+				if (nest == 3) return false;
 
 				if (row.subitems) {
 
@@ -459,7 +461,7 @@
 
 						sublist.append($("<li>").append(a));
 
-						process_toc_sublist(row, sublist);
+						process_toc_sublist(row, sublist, nest + 1);
 
 					});
 
@@ -487,7 +489,7 @@
 
 						list.append($("<li>").append(a));
 
-						process_toc_sublist(row, list);
+						process_toc_sublist(row, list, 0);
 
 					} catch (e) {
 						console.warn(e);
@@ -529,7 +531,9 @@
 
 			var toc_entry = false;
 
-			function iterate_sublist(row) {
+			function iterate_sublist(row, nest) {
+				if (nest == 3) return false;
+
 				if (row.subitems) {
 					$.each(row.subitems, function (i, r) {
 
@@ -538,7 +542,7 @@
 							return true;
 						}
 
-						if (iterate_sublist(r))
+						if (iterate_sublist(r, nest + 1))
 							return true;
 					});
 				}
@@ -552,7 +556,7 @@
 					return;
 				}
 
-				if (iterate_sublist(a)) return;
+				//if (iterate_sublist(a, 0)) return;
 
 			});
 
