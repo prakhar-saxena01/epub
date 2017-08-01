@@ -666,7 +666,7 @@
 							localforage.setItem(cacheId("lastread"),
 								{cfi: data.cfi, page: data.page, total: data.total});
 
-							if (data.cfi) book.gotoCfi(data.cfi);
+							if (data.cfi && item.cfi != data.cfi) book.gotoCfi(data.cfi);
 						}
 					});
 				}
