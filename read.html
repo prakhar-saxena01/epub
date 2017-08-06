@@ -651,26 +651,25 @@
 				localforage.setItem(cacheId("pagination"), pageList);
 			}
 
-			// this might revert progress if server has older position stored
-			// because for example this client read further while offline
-			// probably need to compare item.page and data.page since those are
-			// uniform between devices now
-
 			localforage.getItem(cacheId("lastread")).then(function(item) {
-				console.log('lr local', item.cfi);
+				console.log('lr local', item);
 
-				if (item && item.cfi) book.gotoCfi(item.cfi);
+				item = item || {};
+
+				if (item.cfi) book.gotoCfi(item.cfi);
 
 				if (navigator.onLine) {
 
 					$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
-						console.log('lr remote', data.cfi);
+						console.log('lr remote', data);
 
 						if (navigator.onLine && data) {
 							localforage.setItem(cacheId("lastread"),
 								{cfi: data.cfi, page: data.page, total: data.total});
 
-							if (data.cfi && item.cfi != data.cfi) book.gotoCfi(data.cfi);
+							if (item.cfi != data.cfi && (!item.page || data.page > item.page))
+								book.gotoCfi(data.cfi);
+
 						}
 					});
 				}
