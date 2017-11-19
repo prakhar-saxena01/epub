@@ -4,9 +4,9 @@ class Db {
 	private $dbh;
 
 	private function __construct() {
-		$this->dbh = new SQLite3(SCRATCH_DB);
-		$this->dbh->busyTimeout(30*1000);
-		$this->dbh->exec('PRAGMA journal_mode = wal;');
+		$this->dbh = new PDO('sqlite:' . SCRATCH_DB);
+		//$this->dbh->busyTimeout(30*1000);
+		$this->dbh->query('PRAGMA journal_mode = wal;');
 	}
 
 	public static function get() {

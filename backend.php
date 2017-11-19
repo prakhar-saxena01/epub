@@ -15,7 +15,7 @@
 	require_once "sessions.php";
 	require_once "db.php";
 
-	@$owner = SQLite3::escapeString($_SESSION["owner"]);
+	@$owner = $_SESSION["owner"];
 
 	if (!$owner) {
 		header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
@@ -33,10 +33,11 @@
 	case "cover":
 		$id = (int) $_REQUEST["id"];
 
-		$db = new SQLite3(CALIBRE_DB, SQLITE3_OPEN_READONLY);
-		$result = $db->query("SELECT has_cover, path FROM books WHERE id = " . $id);
+		$db = new PDO('sqlite:' . CALIBRE_DB);
+		$sth = $db->prepare("SELECT has_cover, path FROM books WHERE id = ?");
+		$sth->execute([$id]);
 
-		while ($line = $result->fetchArray(SQLITE3_ASSOC)) {
+		while ($line = $sth->fetch()) {
 			$filename = BOOKS_DIR . "/" . $line["path"] . "/" . "cover.jpg";
 
 			if (file_exists($filename)) {
@@ -54,23 +55,22 @@
 
 		break;
 	case "getowner":
-		$owner = SQLite3::escapeString($_SESSION["owner"]);;
-
 		print json_encode(["owner" => $owner]);
 		break;
 	case "getinfo":
 		$id = (int) $_REQUEST["id"];
 
-		$db = new SQLite3(CALIBRE_DB, SQLITE3_OPEN_READONLY);
+		$db = new PDO('sqlite:' . CALIBRE_DB);
 
-		$result = $db->query("SELECT books.*, s.name AS series_name,
+		$sth = $db->prepare("SELECT books.*, s.name AS series_name,
 			(SELECT text FROM comments WHERE book = books.id) AS comment,
 			(SELECT id FROM data WHERE book = books.id AND format = 'EPUB' LIMIT 1) AS epub_id FROM books
 			LEFT JOIN books_series_link AS bsl ON (bsl.book = books.id)
 			LEFT JOIN series AS s ON (bsl.series = s.id)
-			WHERE books.id = " . $id);
+			WHERE books.id = ?");
+		$sth->execute([$id]);
 
-		if ($line = $result->fetchArray(SQLITE3_ASSOC)) {
+		if ($line = $sth->fetch()) {
 			print json_encode($line);
 		}
 
@@ -79,21 +79,26 @@
 	case "togglefav":
 		$id = (int) $_REQUEST["id"];
 
-		$result = $ldb->query("SELECT id FROM epube_favorites WHERE bookid = '$id'
-			AND owner = '$owner' LIMIT 1");
+		$sth = $ldb->prepare("SELECT id FROM epube_favorites WHERE bookid = ?
+			AND owner = ? LIMIT 1");
+		$sth->execute([$id, $owner]);
 
 		$found_id = false;
 		$status = -1;
 
-		while ($line = $result->fetchArray(SQLITE3_ASSOC)) {
+		while ($line = $sth->fetch()) {
 			$found_id = $line["id"];
 		}
 
 		if ($found_id) {
-			$ldb->query("DELETE FROM epube_favorites WHERE id = " . $found_id);
+			$sth = $ldb->prepare("DELETE FROM epube_favorites WHERE id = ?");
+			$sth->execute([$found_id]);
+
 			$status = 0;
 		} else {
-			$ldb->query("INSERT INTO epube_favorites (bookid, owner) VALUES ($id, '$owner')");
+			$sth = $ldb->prepare("INSERT INTO epube_favorites (bookid, owner) VALUES (?, ?)");
+			$sth->execute([$id, $owner]);
+
 			$status = 1;
 		}
 
@@ -102,10 +107,11 @@
 	case "download":
 		$id = (int) $_REQUEST["id"];
 
-		$db = new SQLite3(CALIBRE_DB, SQLITE3_OPEN_READONLY);
-		$result = $db->query("SELECT path, name, format FROM data LEFT JOIN books ON (data.book = books.id) WHERE data.id = " . $id);
+		$db = new PDO('sqlite:' . CALIBRE_DB);
+		$sth = $db->prepare("SELECT path, name, format FROM data LEFT JOIN books ON (data.book = books.id) WHERE data.id = ?");
+		$sth->execute([$id]);
 
-		while ($line = $result->fetchArray(SQLITE3_ASSOC)) {
+		while ($line = $sth->fetch()) {
 			$filename = BOOKS_DIR . "/" . $line["path"] . "/" . $line["name"] . "." . strtolower($line["format"]);
 
 			if (file_exists($filename)) {
@@ -127,9 +133,10 @@
 		$bookid = (int) $_REQUEST["id"];
 
 		if ($bookid) {
-			$result = $ldb->query("SELECT pagination FROM epube_pagination WHERE bookid = '$bookid' LIMIT 1");
+			$sth = $ldb->prepare("SELECT pagination FROM epube_pagination WHERE bookid = ? LIMIT 1");
+			$sth->execute([$bookid]);
 
-			if ($line = $result->fetchArray()) {
+			if ($line = $sth->fetch()) {
 				print $line["pagination"];
 			} else {
 				header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
@@ -140,28 +147,30 @@
 		break;
 	case "storepagination":
 		$bookid = (int) $_REQUEST["id"];
-		$payload = SQLite3::escapeString($_REQUEST["payload"]);
+		$payload = $_REQUEST["payload"];
 		$total_pages = (int) $_REQUEST["total"];
 
 		if ($bookid && $payload && $total_pages) {
 
-			$ldb->query("BEGIN");
+			$ldb->beginTransaction();
 
-			$result = $ldb->query("SELECT id FROM epube_pagination WHERE bookid = '$bookid' LIMIT 1");
+			$sth = $ldb->prepare("SELECT id FROM epube_pagination WHERE bookid = ? LIMIT 1");
+			$sth->execute([$bookid]);
 
-			if ($line = $result->fetchArray()) {
+			if ($line = $sth->fetch()) {
 				$id = $line["id"];
 
-				$ldb->query("UPDATE epube_pagination SET pagination = '$payload',
-					total_pages = '$total_pages' WHERE id = '$id'");
+				$sth = $ldb->prepare("UPDATE epube_pagination SET pagination = ?,
+					total_pages = ? WHERE id = ?");
+				$sth->execute([$payload, $total_pages, $id]);
 
 			} else {
-				$ldb->query("INSERT INTO epube_pagination (bookid, pagination, total_pages) VALUES
-					('$bookid', '$payload', '$total_pages')");
-
+				$sth = $ldb->prepare("INSERT INTO epube_pagination (bookid, pagination, total_pages) VALUES
+					(?, ?, ?)");
+				$sth->execute([$bookid, $payload, $total_pages]);
 			}
 
-			$ldb->query("COMMIT");
+			$ldb->commit();
 		}
 
 		break;
@@ -173,10 +182,11 @@
 
 		if ($bookid) {
 
-			$result = $ldb->query("SELECT b.lastread, b.lastcfi, p.total_pages FROM epube_books AS b, epube_pagination AS p
-				WHERE b.bookid = p.bookid AND b.bookid = '$bookid' AND b.owner = '$owner' LIMIT 1");
+			$sth = $ldb->prepare("SELECT b.lastread, b.lastcfi, p.total_pages FROM epube_books AS b, epube_pagination AS p
+				WHERE b.bookid = p.bookid AND b.bookid = ? AND b.owner = ? LIMIT 1");
+			$sth->execute([$bookid, $owner]);
 
-			if ($line = $result->fetchArray()) {
+			if ($line = $sth->fetch()) {
 				$lastread = (int) $line["lastread"];
 				$lastcfi = $line["lastcfi"];
 				$totalpages = (int) $line["total_pages"];
@@ -190,16 +200,17 @@
 	case "storelastread":
 		$page = (int) $_REQUEST["page"];
 		$bookid = (int) $_REQUEST["id"];
-		$cfi = SQLite3::escapeString($_REQUEST["cfi"]);
+		$cfi = $_REQUEST["cfi"];
 
 		if ($page && $bookid) {
 
-			$ldb->query("BEGIN");
+			$ldb->beginTransaction();
 
-			$result = $ldb->query("SELECT id, lastread, lastcfi FROM epube_books
-				WHERE bookid = '$bookid' AND owner = '$owner' LIMIT 1");
+			$sth = $ldb->prepare("SELECT id, lastread, lastcfi FROM epube_books
+				WHERE bookid = ? AND owner = ? LIMIT 1");
+			$sth->execute([$bookid, $owner]);
 
-			if ($line = $result->fetchArray()) {
+			if ($line = $sth->fetch()) {
 				$id = $line["id"];
 				$lastread = (int) $line["lastread"];
 
@@ -207,15 +218,16 @@
 
 					if ($page == -1) $page = 0;
 
-					$ldb->query("UPDATE epube_books SET lastread = '$page', lastcfi = '$cfi' WHERE id = '$id'");
+					$sth = $ldb->prepare("UPDATE epube_books SET lastread = ?, lastcfi = ? WHERE id = ?");
+					$sth->execute([$page, $cfi, $id]);
 				}
 			} else {
-				$ldb->query("INSERT INTO epube_books (bookid, owner, lastread, lastcfi) VALUES
-					('$bookid', '$owner', '$page', '$cfi')");
-
+				$sth = $ldb->prepare("INSERT INTO epube_books (bookid, owner, lastread, lastcfi) VALUES
+					(?, ?, ?, ?)");
+				$sth->execute([$bookid, $owner, $page, $cfi]);
 			}
 
-			$ldb->query("COMMIT");
+			$ldb->commit();
 		}
 
 		print json_encode(["page" => $page, "cfi" => $cfi]);

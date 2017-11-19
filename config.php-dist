@@ -9,4 +9,3 @@
 	define('DICT_CLIENT', '/usr/bin/dict');
 	define('DICT_SERVER', 'localhost');
 
-	define('SQLITE_SESSION_STORE', false);

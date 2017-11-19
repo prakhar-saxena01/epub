@@ -21,16 +21,18 @@
 	}
 
 	if (isset($options["del"])) {
-		$user = SQLite3::escapeString($options["del"]);
+		$user = $options["del"];
 
 		print "Deleting user $user...\n";
-		$dbh->query("DELETE FROM epube_users WHERE user = '$user'");
+		$sth = $dbh->prepare("DELETE FROM epube_users WHERE user = ?");
+
+		$sth->execute([$user]);
 	}
 
 	if (isset($options["list"])) {
 		$res = $dbh->query("SELECT id, user FROM epube_users ORDER BY user");
 
-		while ($line = $res->fetchArray(SQLITE3_ASSOC)) {
+		while ($line = $res->fetch()) {
 			printf("%d. %s\n", $line["id"], $line["user"]);
 		}
 
@@ -44,18 +46,20 @@
 			exit;
 		}
 
-		$user = SQLite3::escapeString(trim(mb_strtolower($user)));
-		$pass_hash = SQLite3::escapeString('SHA256:' . hash('sha256', "$user:" . trim($pass)));
+		$user = trim(mb_strtolower($user));
+		$pass_hash = 'SHA256:' . hash('sha256', "$user:" . trim($pass));
 
 		print "Adding user $user with password $pass...\n";
 
-		$res = $dbh->query("SELECT user FROM epube_users WHERE user = '$user'");
+		$sth = $dbh->prepare("SELECT user FROM epube_users WHERE user = ?");
+		$sth->execute([$user]);
 
-		if ($line = $res->fetchArray(SQLITE3_ASSOC)) {
+		if ($line = $sth->fetch()) {
 			print "User already exists.\n";
 		} else {
-			$dbh->query("INSERT INTO epube_users (user, pass)
-					VALUES ('$user', '$pass_hash')");
+			$sth = $dbh->prepare("INSERT INTO epube_users (user, pass)
+					VALUES (?, ?)");
+			$sth->execute([$user, $pass_hash]);
 		}
 
 	}

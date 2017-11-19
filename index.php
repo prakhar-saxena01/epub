@@ -20,7 +20,7 @@
 	require_once "sessions.php";
 	require_once "db.php";
 
-	@$owner = SQLite3::escapeString($_SESSION["owner"]);
+	@$owner = $_SESSION["owner"];
 
 	if (!$owner) {
 		header("Location: login.php");
@@ -181,24 +181,17 @@
 
 	require_once "config.php";
 
-	$db = new SQLite3(CALIBRE_DB, SQLITE3_OPEN_READONLY);
-
-	if ($query) {
-		$query_esc = SQLite3::escapeString($query);
-		$search_qpart = "(LOWER(books.author_sort) LIKE LOWER('%$query_esc%') OR
-			LOWER(books.title) LIKE LOWER('%$query_esc%') OR
-			LOWER(series_name) LIKE LOWER('%$query_esc%'))";
-	} else {
-		$search_qpart = "1";
-	}
+	$db = new PDO('sqlite:' . CALIBRE_DB);
 
 	$ids_qpart = "1";
 
 	if ($mode == "favorites") {
-		$fav_result = $ldb->query("SELECT bookid FROM epube_favorites WHERE owner = '$owner'");
+		$fav_sth = $ldb->prepare("SELECT bookid FROM epube_favorites WHERE owner = ?");
+		$fav_sth->execute([$owner]);
+
 		$fav_ids = [];
 
-		while ($line = $fav_result->fetchArray(SQLITE3_ASSOC)) {
+		while ($line = $fav_sth->fetch()) {
 			array_push($fav_ids, $line["bookid"]);
 		}
 
@@ -210,17 +203,27 @@
 
 	$order_by = $query ? "author_sort, series_name, series_index, title, books.id" : "books.id DESC";
 
-	$result = $db->query("SELECT books.*, s.name AS series_name,
+	$sth = $db->prepare("SELECT books.*, s.name AS series_name,
 		(SELECT id FROM data WHERE book = books.id AND format = 'EPUB' LIMIT 1) AS epub_id FROM books
 		LEFT JOIN books_series_link AS bsl ON (bsl.book = books.id)
 		LEFT JOIN series AS s ON (bsl.series = s.id)
-		WHERE $search_qpart AND $ids_qpart ORDER BY $order_by LIMIT $limit OFFSET $offset");
+		WHERE
+			((:query = '') OR
+				(
+					LOWER(books.author_sort) LIKE LOWER(:query) OR
+					LOWER(books.title) LIKE LOWER(:query) OR
+					LOWER(series_name) LIKE LOWER(:query)
+				))
+			AND $ids_qpart
+		ORDER BY $order_by LIMIT :limit OFFSET :offset");
+
+	$sth->execute([':limit' => $limit, ':offset' => $offset, ':query' => '%' . $query . '%']);
 
 	print "<div class='row'>";
 
 	$rows = 0;
 
-	while ($line = $result->fetchArray(SQLITE3_ASSOC)) {
+	while ($line = $sth->fetch()) {
 		++$rows;
 
 		$cover_link = "backend.php?" . http_build_query(["op" => "cover", "id" => $line["id"]]);
@@ -232,17 +235,17 @@
 		if ($line["epub_id"]) {
 			$read_link = "read.html?" . http_build_query(["id" => $line["epub_id"], "b" => $line["id"]]);
 
-			$lastread_result = $ldb->query("SELECT lastread, total_pages FROM epube_books, epube_pagination
+			$lastread_sth = $ldb->prepare("SELECT lastread, total_pages FROM epube_books, epube_pagination
 				WHERE epube_pagination.bookid = epube_books.bookid AND
-					epube_books.bookid = " . $line["epub_id"] . " AND owner = '$owner'");
+					epube_books.bookid = ? AND owner = ?");
+			$lastread_sth->execute([$line['epub_id'], $owner]);
 
-			if ($lastread_line = $lastread_result->fetchArray(SQLITE3_ASSOC)) {
+			if ($lastread_line = $lastread_sth->fetch()) {
 				$lastread = $lastread_line["lastread"];
 				$total_pages = $lastread_line["total_pages"];
 
 				$is_read = $total_pages - $lastread < 5;
 				$in_progress = $lastread > 1;
-
 			}
 
 		} else {
@@ -289,7 +292,8 @@
 		print "<div><a title=\"".htmlspecialchars($line["author_sort"])."\"
 			href=\"$author_link\">" . $line["author_sort"] . "</a></div>";
 
-		$data_result = $db->query("SELECT * FROM data WHERE book = " . $line["id"] . " LIMIT 3");
+		$data_sth = $db->prepare("SELECT * FROM data WHERE book = ? LIMIT 3");
+		$data_sth->execute([$line['id']]);
 
 		/*print "<span class=\"label label-default\">
 			<span class=\"glyphicon glyphicon-download-alt\">
@@ -317,12 +321,13 @@
 
 				<?php
 
-					$fav_result = $ldb->query("SELECT id FROM epube_favorites WHERE bookid = ".
-						$line['id'] . " AND owner = '$owner' LIMIT 1");
+					$fav_sth = $ldb->prepare("SELECT id FROM epube_favorites
+						WHERE bookid = ?  AND owner = ? LIMIT 1");
+					$fav_sth->execute([$line['id'], $owner]);
 
 					$found_id = false;
 
-					while ($fav_line = $fav_result->fetchArray(SQLITE3_ASSOC)) {
+					while ($fav_line = $fav_sth->fetch()) {
 						$found_id = $fav_line["id"];
 					}
 
@@ -349,7 +354,7 @@
 				<li class="divider"></li>
 				<?php } ?>
 
-				<?php while ($data_line = $data_result->fetchArray(SQLITE3_ASSOC)) {
+				<?php while ($data_line = $data_sth->fetch()) {
 					if ($data_line["format"] != "ORIGINAL_EPUB") {
 						$label_class = $data_line["format"] == "EPUB" ? "label-success" : "label-primary";
 
