@@ -60,6 +60,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<script src="lib/bootstrap/v3/js/jquery.js"></script>
 	<script src="lib/bootstrap/v3/js/bootstrap.min.js"></script>
+	<script src="lib/promise.js"></script>
+	<script src="lib/fetch.js"></script>
 	<script src="lib/holder.min.js"></script>
 	<script src="lib/localforage.min.js"></script>
 	<script src="lib/qtip2/jquery.qtip.min.js"></script>

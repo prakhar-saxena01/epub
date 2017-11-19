@@ -8,6 +8,9 @@
 	<script src="lib/bootstrap/v3/js/jquery.js"></script>
 	<script src="lib/bootstrap/v3/js/bootstrap.min.js"></script>
 
+	<script src="lib/promise.js"></script>
+	<script src="lib/fetch.js"></script>
+
 	<script src="lib/zip.min.js"></script>
 	<script src="lib/localforage.min.js"></script>
 	<script src="lib/epub.js"></script>
@@ -219,6 +222,8 @@
 	var _pagination_stored = 0;
 	var _last_position_sync = 0;
 
+	var _is_ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
 	const DEFAULT_FONT_SIZE = 16;
 	const DEFAULT_FONT_FAMILY = "Georgia";
 	const DEFAULT_LINE_HEIGHT = 140;
@@ -254,13 +259,15 @@
 		}
 
 		localforage.getItem(cacheId("book")).then(function(item) {
-			if (item) {
+
+			// ios doesn't work with FileReader for whatever reason
+			if (/*!_is_ios &&*/ item) {
 
 				console.log("loading from local storage");
 
 				var fileReader = new FileReader();
 
-				fileReader.onload = function() {
+				fileReader.onload = function(evt) {
 					book.open(this.result);
 				};
 
@@ -356,6 +363,15 @@
 
         if (callback) callback();
 		}
+
+/*		EPUBJS.Renderer.prototype.onResized = function(e) {
+			this.trigger('renderer:beforeResize');
+
+			var width = $("#reader").width();
+			var height = $("#reader").height();
+
+			this.resize(width, height, false);
+		}; */
 
 		var book = ePub({
 			restore: false,
