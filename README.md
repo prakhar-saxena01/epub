@@ -38,7 +38,7 @@ When upgrading from an older Git snapshot which used HTTP Authentication:
 Requirements
 ============
 
-* php-sqlite
+* PDO::sqlite
 * Calibre books directory and metadata.db
 
 Acknowledgements
