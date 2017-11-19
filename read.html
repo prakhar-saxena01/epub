@@ -373,9 +373,17 @@
 			this.resize(width, height, false);
 		}; */
 
-		var book = ePub({
-			restore: false,
-		});
+		if (_is_ios) {
+			var book = ePub({
+				restore: false,
+				width: $("#reader").width(),
+				height: $("#reader").height(),
+			});
+		} else {
+			var book = ePub({
+				restore: false,
+			});
+		}
 
 		Promise.all([
 			localforage.getItem("epube.fontSize"),
