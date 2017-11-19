@@ -17,6 +17,8 @@ self.addEventListener('install', function(event) {
 			'css/index.css',
 			'css/transitions.css',
 			'offline.html',
+			'lib/promise.js',
+			'lib/fetch.js',
 			'lib/zip.min.js',
 			'lib/epub.js',
 			'lib/localforage.min.js',
