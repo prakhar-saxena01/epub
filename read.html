@@ -619,34 +619,6 @@
 				}
 
 			};
-
-			$("#reader iframe")[0].contentWindow.ontouchend = function(event) {
-				toggle_ui();
-			};
-
-			/*$("#reader iframe")[0].contentWindow.onmouseup = function(event) {
-
-				if (!navigator.onLine) return;
-
-				var wnd = this;
-				var sel = wnd.getSelection().toString().trim();
-
-				if (sel.match(/^\w+$/)) {
-
-					$.post("backend.php", {op: 'define', word: sel}, function(data) {
-						if (data) {
-
-							wnd.getSelection().removeAllRanges();
-
-							$(".dict_result").html(data.result.join("<br/>"));
-
-							$("#dict-modal").modal('show');
-
-						}
-					});
-				}
-			};*/
-
 		});
 
 		book.on("renderer:keydown", hotkey_handler);
