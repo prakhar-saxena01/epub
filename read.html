@@ -355,7 +355,7 @@
 		document.onkeydown = hotkey_handler;
 
 		localforage.getItem("epube.enable-fullscreen").then(function(enable) {
-			_enable_fullscreen = 1;
+			_enable_fullscreen = enable;
 		});
 
 		EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback, renderer) {

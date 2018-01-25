@@ -1,5 +1,6 @@
-$(window).on("click", function() {
-	parent.toggle_ui();
+$(window).on("click tap", function() {
+	parent.show_ui(true);
+	parent.disable_fullscreen();
 });
 
 $(window).on("swipeleft", function() {

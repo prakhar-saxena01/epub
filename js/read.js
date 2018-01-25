@@ -6,6 +6,10 @@ function request_fullscreen() {
 		document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
 }
 
+function disable_fullscreen() {
+	document.webkitExitFullscreen();
+}
+
 function show_ui(show) {
 	if (show)
 		$(".header,.footer").fadeIn();
