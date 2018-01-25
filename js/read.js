@@ -1,13 +1,29 @@
 var _store_position = 0;
 
+function show_ui(show) {
+	if (show)
+		$(".header,.footer").fadeIn();
+	else
+		$(".header,.footer").fadeOut();
+}
+
+function toggle_ui() {
+	if ($(".header").is(":visible"))
+		$(".header,.footer").fadeOut();
+	else
+		$(".header,.footer").fadeIn();
+}
+
 function next_page() {
 	_store_position = 1;
 
 	window.book.nextPage();
+	show_ui(false);
 }
 
 function prev_page() {
 	window.book.prevPage();
+	show_ui(false);
 }
 
 function hotkey_handler(e) {
@@ -25,9 +41,16 @@ function hotkey_handler(e) {
 
 		// left
 		if (e.which == 37) {
-			e.preventDefault();;
+			e.preventDefault();
 			prev_page();
 		}
+
+		// esc
+		if (e.which == 27) {
+			e.preventDefault();
+			show_ui(true);
+		}
+
 
 	} catch (e) {
 		console.warn(e);
@@ -57,9 +80,7 @@ function init_taps() {
 					if (event.clientX >= doc.clientWidth - margin_x) {
 						console.log("RIGHT SIDE");
 						next_page();
-					}
-
-					if (event.clientX <= margin_x) {
+					} else if (event.clientX <= margin_x) {
 						console.log("LEFT SIDE");
 						prev_page();
 					}
