@@ -65,13 +65,13 @@
 
 						<div class="checkbox">
 							<label>
-								<input class="transition_checkbox" onchange="toggle_transitions(this)"
+								<input class="transition_checkbox"
 									type="checkbox"> Disable transitions
 							</label>
 						</div>
 						<div class="checkbox">
 							<label>
-								<input class="swipe_checkbox" onchange="toggle_swipes(this)"
+								<input class="swipe_checkbox"
 									type="checkbox"> Disable swipes
 							</label>
 						</div>
@@ -432,11 +432,19 @@
 			});
 
 			localforage.getItem("epube.disable-transitions").then(function(disable) {
-				$(".transition_checkbox").attr("checked", disable);
+				$(".transition_checkbox")
+					.attr("checked", disable)
+					.on("click", function() {
+						localforage.setItem("epube.disable-transitions", this.checked);
+					});
 			});
 
 			localforage.getItem("epube.disable-swipes").then(function(disable) {
-				$(".swipe_checkbox").attr("checked", disable);
+				$(".swipe_checkbox")
+					.attr("checked", disable)
+					.on("click", function() {
+						localforage.setItem("epube.disable-swipes", this.checked);
+					});
 			});
 
 			localforage.getItem("epube.fontFamily").then(function(font) {
