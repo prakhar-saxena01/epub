@@ -1,17 +1,9 @@
 var _store_position = 0;
+var _enable_fullscreen = 0;
 
 function request_fullscreen() {
-	localforage.getItem("epube.enable-fullscreen").then(function(enable) {
-
-		if (enable) {
-			var elem = document.documentElement;
-			var func = elem.webkitRequestFullscreen;
-
-			if (typeof func != "undefined") {
-				func.call(elem);
-			}
-		}
-	});
+	if (_enable_fullscreen)
+		document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
 }
 
 function show_ui(show) {
@@ -34,12 +26,14 @@ function next_page() {
 	window.book.nextPage();
 
 	show_ui(false);
+	request_fullscreen();
 }
 
 function prev_page() {
 	window.book.prevPage();
 
 	show_ui(false);
+	request_fullscreen();
 }
 
 function hotkey_handler(e) {
