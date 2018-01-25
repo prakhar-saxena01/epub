@@ -1,5 +1,19 @@
 var _store_position = 0;
 
+function request_fullscreen() {
+	localforage.getItem("epube.enable-fullscreen").then(function(enable) {
+
+		if (enable) {
+			var elem = document.documentElement;
+			var func = elem.webkitRequestFullscreen;
+
+			if (typeof func != "undefined") {
+				func.call(elem);
+			}
+		}
+	});
+}
+
 function show_ui(show) {
 	if (show)
 		$(".header,.footer").fadeIn();
@@ -18,11 +32,13 @@ function next_page() {
 	_store_position = 1;
 
 	window.book.nextPage();
+
 	show_ui(false);
 }
 
 function prev_page() {
 	window.book.prevPage();
+
 	show_ui(false);
 }
 

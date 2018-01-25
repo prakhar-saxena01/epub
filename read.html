@@ -75,6 +75,12 @@
 									type="checkbox"> Disable swipes
 							</label>
 						</div>
+						<div class="checkbox">
+							<label>
+								<input class="fullscreen_checkbox"
+									type="checkbox"> Request fullscreen mode
+							</label>
+						</div>
 					</div>
   				</div>
 
@@ -444,6 +450,14 @@
 					.attr("checked", disable)
 					.on("click", function() {
 						localforage.setItem("epube.disable-swipes", this.checked);
+					});
+			});
+
+			localforage.getItem("epube.enable-fullscreen").then(function(enable) {
+				$(".fullscreen_checkbox")
+					.attr("checked", enable)
+					.on("click", function() {
+						localforage.setItem("epube.enable-fullscreen", this.checked);
 					});
 			});
 
