@@ -208,6 +208,10 @@ function toggle_transitions(elem) {
 	localforage.setItem("epube.disable-transitions", elem.checked);
 }
 
+function toggle_swipes(elem) {
+	localforage.setItem("epube.disable-swipes", elem.checked);
+}
+
 function dict_lookup(word, callback) {
 	$.post("backend.php", {op: 'define', word: word}, function(data) {
 		if (data) {

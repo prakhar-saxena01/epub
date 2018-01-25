@@ -61,10 +61,18 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label"></label>
 					<div class="col-sm-9">
+						<div class="text-muted">Options take effect after reload:</div>
+
 						<div class="checkbox">
 							<label>
 								<input class="transition_checkbox" onchange="toggle_transitions(this)"
-									type="checkbox"> Disable transitions (needs page reload)
+									type="checkbox"> Disable transitions
+							</label>
+						</div>
+						<div class="checkbox">
+							<label>
+								<input class="swipe_checkbox" onchange="toggle_swipes(this)"
+									type="checkbox"> Disable swipes
 							</label>
 						</div>
 					</div>
@@ -346,19 +354,26 @@
 
 			EPUBJS.core.addScripts([baseUrl + "lib/bootstrap/v3/js/jquery.js",
 					baseUrl + "lib/jquery.mobile.custom.js",
-					baseUrl + "js/dict.js",
-					baseUrl + "js/swipes.js" ], null, renderer.doc.head);
+					baseUrl + "js/dict.js" ], null, renderer.doc.head);
 
 			EPUBJS.core.addCss(baseUrl + "css/reader.css", null, renderer.doc.head);
 
-			localforage.getItem("epube.disable-transitions").then(function(disable) {
-				if (!disable) {
-					EPUBJS.core.addCss(baseUrl + "css/transitions.css", null, renderer.doc.head);
+			localforage.getItem("epube.disable-swipes").then(function(noswipes) {
 
-					EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
-			 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
-					}
+				if (!noswipes) {
+					EPUBJS.core.addScripts([baseUrl + "js/swipes.js" ], null, renderer.doc.head);
 				}
+
+				localforage.getItem("epube.disable-transitions").then(function(notransitions) {
+					if (!notransitions) {
+						EPUBJS.core.addCss(baseUrl + "css/transitions.css", null, renderer.doc.head);
+
+						EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
+				 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
+						}
+					}
+				});
+
 			});
 
         if (callback) callback();
@@ -418,6 +433,10 @@
 
 			localforage.getItem("epube.disable-transitions").then(function(disable) {
 				$(".transition_checkbox").attr("checked", disable);
+			});
+
+			localforage.getItem("epube.disable-swipes").then(function(disable) {
+				$(".swipe_checkbox").attr("checked", disable);
 			});
 
 			localforage.getItem("epube.fontFamily").then(function(font) {
