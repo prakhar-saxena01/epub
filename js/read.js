@@ -47,8 +47,8 @@ function hotkey_handler(e) {
 		if ($(".modal").is(":visible"))
 			return;
 
-		// right
-		if (e.which == 39) {
+		// right or space
+		if (e.which == 39 || e.which == 32) {
 			e.preventDefault();
 			next_page();
 		}
