@@ -1,4 +1,4 @@
-body {
+body, .loading {
 	background : #3B3228;
 	color : #D0C8C6;
 }

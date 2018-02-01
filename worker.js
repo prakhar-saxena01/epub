@@ -20,6 +20,7 @@ self.addEventListener('install', function(event) {
 			'themes/default.css',
 			'themes/mocca.css',
 			'themes/night.css',
+			'themes/plan9.css',
 			'lib/promise.js',
 			'lib/fetch.js',
 			'lib/zip.min.js',

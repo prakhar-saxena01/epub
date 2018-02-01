@@ -144,7 +144,12 @@ function apply_styles() {
 		var lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
 		var themeName = res[3] ? res[3] : false;
 
-		$("#reader iframe").contents().find("*")
+		book.setStyle("fontSize", fontSize);
+		book.setStyle("fontFamily", fontFamily);
+		book.setStyle("lineHeight", lineHeight);
+		book.setStyle("textAlign", "justify");
+
+		$("#reader iframe").contents().find("p")
 			.css("background", "")
 			.css("color", "")
 			.css("background-color", "")
@@ -152,8 +157,6 @@ function apply_styles() {
 			.css("font-size", fontSize)
 			.css("line-height", lineHeight)
 			.css("text-align", "justify");
-
-		$("#reader").show();
 
 	});
 

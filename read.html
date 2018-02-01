@@ -66,8 +66,9 @@
 					<div class="col-sm-9">
 						<select class="theme_name form-control" onchange="change_theme(this)">
 							<option value="default">Default</option>
-						 	<option value="night">Night</option>
 							<option value="mocca">Mocca</option>
+						 	<option value="night">Night</option>
+						 	<option value="plan9">Plan9</option>
 						</select>
 					</div>
   				</div>
@@ -259,6 +260,8 @@
 	}
 
 	$(document).ready(function() {
+		apply_theme();
+
 		$(window).on('online', function() {
 			console.log("we're online, storing lastread");
 
@@ -362,12 +365,24 @@
 		});
 
 		init_taps();
-		apply_theme();
 		document.onkeydown = hotkey_handler;
 
 		localforage.getItem("epube.enable-fullscreen").then(function(enable) {
 			_enable_fullscreen = enable;
 		});
+
+		EPUBJS.Hooks.register("beforeChapterDisplay").applyTheme = function(callback, renderer) {
+			var baseUrl = window.location.href.match(/^.*\//)[0];
+
+console.log('tn', themeName);
+
+			$(book.renderer.doc.head)
+				.append($("<link rel='stylesheet' id='theme_css' type='text/css'>")
+					.attr('href', baseUrl + 'themes/' + themeName + '.css'));
+
+
+			if (callback) callback();
+		}
 
 		EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback, renderer) {
 
@@ -378,9 +393,6 @@
 					baseUrl + "js/dict.js" ], null, renderer.doc.head);
 
 			EPUBJS.core.addCss(baseUrl + "css/reader.css", null, renderer.doc.head);
-
-			$(book.renderer.doc.head)
-				.append("<link rel='stylesheet' id='theme_css' type='text/css' href='themes/default.css'>")
 
 			localforage.getItem("epube.disable-swipes").then(function(noswipes) {
 
@@ -425,9 +437,30 @@
 			});
 		}
 
-		window.book = book;
+		var fontSize;
+		var fontFamily;
+		var lineHeight;
+		var themeName;
 
-		var rendered = book.renderTo("reader");
+		Promise.all([
+			localforage.getItem("epube.fontSize"),
+			localforage.getItem("epube.fontFamily"),
+			localforage.getItem("epube.lineHeight"),
+			localforage.getItem("epube.theme")
+		]).then(function(res) {
+			fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
+			fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
+			lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
+			themeName = res[3] ? res[3] : 'default';
+
+			book.setStyle("fontSize", fontSize);
+			book.setStyle("fontFamily", fontFamily);
+			book.setStyle("lineHeight", lineHeight);
+			book.setStyle("textAlign", "justify");
+		});
+
+		window.book = book;
+		rendered = book.renderTo("reader");
 
 		$('#settings-modal').on('shown.bs.modal', function() {
 
@@ -646,10 +679,18 @@
 		});
 
 		book.on("renderer:chapterDisplayed", function() {
-			$("#reader").hide();
 
-			apply_theme();
-			apply_styles();
+			// variables defined above after reading from localforage
+
+			$("#reader iframe").contents().find("p")
+				.css("background", "")
+				.css("color", "")
+				.css("background-color", "")
+				.css("font-family", fontFamily)
+				.css("font-size", fontSize)
+				.css("line-height", lineHeight)
+				.css("text-align", "justify");
+
 		});
 
 		book.on("renderer:keydown", hotkey_handler);
