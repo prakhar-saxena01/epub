@@ -1,0 +1,9 @@
+body, .loading {
+	background : #FFFFE8;
+	color : #424242;
+}
+
+body .header,
+body .footer {
+	color : #B85C57;
+}
