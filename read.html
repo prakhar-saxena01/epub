@@ -411,14 +411,18 @@
 			});
 		}
 
+		var fontSize;
+		var fontFamily;
+		var lineHeight;
+
 		Promise.all([
 			localforage.getItem("epube.fontSize"),
 			localforage.getItem("epube.fontFamily"),
 			localforage.getItem("epube.lineHeight")
 		]).then(function(res) {
-			var fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
-			var fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
-			var lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
+			fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
+			fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
+			lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
 
 			book.setStyle("fontSize", fontSize);
 			book.setStyle("fontFamily", fontFamily);
@@ -427,9 +431,6 @@
 			book.setStyle("textAlign", "justify");
 
 		});
-
-
-		//styles: { fontSize: '24px', lineHeight: '130%', fontFamily: 'Georgia' }
 
 		window.book = book;
 
@@ -650,15 +651,12 @@
 		book.on("renderer:chapterDisplayed", function() {
 
 			// cleanup possibly interfering styles
-			var c = $("#reader iframe").contents();
+			// variables defined above after reading from localforage
 
-			c.find("p")
-				.removeAttr("style")
-				.removeAttr("class")
-				.css("margin", "0px");
-
-			c.find("*")
-				.removeAttr("class");
+			$("#reader iframe").contents().find("*")
+				.css("font-family", fontFamily)
+				.css("font-size", fontSize)
+				.css("line-height", lineHeight);
 
 		});
 
