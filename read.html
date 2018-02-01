@@ -647,21 +647,6 @@
 			};
 		});
 
-		book.on("renderer:chapterDisplayed", function() {
-
-			// cleanup possibly interfering styles
-			var c = $("#reader iframe").contents();
-
-			c.find("p")
-				.removeAttr("style")
-				.removeAttr("class")
-				.css("margin", "0px");
-
-			c.find("*")
-				.removeAttr("class");
-
-		});
-
 		book.on("renderer:keydown", hotkey_handler);
 
 		book.getMetadata().then(function(meta){
