@@ -20,6 +20,8 @@
 
 	<link id="favicon" rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link type="text/css" rel="stylesheet" media="screen" href="css/read.css" />
+
+	<link type="text/css" rel="stylesheet" media="screen" href="themes/default.css" id="theme_css" />
 </head>
 <body>
 
@@ -40,6 +42,7 @@
 							<option>Arial</option>
 						 	<option>Times New Roman</option>
 							<option>Georgia</option>
+							<option>Courier New</option>
 						</select>
 					</div>
   				</div>
@@ -55,6 +58,17 @@
 					<label class="col-sm-3 control-label">Line height</label>
 					<div class="col-sm-9">
 						<select class="line_height form-control" onchange="apply_line_height(this)"></select>
+					</div>
+  				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">Theme</label>
+					<div class="col-sm-9">
+						<select class="theme_name form-control" onchange="change_theme(this)">
+							<option value="default">Default</option>
+						 	<option value="night">Night</option>
+							<option value="mocca">Mocca</option>
+						</select>
 					</div>
   				</div>
 
@@ -179,6 +193,7 @@
   </div>
 </div>
 
+<div class="container">
 <div class="header">
 	<span>
 		<a href="#" onclick="save_and_close()">&laquo;&nbsp;Exit</a>
@@ -194,10 +209,6 @@
 		<button class="btn btn-default btn-xs"
 			data-toggle="modal" data-target="#settings-modal">
 			<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-		</button>
-
-		<button class="btn btn-default btn-xs" onclick="toggle_night_mode()">
-			<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 		</button>
 
 		<button class="btn btn-default btn-xs"
@@ -231,6 +242,7 @@
 		Opening book...
 	</div>
 </div>
+</div>
 
 <script>
 	var _pagination_stored = 0;
@@ -247,8 +259,6 @@
 	}
 
 	$(document).ready(function() {
-		apply_night_mode();
-
 		$(window).on('online', function() {
 			console.log("we're online, storing lastread");
 
@@ -352,6 +362,7 @@
 		});
 
 		init_taps();
+		apply_theme();
 		document.onkeydown = hotkey_handler;
 
 		localforage.getItem("epube.enable-fullscreen").then(function(enable) {
@@ -367,6 +378,9 @@
 					baseUrl + "js/dict.js" ], null, renderer.doc.head);
 
 			EPUBJS.core.addCss(baseUrl + "css/reader.css", null, renderer.doc.head);
+
+			$(book.renderer.doc.head)
+				.append("<link rel='stylesheet' id='theme_css' type='text/css' href='themes/default.css'>")
 
 			localforage.getItem("epube.disable-swipes").then(function(noswipes) {
 
@@ -411,27 +425,6 @@
 			});
 		}
 
-		var fontSize;
-		var fontFamily;
-		var lineHeight;
-
-		Promise.all([
-			localforage.getItem("epube.fontSize"),
-			localforage.getItem("epube.fontFamily"),
-			localforage.getItem("epube.lineHeight")
-		]).then(function(res) {
-			fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
-			fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
-			lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
-
-			book.setStyle("fontSize", fontSize);
-			book.setStyle("fontFamily", fontFamily);
-			book.setStyle("lineHeight", lineHeight);
-
-			book.setStyle("textAlign", "justify");
-
-		});
-
 		window.book = book;
 
 		var rendered = book.renderTo("reader");
@@ -470,6 +463,10 @@
 				if (!font) font = DEFAULT_FONT_FAMILY;
 
 				$(".font_family").val(font);
+			});
+
+			localforage.getItem("epube.theme").then(function(theme) {
+				$(".theme_name").val(theme);
 			});
 
 			localforage.getItem("epube.fontSize").then(function(size) {
@@ -649,16 +646,10 @@
 		});
 
 		book.on("renderer:chapterDisplayed", function() {
+			$("#reader").hide();
 
-			// cleanup possibly interfering styles
-			// variables defined above after reading from localforage
-
-			$("#reader iframe").contents().find("*")
-				.css("font-family", fontFamily)
-				.css("font-size", fontSize)
-				.css("line-height", lineHeight)
-				.css("text-align", "justify");
-
+			apply_theme();
+			apply_styles();
 		});
 
 		book.on("renderer:keydown", hotkey_handler);

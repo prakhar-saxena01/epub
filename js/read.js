@@ -109,26 +109,53 @@ function init_taps() {
 function apply_line_height(elem) {
 	var height = elem[elem.selectedIndex].value;
 
-	localforage.setItem("epube.lineHeight", height);
-
-	window.book.setStyle("lineHeight", height + "%");
-
+	localforage.setItem("epube.lineHeight", height).then(function() {
+		apply_styles();
+	});
 }
 
 function apply_font(elem) {
 	var font = elem[elem.selectedIndex].value;
 
-	localforage.setItem("epube.fontFamily", font);
-
-	window.book.setStyle("fontFamily", font);
+	localforage.setItem("epube.fontFamily", font).then(function() {
+		apply_styles();
+	});
 
 }
 
 function apply_font_size(elem) {
 	var size = elem[elem.selectedIndex].value;
 
-	localforage.setItem("epube.fontSize", size);
-	window.book.setStyle("fontSize", size + "px");
+	localforage.setItem("epube.fontSize", size).then(function() {
+		apply_styles();
+	});
+}
+
+function apply_styles() {
+
+	Promise.all([
+		localforage.getItem("epube.fontSize"),
+		localforage.getItem("epube.fontFamily"),
+		localforage.getItem("epube.lineHeight"),
+		localforage.getItem("epube.theme")
+	]).then(function(res) {
+		var fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
+		var fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
+		var lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
+		var themeName = res[3] ? res[3] : false;
+
+		$("#reader iframe").contents().find("*")
+			.css("background", "")
+			.css("color", "")
+			.css("background-color", "")
+			.css("font-family", fontFamily)
+			.css("font-size", fontSize)
+			.css("line-height", lineHeight)
+			.css("text-align", "justify");
+
+		$("#reader").show();
+
+	});
 
 }
 
@@ -183,33 +210,26 @@ function save_and_close() {
 	}
 }
 
-function toggle_night_mode() {
-	localforage.getItem("epube.night_mode").then(function(night) {
-		night = !night;
-
-		localforage.setItem("epube.night_mode", night).then(function() {
-			apply_night_mode();
-		});
-
+function change_theme(elem) {
+	var theme = $(elem).val();
+	localforage.setItem("epube.theme", theme).then(function() {
+		apply_theme();
 	});
 }
 
-function apply_night_mode() {
-	localforage.getItem("epube.night_mode").then(function(night) {
-		if (night) {
+function apply_theme() {
+	localforage.getItem("epube.theme").then(function(theme) {
+		console.log('theme', theme);
 
-			window.book.setStyle("background", "black");
-			window.book.setStyle("color", "#ccc");
+		var baseUrl = window.location.href.match(/^.*\//)[0];
 
-			$("body").addClass("night");
+		if (!theme) theme = 'default';
 
-		} else {
+		var themeUrl = baseUrl + "/themes/" + theme + ".css";
 
-			window.book.setStyle("background", "white");
-			window.book.setStyle("color", "black");
+		$("#theme_css").attr("href", themeUrl);
+		$(book.renderer.doc).find("#theme_css").attr('href', themeUrl);
 
-			$("body").removeClass("night");
-		}
 	});
 }
 
