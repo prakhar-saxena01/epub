@@ -149,14 +149,14 @@ function apply_styles() {
 		book.setStyle("lineHeight", lineHeight);
 		book.setStyle("textAlign", "justify");
 
-		$("#reader iframe").contents().find("p")
+/*		$("#reader iframe").contents().find("p")
 			.css("background", "")
 			.css("color", "")
 			.css("background-color", "")
 			.css("font-family", fontFamily)
 			.css("font-size", fontSize)
 			.css("line-height", lineHeight)
-			.css("text-align", "justify");
+			.css("text-align", "justify"); */
 
 	});
 
