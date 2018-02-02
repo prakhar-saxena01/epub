@@ -8,6 +8,13 @@ web EPUB reader using EPUB.js, Bootstrap, and Calibre.
 * can optionally store files locally for later reading
 * supports word definition lookups using dictd
 * supports Chrome homescreen "app mode"
+* has several color themes
+
+Screenshots
+===========
+
+1. https://tt-rss.org/images/epube/screen1.png (desktop)
+2. https://tt-rss.org/images/epube/screen2.png (mobile)
 
 Installation
 ============
