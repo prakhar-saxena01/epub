@@ -372,16 +372,18 @@
 		});
 
 		EPUBJS.Hooks.register("beforeChapterDisplay").applyTheme = function(callback, renderer) {
-			var baseUrl = window.location.href.match(/^.*\//)[0];
 
-console.log('tn', themeName);
+			localforage.getItem("epube.theme").then(function(theme) {
+				var baseUrl = window.location.href.match(/^.*\//)[0];
 
-			$(book.renderer.doc.head)
-				.append($("<link rel='stylesheet' id='theme_css' type='text/css'>")
-					.attr('href', baseUrl + 'themes/' + themeName + '.css'));
+				if (!theme) theme = 'default';
 
+				$(book.renderer.doc.head)
+					.append($("<link rel='stylesheet' id='theme_css' type='text/css'>")
+						.attr('href', baseUrl + 'themes/' + theme + '.css'));
 
-			if (callback) callback();
+				if (callback) callback();
+			});
 		}
 
 		EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback, renderer) {
