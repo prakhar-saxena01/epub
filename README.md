@@ -27,7 +27,7 @@ Installation
 2. Ensure both <code>scratch.db</code> and its containing folder (i.e. <code>db/</code>) are writable by the 
 application, normally this means chown-ing them as <code>www-data</code> or whatever user your httpd is running under.
 
-    <pre>chown www-data db/ db/sratch.db</pre>
+    <pre>chown www-data db/ db/scratch.db</pre>
 
 3. Copy <code>config.php-dist</code> to <code>config.php</code> and edit path to Calibre, etc.
 
