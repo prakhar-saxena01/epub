@@ -267,6 +267,7 @@ function dict_lookup(word, callback) {
 		if (data) {
 
 			$(".dict_result").html(data.result.join("<br/>"));
+			$(".dict_query").val(word);
 			$("#dict-modal").modal('show');
 
 			if (callback) callback();

@@ -137,11 +137,13 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Dictionary Lookup</h4>
       </div>
+		<input type="hidden" class="dict_query" value=""/>
       <div class="modal-body">
 			<div class="dict_result"> </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="dict_search_btn btn-default btn">Google</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -539,8 +541,13 @@
 
 		$('#dict-modal').on('shown.bs.modal', function() {
 			$(".dict_result").scrollTop(0);
+
 		})
 
+		$(".dict_search_btn").on("click", function() {
+			$("#dict-modal").modal('hide');
+			window.open("https://google.com/search?q=" + $(".dict_query").val());
+		});
 
 		$('#toc-modal').on('shown.bs.modal', function() {
 			function process_toc_sublist(row, list, nest) {
