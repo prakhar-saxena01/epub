@@ -3,7 +3,7 @@ function cache_refresh(force) {
 		localforage.getItem("epube.cache-timestamp").then(function(stamp) {
 			var ts = parseInt(new Date().getTime()/1000);
 
-			if (force || !stamp || ts - stamp > 3600) {
+			if (force || !stamp || ts - stamp > 3600 * 24) {
 				console.log('asking worker to refresh cache');
 				navigator.serviceWorker.controller.postMessage("refresh-cache");
 				localforage.setItem("epube.cache-timestamp", ts);
