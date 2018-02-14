@@ -1,11 +1,7 @@
 //importScripts('lib/localforage.min.js');
 
-var CACHE_NAME = 'epube-v1';
-
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-		var urls = [
+const CACHE_NAME = 'epube-v1';
+const CACHE_URLS = [
 			'read.html',
 			'js/common.js',
 			'js/read.js',
@@ -38,7 +34,12 @@ self.addEventListener('install', function(event) {
 			'lib/qtip2/jquery.qtip.min.js',
 		];
 
-		return cache.addAll(urls.map(url => new Request(url, {credentials: 'same-origin'})));
+
+
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function(cache) {
+		return cache.addAll(CACHE_URLS.map(url => new Request(url, {credentials: 'same-origin'})));
     })
   );
 });
@@ -62,26 +63,26 @@ self.addEventListener('message', function(event){
 		caches.open(CACHE_NAME).then(function(cache) {
 			var promises = [];
 
-			cache.keys().then(function(keys) {
-				for (var i = 0; i < keys.length; i++) {
+			for (var i = 0; i < CACHE_URLS.length; i++) {
 
-					if (keys[i].url.match("backend.php"))
-						continue;
+				if (CACHE_URLS[i].match("backend.php"))
+					continue;
 
-					//console.log(keys[i]);
+				//console.log(CACHE_URLS[i]);
 
-					var promise = fetch(keys[i]).then(function(resp) {
-						if (resp.status == 200) {
-							cache.put(resp.url, resp);
-						} else if (resp.status == 404) {
-							cache.delete(resp.url);
-						}
-					});
+				var promise = fetch(CACHE_URLS[i]).then(function(resp) {
+					//console.log(resp);
 
-					promises.push(promise);
+					if (resp.status == 200) {
+						cache.put(resp.url, resp);
+					} else if (resp.status == 404) {
+						cache.delete(resp.url);
+					}
+				});
 
-				}
-			});
+				promises.push(promise);
+
+			}
 
 			Promise.all(promises).then(function() {
 				console.log('all done');
