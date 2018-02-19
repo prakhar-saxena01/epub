@@ -1,4 +1,4 @@
-$(window).on("click tap", function() {
+$(window).on("vclick", function() {
 	if (parent.$(".header").is(":visible")) {
 		parent.show_ui(false);
 		parent.request_fullscreen();
