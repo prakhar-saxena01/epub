@@ -615,7 +615,8 @@
 		})
 
 		book.on("renderer:chapterUnloaded", function() {
-			$(".chapter").html("Loading...");
+			$(".loading").show();
+			$(".loading_message").html("Opening chapter...");
 
 		});
 
