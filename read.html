@@ -399,12 +399,19 @@
 
 			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
 				if (!notransitions) {
-					EPUBJS.core.addCss(baseUrl + "css/transitions.css", null, renderer.doc.head);
 
-					EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
-			 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
-					}
+					window.setTimeout(function() {
+
+						EPUBJS.core.addCss(baseUrl + "css/transitions.css", null, renderer.doc.head);
+
+						EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
+				 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
+						}
+
+					}, 250);
+
 				}
+
 			});
 
         if (callback) callback();
