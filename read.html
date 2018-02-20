@@ -86,12 +86,6 @@
 						</div>
 						<div class="checkbox">
 							<label>
-								<input class="swipe_checkbox"
-									type="checkbox"> Disable swipes
-							</label>
-						</div>
-						<div class="checkbox">
-							<label>
 								<input class="fullscreen_checkbox"
 									type="checkbox"> Request fullscreen mode
 							</label>
@@ -393,32 +387,24 @@
 			});
 		}
 
-		EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback, renderer) {
+		EPUBJS.Hooks.register("beforeChapterDisplay").initDict = function(callback, renderer) {
 
 			var baseUrl = window.location.href.match(/^.*\//)[0];
 
 			EPUBJS.core.addScripts([baseUrl + "lib/bootstrap/v3/js/jquery.js",
-					baseUrl + "lib/jquery.touchSwipe.min.js",
+					baseUrl + "js/reader.js",
 					baseUrl + "js/dict.js" ], null, renderer.doc.head);
 
 			EPUBJS.core.addCss(baseUrl + "css/reader.css", null, renderer.doc.head);
 
-			localforage.getItem("epube.disable-swipes").then(function(noswipes) {
+			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
+				if (!notransitions) {
+					EPUBJS.core.addCss(baseUrl + "css/transitions.css", null, renderer.doc.head);
 
-				if (!noswipes) {
-					EPUBJS.core.addScripts([baseUrl + "js/swipes.js" ], null, renderer.doc.head);
-				}
-
-				localforage.getItem("epube.disable-transitions").then(function(notransitions) {
-					if (!notransitions) {
-						EPUBJS.core.addCss(baseUrl + "css/transitions.css", null, renderer.doc.head);
-
-						EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
-				 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
-						}
+					EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
+			 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
 					}
-				});
-
+				}
 			});
 
         if (callback) callback();
@@ -482,14 +468,6 @@
 					.attr("checked", disable)
 					.on("click", function() {
 						localforage.setItem("epube.disable-transitions", this.checked);
-					});
-			});
-
-			localforage.getItem("epube.disable-swipes").then(function(disable) {
-				$(".swipe_checkbox")
-					.attr("checked", disable)
-					.on("click", function() {
-						localforage.setItem("epube.disable-swipes", this.checked);
 					});
 			});
 

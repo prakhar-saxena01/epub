@@ -6,7 +6,7 @@ const CACHE_URLS = [
 			'js/common.js',
 			'js/read.js',
 			'js/offline.js',
-			'js/swipes.js',
+			'js/reader.js',
 			'js/dict.js',
 			'css/read.css',
 			'css/reader.css',
@@ -31,7 +31,6 @@ const CACHE_URLS = [
 			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
 			'lib/qtip2/jquery.qtip.min.css',
 			'lib/qtip2/jquery.qtip.min.js',
-			'lib/jquery.touchSwipe.min.js',
 		];
 
 
