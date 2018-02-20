@@ -297,7 +297,12 @@
 				var fileReader = new FileReader();
 
 				fileReader.onload = function(evt) {
-					book.open(this.result);
+					try {
+						book.open(this.result);
+					} catch (e) {
+						$(".loading_message").html("Unable to load book (local).");
+						console.log(e);
+					}
 				};
 
 				fileReader.readAsArrayBuffer(item);
@@ -311,7 +316,7 @@
 
 					RSVP.on('error', function(error) {
 						if ($(".loading").is(":visible")) {
-							$(".loading_message").html("Unable to load book.");
+							$(".loading_message").html("Unable to load book (remote).");
 						}
 						console.log(error);
 					});
