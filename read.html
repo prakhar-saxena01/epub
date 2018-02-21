@@ -623,6 +623,16 @@
 		book.on("renderer:chapterDisplayed", function() {
 			$(".chapter").html("");
 
+			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
+				if (notransitions) {
+					$(".loading").hide();
+				} else {
+					window.setTimeout(function() {
+						$(".loading").hide();
+					}, 500);
+				}
+			} );
+
 			var toc_entry = false;
 
 			function iterate_sublist(row, nest) {
@@ -785,8 +795,6 @@
 
 		book.on('book:pageChanged', function(location) {
 
-			//console.log(location);
-			$(".loading").hide();
 			$("#cur_page").html(location.anchorPage);
 
 			var total = book.pagination.totalPages;
