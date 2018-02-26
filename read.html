@@ -362,11 +362,7 @@
 					$(".loading_message").html("This book is not available offline.");
 				}
 			}
-
 		});
-
-		init_taps();
-		document.onkeydown = hotkey_handler;
 
 		localforage.getItem("epube.enable-fullscreen").then(function(enable) {
 			_enable_fullscreen = enable;

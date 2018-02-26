@@ -71,40 +71,36 @@ function hotkey_handler(e) {
 	}
 }
 
-function init_taps() {
-	try {
-		window.addEventListener("mouseup",
-			function(event) {
-				if (event.button == 0) {
+$(document).ready(function() {
+	document.onkeydown = hotkey_handler;
 
-					if ($(".modal").is(":visible"))
-						return;
+	$(window).on("mouseup", function(evt) {
+		if (evt.button == 0) {
 
-					var doc = document.documentElement;
-					var margin_x = 64;
-					var margin_y_top = 48;
-					var margin_y_bottom = 48;
+			if ($(".modal").is(":visible"))
+					return;
 
-					//console.log(event.clientY + " " + doc.clientHeight);
+			var doc = document.documentElement;
+			var margin_x = 64;
+			var margin_y_top = 48;
+			var margin_y_bottom = 48;
 
-					if (event.clientY < margin_y_top || event.clientY >= doc.clientHeight - margin_y_bottom) {
-						return;
-					}
+			//console.log(event.clientY + " " + doc.clientHeight);
 
-					if (event.clientX >= doc.clientWidth - margin_x) {
-						console.log("RIGHT SIDE");
-						next_page();
-					} else if (event.clientX <= margin_x) {
-						console.log("LEFT SIDE");
-						prev_page();
-					}
-				}
+			if (evt.clientY < margin_y_top || evt.clientY >= doc.clientHeight - margin_y_bottom) {
+				return;
 			}
-		);
-	} catch (e) {
-		console.warn(e);
-	}
-}
+
+			if (evt.clientX >= doc.clientWidth - margin_x) {
+				console.log("RIGHT SIDE");
+				next_page();
+			} else if (evt.clientX <= margin_x) {
+				console.log("LEFT SIDE");
+				prev_page();
+			}
+		}
+	});
+});
 
 function apply_line_height(elem) {
 	var height = elem[elem.selectedIndex].value;
