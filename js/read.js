@@ -1,6 +1,5 @@
 var _store_position = 0;
 var _enable_fullscreen = 0;
-var _has_touch = 0;
 
 function request_fullscreen() {
 	if (_enable_fullscreen)
@@ -101,7 +100,6 @@ $(document).ready(function() {
 			}
 		}
 	});
-
 });
 
 function apply_line_height(elem) {
