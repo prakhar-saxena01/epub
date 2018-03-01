@@ -13,9 +13,7 @@ web EPUB reader using EPUB.js, Bootstrap, and Calibre.
 Screenshots
 ===========
 
-1. https://tt-rss.org/images/epube/screen1.png (desktop)
-2. https://tt-rss.org/images/epube/screen2.png (mobile)
-3. https://tt-rss.org/images/epube/screen3.png (settings)
+See here: https://git.tt-rss.org/fox/the-epube/wiki/Home
 
 Installation
 ============
