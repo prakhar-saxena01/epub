@@ -1,3 +1,5 @@
+'use strict';
+
 function cache_refresh(force) {
 	if ('serviceWorker' in navigator) {
 		localforage.getItem("epube.cache-timestamp").then(function(stamp) {

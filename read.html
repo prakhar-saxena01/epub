@@ -241,7 +241,9 @@
 </div>
 </div>
 
-<script>
+<script type='text/javascript'>
+	'use strict';
+
 	var _pagination_stored = 0;
 	var _last_position_sync = 0;
 
@@ -451,7 +453,7 @@
 		});
 
 		window.book = book;
-		rendered = book.renderTo("reader");
+		var rendered = book.renderTo("reader");
 
 		$('#settings-modal').on('shown.bs.modal', function() {
 

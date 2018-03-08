@@ -1,3 +1,5 @@
+'use strict';
+
 function offline_search(form) {
 	var query = $(".search_query").val();
 

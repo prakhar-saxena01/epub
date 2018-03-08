@@ -1,3 +1,5 @@
+'use strict';
+
 var _store_position = 0;
 var _enable_fullscreen = 0;
 

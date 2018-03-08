@@ -1,3 +1,5 @@
+'use strict';
+
 $.urlParam = function(name){
 	try {
 		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);

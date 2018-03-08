@@ -1,3 +1,5 @@
+'use strict';
+
 $(document).ready(function() {
 	$(window).on("click tap", function() {
 		if (parent.$(".header").is(":visible")) {

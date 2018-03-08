@@ -1,3 +1,5 @@
+'use strict';
+
 $(document).ready(function() {
 	$(window).on("mouseup touchend", function() {
 		if (!navigator.onLine) return;
