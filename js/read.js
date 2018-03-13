@@ -26,6 +26,33 @@ function toggle_ui() {
 		$(".header,.footer").fadeIn();
 }
 
+function open_lastread() {
+	localforage.getItem(cacheId("lastread")).then(function(item) {
+		console.log('lr local', item);
+
+		item = item || {};
+
+		if (item.cfi) book.gotoCfi(item.cfi);
+
+		if (navigator.onLine) {
+
+			$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
+				console.log('lr remote', data);
+
+				if (navigator.onLine && data) {
+					localforage.setItem(cacheId("lastread"),
+						{cfi: data.cfi, page: data.page, total: data.total});
+
+					if (item.cfi != data.cfi && (!item.page || data.page > item.page))
+						book.gotoCfi(data.cfi);
+
+				}
+			});
+		}
+
+	});
+}
+
 function next_page() {
 	_store_position = 1;
 
@@ -75,6 +102,22 @@ function hotkey_handler(e) {
 
 $(document).ready(function() {
 	document.onkeydown = hotkey_handler;
+
+	$(window).on("orientationchange", function(evt) {
+		console.log("orientationchange");
+
+		$(".loading").show();
+		$(".loading_message").html("Opening chapter...");
+
+		window.setTimeout(function() {
+			open_lastread();
+
+			window.setTimeout(function() {
+				$(".loading").hide();
+			}, 500);
+
+		}, 1000);
+	});
 
 	$(window).on("mouseup", function(evt) {
 		if (evt.button == 0) {
