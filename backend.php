@@ -4,6 +4,8 @@
 
 	header("Content-type: text/json");
 
+	define('STATIC_EXPIRES', 86400*14);
+
 	// let's not start a session if there's no cookie, login is impossible
 	// via backend anyway
 	if (!isset($_COOKIE['epube_sid'])) {
@@ -44,7 +46,8 @@
 				$base_filename = basename($filename);
 
 				header("Content-type: " . mime_content_type($filename));
-				header('Cache-control: max-age= ' . (86400*24));
+				header('Cache-control: max-age=' . STATIC_EXPIRES);
+				header("Expires: " . gmdate("D, d M Y H:i:s \G\M\T", time()+STATIC_EXPIRES));
 
 				readfile($filename);
 			} else {
