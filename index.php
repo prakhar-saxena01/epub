@@ -7,10 +7,6 @@
 		die("sessions/ directory is not writable.");
 	}
 
-	if (isset($_SERVER["PHP_AUTH_USER"])) {
-		die("HTTP Authentication is no longer supported, please see migration notes in git.");
-	}
-
 	if (!isset($_COOKIE['epube_sid'])) {
 		header("Location: login.php");
 		exit;
