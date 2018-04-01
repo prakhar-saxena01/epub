@@ -66,7 +66,11 @@
 		$sth->execute([$user]);
 
 		if ($line = $sth->fetch()) {
-			print "User already exists.\n";
+			print "User already exists, updating password.\n";
+
+			$sth = $dbh->prepare("UPDATE epube_users SET pass = ? WHERE user = ?");
+			$sth->execute([$pass_hash, $user]);
+
 		} else {
 			$sth = $dbh->prepare("INSERT INTO epube_users (user, pass)
 					VALUES (?, ?)");
