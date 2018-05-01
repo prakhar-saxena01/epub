@@ -4,10 +4,14 @@ function enable_swipes() {
 	$(window).off("swipeleft swiperight");
 
 	$(window).on("swipeleft", function() {
+		parent.show_ui(false);
+		parent.request_fullscreen();
 		parent.book.nextPage();
 	});
 
 	$(window).on("swiperight", function() {
+		parent.show_ui(false);
+		parent.request_fullscreen();
 		parent.book.prevPage();
 	});
 }
