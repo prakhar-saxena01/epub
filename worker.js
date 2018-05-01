@@ -22,6 +22,7 @@ const CACHE_URLS = [
 			'lib/zip.min.js',
 			'lib/epub.js',
 			'lib/localforage.min.js',
+			'lib/jquery.mobile.custom.js',
 			'lib/holder.min.js',
 			'lib/smartimages.js',
 			'lib/bootstrap/v3/css/bootstrap-theme.min.css',
