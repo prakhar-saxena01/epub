@@ -267,9 +267,12 @@ function apply_theme() {
 
 		var baseUrl = window.location.href.match(/^.*\//)[0];
 
-		if (!theme) theme = 'default';
+		if (!theme)
+			theme = 'default';
+		else
+			theme = theme.replace("/", "");
 
-		var themeUrl = baseUrl + "/themes/" + theme + ".css";
+		var themeUrl = baseUrl + "themes/" + theme + ".css";
 
 		$("#theme_css").attr("href", themeUrl);
 		$(book.renderer.doc).find("#theme_css").attr('href', themeUrl);
