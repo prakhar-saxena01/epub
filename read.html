@@ -380,9 +380,11 @@
 				else
 					theme = theme.replace("/", "");
 
-				$(book.renderer.doc.head)
-					.append($("<link rel='stylesheet' id='theme_css' type='text/css'>")
-						.attr('href', baseUrl + 'themes/' + theme + '.css'));
+				window.parent.$.get(baseUrl + 'themes/' + theme + '.css', function(data) {
+					$(book.renderer.doc.head)
+						.append($("<style type='text/css' id='theme_css' type='text/css'>")
+							.html(data));
+				});
 
 				if (callback) callback();
 			});

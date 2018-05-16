@@ -17,6 +17,8 @@ function enable_swipes() {
 }
 
 $(document).ready(function() {
+	console.log('setting taps');
+
 	$(window).on("click tap", function() {
 		if (parent.$(".header").is(":visible")) {
 			parent.show_ui(false);

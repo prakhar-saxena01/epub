@@ -275,7 +275,12 @@ function apply_theme() {
 		var themeUrl = baseUrl + "themes/" + theme + ".css";
 
 		$("#theme_css").attr("href", themeUrl);
-		$(book.renderer.doc).find("#theme_css").attr('href', themeUrl);
+		//$(book.renderer.doc).find("#theme_css").attr('href', themeUrl);
+
+		window.parent.$.get(baseUrl + 'themes/' + theme + '.css', function(data) {
+			$(book.renderer.doc).find("#theme_css").html(data);
+		});
+
 
 	});
 }
