@@ -248,6 +248,7 @@
 	var _last_position_sync = 0;
 
 	var _is_ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+	var _res_data = [];
 
 	const DEFAULT_FONT_SIZE = 16;
 	const DEFAULT_FONT_FAMILY = "Georgia";
@@ -258,6 +259,40 @@
 	}
 
 	$(document).ready(function() {
+		var res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js",
+			"css/transitions.css",
+			"js/reader.js", "css/reader.css", "js/dict.js",
+			"themes/default.css", "themes/mocca.css", "themes/night.css", "themes/plan9.css" ];
+
+		for (var i = 0; i < res_names.length; i++) {
+			fetch(res_names[i], {credentials: 'same-origin'}).then(function(resp) {
+				resp.text().then(function(data) {
+					_res_data[resp.url] = data;
+				});
+			});
+		}
+
+		check_resource_load(res_names, _res_data, 0);
+	});
+
+	function check_resource_load(res_names, res_data, attempt) {
+		console.log("check_resource_load", attempt, res_names.length, Object.keys(res_data).length);
+
+		if (attempt == 5) {
+			$(".loading_message").html("Unable to load resources.");
+			return;
+		}
+
+		if (res_names.length != Object.keys(res_data).length) {
+			window.setTimeout(function() {
+				check_resource_load(res_names, res_data, attempt+1);
+			}, 250);
+		} else {
+			init_reader();
+		}
+	}
+
+	function init_reader() {
 		apply_theme();
 
 		$(window).on('online', function() {
@@ -380,11 +415,17 @@
 				else
 					theme = theme.replace("/", "");
 
-				window.parent.$.get(baseUrl + 'themes/' + theme + '.css', function(data) {
+				/*window.parent.$.get(baseUrl + 'themes/' + theme + '.css', function(data) {
 					$(book.renderer.doc.head)
-						.append($("<style type='text/css' id='theme_css' type='text/css'>")
-							.html(data));
-				});
+						.append($("<style type='text/css' id='theme_css'>")
+							.text(data));
+				}); */
+
+				var theme_url = baseUrl + 'themes/' + theme + '.css';
+
+				$(book.renderer.doc.head)
+					.append($("<style type='text/css' id='theme_css'>")
+					.text(_res_data[theme_url]));
 
 				if (callback) callback();
 			});
@@ -394,7 +435,7 @@
 
 			var baseUrl = window.location.href.match(/^.*\//)[0];
 
-			EPUBJS.core.addScripts([baseUrl + "lib/bootstrap/v3/js/jquery.js",
+			/*EPUBJS.core.addScripts([baseUrl + "lib/bootstrap/v3/js/jquery.js",
 					baseUrl + "lib/jquery.mobile.custom.js",
 					baseUrl + "js/reader.js",
 					baseUrl + "js/dict.js" ], null, renderer.doc.head);
@@ -409,7 +450,7 @@
 			 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
 					}
 				}
-			});
+			}); */
 
         if (callback) callback();
 		}
@@ -815,7 +856,7 @@
 			}
 		});
 
-	});
+	}
 </script>
 
 </body>

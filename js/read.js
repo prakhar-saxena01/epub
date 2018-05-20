@@ -272,15 +272,11 @@ function apply_theme() {
 		else
 			theme = theme.replace("/", "");
 
-		var themeUrl = baseUrl + "themes/" + theme + ".css";
+		var theme_url = baseUrl + "themes/" + theme + ".css";
 
-		$("#theme_css").attr("href", themeUrl);
-		//$(book.renderer.doc).find("#theme_css").attr('href', themeUrl);
+		$("#theme_css").attr("href", theme_url);
 
-		window.parent.$.get(baseUrl + 'themes/' + theme + '.css', function(data) {
-			$(book.renderer.doc).find("#theme_css").html(data);
-		});
-
+		$(book.renderer.doc).find("#theme_css").text(_res_data[theme_url]);
 
 	});
 }
