@@ -259,6 +259,18 @@
 	}
 
 	$(document).ready(function() {
+		if ('serviceWorker' in navigator) {
+ 			 navigator.serviceWorker
+           .register('worker.js')
+           .then(function() {
+					console.log("service worker registered");
+
+					init_loader();
+				});
+		}
+	});
+
+	function init_loader() {
 		// we need to preload resources for reader iframe because it can't utilize our
 		// service worker because while offline it is created outside our base server context
 		var res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js",
@@ -275,7 +287,7 @@
 		}
 
 		check_resource_load(res_names, _res_data, 0);
-	});
+	}
 
 	function check_resource_load(res_names, res_data, attempt) {
 		console.log("check_resource_load", attempt, res_names.length, Object.keys(res_data).length);
@@ -311,14 +323,6 @@
 					}
 				});
 		});
-
-		if ('serviceWorker' in navigator) {
- 			 navigator.serviceWorker
-           .register('worker.js')
-           .then(function() {
-					console.log("service worker registered");
-				});
-		}
 
 		localforage.getItem(cacheId("book")).then(function(item) {
 
