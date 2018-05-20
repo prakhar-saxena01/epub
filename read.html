@@ -440,17 +440,19 @@
 					baseUrl + "js/reader.js",
 					baseUrl + "js/dict.js" ], null, renderer.doc.head);
 
-			EPUBJS.core.addCss(baseUrl + "css/reader.css", null, renderer.doc.head);
+			EPUBJS.core.addCss(baseUrl + "css/reader.css", null, renderer.doc.head); */
 
 			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
 				if (!notransitions) {
-					EPUBJS.core.addCss(baseUrl + "css/transitions.css", null, renderer.doc.head);
+					$(book.renderer.doc.head)
+						.append($("<style type='text/css' id='theme_css'>")
+						.text(_res_data[baseUrl + 'css/transitions.css']));
 
 					EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
 			 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
 					}
 				}
-			}); */
+			});
 
         if (callback) callback();
 		}
