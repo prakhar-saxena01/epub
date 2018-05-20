@@ -259,6 +259,8 @@
 	}
 
 	$(document).ready(function() {
+		// we need to preload resources for reader iframe because it can't utilize our
+		// service worker because while offline it is created outside our base server context
 		var res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js",
 			"css/transitions.css",
 			"js/reader.js", "css/reader.css", "js/dict.js",
@@ -266,7 +268,7 @@
 
 		for (var i = 0; i < res_names.length; i++) {
 			fetch(res_names[i], {credentials: 'same-origin'}).then(function(resp) {
-				resp.text().then(function(data) {
+				if (resp.status == 200) resp.text().then(function(data) {
 					_res_data[resp.url] = data;
 				});
 			});
