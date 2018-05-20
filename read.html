@@ -408,20 +408,14 @@
 		EPUBJS.Hooks.register("beforeChapterDisplay").applyTheme = function(callback, renderer) {
 
 			localforage.getItem("epube.theme").then(function(theme) {
-				var baseUrl = window.location.href.match(/^.*\//)[0];
+				var base_url = window.location.href.match(/^.*\//)[0];
 
 				if (!theme)
 					theme = 'default';
 				else
 					theme = theme.replace("/", "");
 
-				/*window.parent.$.get(baseUrl + 'themes/' + theme + '.css', function(data) {
-					$(book.renderer.doc.head)
-						.append($("<style type='text/css' id='theme_css'>")
-							.text(data));
-				}); */
-
-				var theme_url = baseUrl + 'themes/' + theme + '.css';
+				var theme_url = base_url + 'themes/' + theme + '.css';
 
 				$(book.renderer.doc.head)
 					.append($("<style type='text/css' id='theme_css'>")
@@ -433,20 +427,29 @@
 
 		EPUBJS.Hooks.register("beforeChapterDisplay").initDict = function(callback, renderer) {
 
-			var baseUrl = window.location.href.match(/^.*\//)[0];
+			var base_url = window.location.href.match(/^.*\//)[0];
+			var res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js", "js/reader.js", "js/dict.js" ];
+			var doc = book.renderer.doc;
 
-			/*EPUBJS.core.addScripts([baseUrl + "lib/bootstrap/v3/js/jquery.js",
-					baseUrl + "lib/jquery.mobile.custom.js",
-					baseUrl + "js/reader.js",
-					baseUrl + "js/dict.js" ], null, renderer.doc.head);
+			for (var i = 0; i < res_names.length; i++) {
 
-			EPUBJS.core.addCss(baseUrl + "css/reader.css", null, renderer.doc.head); */
+				// we need to create script element with proper context, that is inside the iframe
+				var elem = doc.createElement("script");
+				elem.type = 'text/javascript';
+				elem.text = _res_data[base_url + res_names[i]];
+
+				doc.head.appendChild(elem);
+			}
+
+			$(book.renderer.doc.head)
+				.append($("<style type='text/css'>")
+				.text(_res_data[base_url + 'css/reader.css']));
 
 			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
 				if (!notransitions) {
 					$(book.renderer.doc.head)
-						.append($("<style type='text/css' id='theme_css'>")
-						.text(_res_data[baseUrl + 'css/transitions.css']));
+						.append($("<style type='text/css'>")
+						.text(_res_data[base_url + 'css/transitions.css']));
 
 					EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
 			 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';

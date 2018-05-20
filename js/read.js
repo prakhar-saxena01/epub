@@ -265,14 +265,14 @@ function apply_theme() {
 	localforage.getItem("epube.theme").then(function(theme) {
 		console.log('theme', theme);
 
-		var baseUrl = window.location.href.match(/^.*\//)[0];
+		var base_url = window.location.href.match(/^.*\//)[0];
 
 		if (!theme)
 			theme = 'default';
 		else
 			theme = theme.replace("/", "");
 
-		var theme_url = baseUrl + "themes/" + theme + ".css";
+		var theme_url = base_url + "themes/" + theme + ".css";
 
 		$("#theme_css").attr("href", theme_url);
 
