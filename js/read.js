@@ -247,7 +247,7 @@ function save_and_close() {
 	if (navigator.onLine) {
 		$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
 			cfi: currentCfi }, function(data) {
-				window.location = "index.php";
+				window.location = $.urlParam("rt") ? "index.php?mode=" + $.urlParam("rt") : "index.php";
 			});
 	} else {
 		window.location = "index.php";

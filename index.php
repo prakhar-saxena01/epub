@@ -231,7 +231,7 @@
 		$is_read = false;
 
 		if ($line["epub_id"]) {
-			$read_link = "read.html?" . http_build_query(["id" => $line["epub_id"], "b" => $line["id"]]);
+			$read_link = "read.html?" . http_build_query(["id" => $line["epub_id"], "rt" => $mode, "b" => $line["id"]]);
 
 			$lastread_sth = $ldb->prepare("SELECT lastread, total_pages FROM epube_books, epube_pagination
 				WHERE epube_pagination.bookid = epube_books.bookid AND
