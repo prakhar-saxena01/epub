@@ -11,7 +11,8 @@
 }
 
 .thumb.read img {
-	opacity : 0.25;
+	opacity : 0.5;
+	filter : grayscale(100%);
 }
 
 .in_progress {
