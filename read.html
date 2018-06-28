@@ -466,14 +466,26 @@
         if (callback) callback();
 		}
 
-/*		EPUBJS.Renderer.prototype.onResized = function(e) {
+		EPUBJS.Renderer.prototype.onResized = function(e) {
 			this.trigger('renderer:beforeResize');
 
-			var width = $("#reader").width();
-			var height = $("#reader").height();
+			var width = this.container.clientWidth;
+			var height = this.container.clientHeight;
 
 			this.resize(width, height, false);
-		}; */
+
+			$(".loading").show();
+			$(".loading_message").html("Opening chapter...");
+
+			window.setTimeout(function() {
+				open_lastread();
+
+				window.setTimeout(function() {
+					$(".loading").hide();
+				}, 500);
+
+			}, 1000);
+		};
 
 		if (_is_ios) {
 			var book = ePub({
