@@ -466,27 +466,6 @@
         if (callback) callback();
 		}
 
-		EPUBJS.Renderer.prototype.onResized = function(e) {
-			this.trigger('renderer:beforeResize');
-
-			var width = this.container.clientWidth;
-			var height = this.container.clientHeight;
-
-			this.resize(width, height, false);
-
-			$(".loading").show();
-			$(".loading_message").html("Opening chapter...");
-
-			window.setTimeout(function() {
-				open_lastread();
-
-				window.setTimeout(function() {
-					$(".loading").hide();
-				}, 500);
-
-			}, 1000);
-		};
-
 		if (_is_ios) {
 			var book = ePub({
 				restore: false,
@@ -685,7 +664,19 @@
 		book.on("renderer:chapterUnloaded", function() {
 			$(".loading").show();
 			$(".loading_message").html("Opening chapter...");
+		});
 
+		book.on("renderer:resized", function() {
+			$(".loading").show();
+			$(".loading_message").html("Opening chapter...");
+
+			window.setTimeout(function() {
+				open_lastread();
+
+				window.setTimeout(function() {
+					$(".loading").hide();
+				}, 500);
+			}, 500);
 		});
 
 		book.on("renderer:chapterDisplayed", function() {

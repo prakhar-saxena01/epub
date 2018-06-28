@@ -103,22 +103,6 @@ function hotkey_handler(e) {
 $(document).ready(function() {
 	document.onkeydown = hotkey_handler;
 
-	$(window).on("orientationchange", function(evt) {
-		console.log("orientationchange");
-
-		$(".loading").show();
-		$(".loading_message").html("Opening chapter...");
-
-		window.setTimeout(function() {
-			open_lastread();
-
-			window.setTimeout(function() {
-				$(".loading").hide();
-			}, 500);
-
-		}, 1000);
-	});
-
 	$(window).on("mouseup", function(evt) {
 		if (evt.button == 0) {
 
