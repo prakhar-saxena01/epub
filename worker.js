@@ -29,9 +29,7 @@ const CACHE_URLS = [
 			'lib/bootstrap/v3/css/bootstrap.min.css',
 			'lib/bootstrap/v3/js/jquery.js',
 			'lib/bootstrap/v3/js/bootstrap.min.js',
-			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
-			'lib/qtip2/jquery.qtip.min.css',
-			'lib/qtip2/jquery.qtip.min.js',
+			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2'
 		];
 
 
