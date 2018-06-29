@@ -791,40 +791,43 @@
 			$(".chapter").html("");
 
 			try {
+				var location = book.rendition.currentLocation();
 
-				var cur_href = book.canonical(book.rendition.currentLocation().start.href);
-				var toc_entry = false;
+				if (location.start) {
+					var cur_href = book.canonical(location.start.href);
+					var toc_entry = false;
 
-				function iterate_sublist(row, nest) {
-					if (nest == 3) return false;
+					function iterate_sublist(row, nest) {
+						if (nest == 3) return false;
 
-					if (row.subitems) {
-						$.each(row.subitems, function (i, r) {
+						if (row.subitems) {
+							$.each(row.subitems, function (i, r) {
 
-							if (book.spine.get(r.href).canonical == cur_href) {
-								toc_entry = r;
-								return true;
-							}
+								if (book.spine.get(r.href).canonical == cur_href) {
+									toc_entry = r;
+									return true;
+								}
 
-							if (iterate_sublist(r, nest + 1))
-								return true;
-						});
+								if (iterate_sublist(r, nest + 1))
+									return true;
+							});
+						}
+
+						return false;
 					}
 
-					return false;
+					$.each(book.navigation.toc, function(i, a) {
+						if (book.spine.get(a.href).canonical == cur_href) {
+							toc_entry = a;
+							return;
+						}
+
+						if (iterate_sublist(a, 0)) return;
+
+					});
+
+					if (toc_entry) $(".chapter").html(toc_entry.label);
 				}
-
-				$.each(book.navigation.toc, function(i, a) {
-					if (book.spine.get(a.href).canonical == cur_href) {
-						toc_entry = a;
-						return;
-					}
-
-					if (iterate_sublist(a, 0)) return;
-
-				});
-
-				if (toc_entry) $(".chapter").html(toc_entry.label);
 
 			} catch (e) {
 				console.warn(e);
