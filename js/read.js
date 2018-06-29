@@ -1,11 +1,9 @@
 'use strict';
 
 var _store_position = 0;
-var _enable_fullscreen = 0;
 
 function request_fullscreen() {
-	if (_enable_fullscreen)
-		document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+	document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
 }
 
 function disable_fullscreen() {

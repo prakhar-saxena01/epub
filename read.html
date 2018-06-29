@@ -72,7 +72,7 @@
 					</div>
   				</div>
 
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<label class="col-sm-3 control-label"></label>
 					<div class="col-sm-9">
 						<div class="text-muted">Options take effect after reload:</div>
@@ -90,7 +90,7 @@
 							</label>
 						</div>
 					</div>
-  				</div>
+  				</div> -->
 
 				<hr/>
 
@@ -201,6 +201,10 @@
 			data-toggle="modal" data-target="#toc-modal">
 			<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 		</button> -->
+
+		<button class="btn btn-default btn-xs" onclick="request_fullscreen()">
+			<span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+		</button>
 
 		<button class="btn btn-default btn-xs"
 			data-toggle="modal" data-target="#settings-modal">
@@ -409,10 +413,6 @@
 			}
 		});
 
-		localforage.getItem("epube.enable-fullscreen").then(function(enable) {
-			_enable_fullscreen = enable;
-		});
-
 		var book = ePub({
 			restore: false,
 			minSpreadWidth: 961,
@@ -478,7 +478,7 @@
 				.append($("<style type='text/css'>")
 				.text(_res_data[base_url + 'css/reader.css']));
 
-			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
+			/*localforage.getItem("epube.disable-transitions").then(function(notransitions) {
 				if (!notransitions) {
 					$(contents.document.head)
 						.append($("<style type='text/css'>")
@@ -486,13 +486,13 @@
 
 					// TODO: fix transitions somehow
 
-					/*EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
+					EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
 			 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
-					}*/
+					}
 				}
-			});
+			}); */
 
-			localforage.getItem("epube.theme").then(function(theme) {
+			return localforage.getItem("epube.theme").then(function(theme) {
 
 				if (!theme) theme = 'default';
 
@@ -516,14 +516,6 @@
 					.attr("checked", disable)
 					.on("click", function() {
 						localforage.setItem("epube.disable-transitions", this.checked);
-					});
-			});
-
-			localforage.getItem("epube.enable-fullscreen").then(function(enable) {
-				$(".fullscreen_checkbox")
-					.attr("checked", enable)
-					.on("click", function() {
-						localforage.setItem("epube.enable-fullscreen", this.checked);
 					});
 			});
 
