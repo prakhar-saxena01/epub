@@ -1,6 +1,6 @@
 //importScripts('lib/localforage.min.js');
 
-const CACHE_NAME = 'epube-v1';
+const CACHE_NAME = 'epube-v2';
 const CACHE_URLS = [
 			'read.html',
 			'js/common.js',
