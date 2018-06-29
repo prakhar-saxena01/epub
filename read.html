@@ -14,7 +14,6 @@
 	<script src="lib/zip.min.js"></script>
 	<script src="lib/localforage.min.js"></script>
 	<script src="lib/epub.js"></script>
-	<script src="lib/smartimages.js"></script>
 	<script src="js/read.js"></script>
 	<script src="js/common.js"></script>
 
@@ -351,12 +350,12 @@
 				if (navigator.onLine) {
 					var book_url = "backend.php?op=download&id=" + $.urlParam("id");
 
-					RSVP.on('error', function(error) {
+					/*RSVP.on('error', function(error) {
 						if ($(".loading").is(":visible")) {
 							$(".loading_message").html("Unable to load book (remote).");
 						}
 						console.log(error);
-					});
+					});*/
 
 					fetch(book_url, {credentials: 'same-origin'}).then(function(resp) {
 
@@ -399,6 +398,10 @@
 						} else {
 							$(".loading_message").html("Unable to download book: " + resp.status + ".");
 						}
+					}).catch(function() {
+						if ($(".loading").is(":visible")) {
+							$(".loading_message").html("Unable to load book (remote).");
+						}
 					});
 
 				} else {
@@ -411,7 +414,7 @@
 			_enable_fullscreen = enable;
 		});
 
-		EPUBJS.Hooks.register("beforeChapterDisplay").applyTheme = function(callback, renderer) {
+		/*EPUBJS.Hooks.register("beforeChapterDisplay").applyTheme = function(callback, renderer) {
 
 			localforage.getItem("epube.theme").then(function(theme) {
 				var base_url = window.location.href.match(/^.*\//)[0];
@@ -464,7 +467,7 @@
 			});
 
         if (callback) callback();
-		}
+		}*/
 
 /*		EPUBJS.Renderer.prototype.onResized = function(e) {
 			this.trigger('renderer:beforeResize');
@@ -488,30 +491,36 @@
 			});
 		}
 
-		var fontSize;
-		var fontFamily;
-		var lineHeight;
-		var themeName;
-
-		Promise.all([
-			localforage.getItem("epube.fontSize"),
-			localforage.getItem("epube.fontFamily"),
-			localforage.getItem("epube.lineHeight"),
-			localforage.getItem("epube.theme")
-		]).then(function(res) {
-			fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
-			fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
-			lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
-			themeName = res[3] ? res[3] : 'default';
-
-			book.setStyle("fontSize", fontSize);
-			book.setStyle("fontFamily", fontFamily);
-			book.setStyle("lineHeight", lineHeight);
-			book.setStyle("textAlign", "justify");
-		});
-
 		window.book = book;
-		var rendered = book.renderTo("reader");
+
+		var rendition = book.renderTo("reader", {width: '100%', height: '100%'});
+		var displayed = rendition.display();
+
+		rendition.hooks.content.register(function(contents) {
+
+			var fontSize;
+			var fontFamily;
+			var lineHeight;
+			var themeName;
+
+			Promise.all([
+				localforage.getItem("epube.fontSize"),
+				localforage.getItem("epube.fontFamily"),
+				localforage.getItem("epube.lineHeight"),
+				localforage.getItem("epube.theme")
+			]).then(function(res) {
+				fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
+				fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
+				lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
+				themeName = res[3] ? res[3] : 'default';
+
+				contents.css("font-size", fontSize, 1);
+				contents.css("font-family", fontFamily, 1);
+				contents.css("line-height", lineHeight, 1);
+				contents.css("text-align", "justify", 1);
+			});
+
+		});
 
 		$('#settings-modal').on('shown.bs.modal', function() {
 
@@ -754,12 +763,12 @@
 
 		book.on("renderer:keydown", hotkey_handler);
 
-		book.getMetadata().then(function(meta){
+		/*book.getMetadata().then(function(meta){
 			document.title = meta.bookTitle + " – " + meta.creator;
 			$(".title").html("<b>" + meta.bookTitle + "</b> - " + meta.creator);
-		});
+		});*/
 
-		rendered.then(function() {
+		/*book.ready.then(function() {
 
 			localforage.getItem(cacheId("pagination")).then(function(pageList) {
 
@@ -784,10 +793,46 @@
 				}
 			});
 
-		});
+		}); */
 
-		book.pageListReady.then(function(pageList) {
-			if (!_pagination_stored) {
+		book.ready.then(function() {
+
+			var meta = book.package.metadata;
+
+			document.title = meta.title + " – " + meta.creator;
+			$(".title").html("<b>" + meta.title + "</b> - " + meta.creator);
+
+			return localforage.getItem(cacheId("locations")).then(function(locations) {
+
+				// legacy format is array of objects {cfi: ..., page: ...}
+				if (locations && typeof locations[0] == "string") {
+					_pagination_stored = 1;
+					return book.locations.load(locations);
+				} else {
+					var url = "backend.php?op=getpagination&id=" + encodeURIComponent($.urlParam("id"));
+
+					return fetch(url, {credentials:'same-origin'}).then(function(resp) {
+
+						if (resp.ok) {
+							return resp.json().then(function(locations) {
+								if (locations && typeof locations[0] == "string") {
+									_pagination_stored = 1;
+									return book.locations.load(locations);
+								} else {
+									return book.locations.generate(1600);
+								}
+							});
+						} else {
+							return book.locations.generate(1600);
+						}
+					}).catch(function() {
+						return book.locations.generate(1600);
+					});
+				}
+
+			});
+
+			/*if (!_pagination_stored) {
 				if (navigator.onLine) {
 					$.post("backend.php", { op: "storepagination", id: $.urlParam("id"),
 						payload: JSON.stringify(pageList), total: book.pagination.totalPages });
@@ -822,27 +867,42 @@
 					book.gotoPage(page);
 				}
 
-			});
+			}); */
+		}).then(function(locations) {
+
+			if (locations && !_pagination_stored) {
+				if (navigator.onLine) {
+					$.post("backend.php", { op: "storepagination", id: $.urlParam("id"),
+						payload: JSON.stringify(locations), total: 100});
+				}
+
+				localforage.setItem(cacheId("locations"), locations);
+
+			}
+
+			$(".loading").hide();
+
 
 		});
 
-		book.on('book:pageChanged', function(location) {
+		rendition.on('relocated', function(location) {
 
-			$("#cur_page").html(location.anchorPage);
+			/*$("#cur_page").html(location.anchorPage);
 
 			var total = book.pagination.totalPages;
 
 			if (book.pagination.totalPages > 0) {
 				var pct = parseInt(location.anchorPage / book.pagination.totalPages * 100);
 				$("#page_pct").html(pct + "%");
-			}
+			} */
+
+			var currentPage = book.locations.percentageFromCfi(location.start.cfi);
+			var currentCfi = location.start.cfi;
+
+			$("#page_pct").html(currentPage + '%');
 
 			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 15) {
 				console.log("storing lastread");
-
-				var currentCfi = book.getCurrentLocationCfi();
-				var currentPage = location.anchorPage;
-				var totalPages = book.pagination.totalPages;
 
 				if (navigator.onLine) {
 
@@ -856,13 +916,12 @@
 					});
 
 					_store_position = 0;
-
 				} else {
 					_last_position_sync = 0;
 				}
 
 				localforage.setItem(cacheId("lastread"),
-					{cfi: currentCfi, page: currentPage, total: totalPages});
+					{cfi: currentCfi, page: currentPage, total: 100});
 
 			}
 		});

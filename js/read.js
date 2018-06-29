@@ -56,14 +56,14 @@ function open_lastread() {
 function next_page() {
 	_store_position = 1;
 
-	window.book.nextPage();
+	window.book.rendition.next();
 
 	show_ui(false);
 	request_fullscreen();
 }
 
 function prev_page() {
-	window.book.prevPage();
+	window.book.rendition.prev();
 
 	show_ui(false);
 	request_fullscreen();
@@ -276,7 +276,7 @@ function apply_theme() {
 
 		$("#theme_css").attr("href", theme_url);
 
-		$(book.renderer.doc).find("#theme_css").text(_res_data[theme_url]);
+		//$(book.renderer.doc).find("#theme_css").text(_res_data[theme_url]);
 
 	});
 }
