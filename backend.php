@@ -217,7 +217,7 @@
 				$id = $line["id"];
 				$lastread = (int) $line["lastread"];
 
-				if ($lastread < $page || $page == -1) {
+				if ($lastread <= $page || $page == -1) {
 
 					if ($page == -1) $page = 0;
 
