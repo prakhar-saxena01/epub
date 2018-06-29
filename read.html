@@ -762,7 +762,7 @@
 					});
 
 					if (toc_entry && toc_entry.label.trim())
-						$(".chapter").html(toc_entry.label);
+						$(".chapter").append("&nbsp;" + toc_entry.label);
 				}
 
 			} catch (e) {
