@@ -3,7 +3,15 @@
 var _store_position = 0;
 
 function request_fullscreen() {
-	document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+	var element = document.documentElement;
+
+	if (element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if (element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+	} else if (element.webkitRequestFullScreen) {
+		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+	}
 }
 
 function disable_fullscreen() {

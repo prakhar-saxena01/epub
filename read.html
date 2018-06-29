@@ -723,7 +723,7 @@
 		});
 
 		rendition.on('rendered', function(chapter) {
-			$(".chapter").html("");
+			$(".chapter").html($("<span>").addClass("glyphicon glyphicon-th-list"));
 
 			try {
 				var location = book.rendition.currentLocation();
@@ -761,7 +761,8 @@
 
 					});
 
-					if (toc_entry) $(".chapter").html(toc_entry.label);
+					if (toc_entry && toc_entry.label.trim())
+						$(".chapter").html(toc_entry.label);
 				}
 
 			} catch (e) {

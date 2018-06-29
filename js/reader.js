@@ -20,7 +20,6 @@ $(document).ready(function() {
 			parent.show_ui(false);
 		} else {
 			parent.show_ui(true);
-			parent.disable_fullscreen();
 		}
 	});
 
