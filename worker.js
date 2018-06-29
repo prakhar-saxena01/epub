@@ -1,6 +1,7 @@
 //importScripts('lib/localforage.min.js');
 
-const CACHE_NAME = 'epube-v2';
+const CACHE_PREFIX = 'epube';
+const CACHE_NAME = CACHE_PREFIX + '-v2';
 const CACHE_URLS = [
 			'read.html',
 			'js/common.js',
@@ -39,6 +40,18 @@ self.addEventListener('install', function(event) {
 		return cache.addAll(CACHE_URLS.map(url => new Request(url, {credentials: 'same-origin'})));
     })
   );
+});
+
+self.addEventListener('activate', function(event) {
+	event.waitUntil(
+		caches.keys().then(function(keyList) {
+			return Promise.all(keyList.map(function(key) {
+				if (key.indexOf(CACHE_PREFIX) != -1 && key != CACHE_NAME) {
+					return caches.delete(key);
+				}
+	      }));
+	    })
+    );
 });
 
 function send_message(client, msg) {
