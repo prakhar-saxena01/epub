@@ -746,42 +746,6 @@
 
 			});
 
-			/*if (!_pagination_stored) {
-				if (navigator.onLine) {
-					$.post("backend.php", { op: "storepagination", id: $.urlParam("id"),
-						payload: JSON.stringify(pageList), total: book.pagination.totalPages });
-				}
-
-				localforage.setItem(cacheId("pagination"), pageList);
-			}
-
-			var curPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
-
-			$("#total_pages").html(book.pagination.totalPages);
-			$("#cur_page").html(curPage);
-
-			if (book.pagination.totalPages > 0) {
-				var pct = parseInt(curPage / book.pagination.totalPages * 100);
-				$("#page_pct").html(pct + "%");
-			}
-
-			open_lastread();
-
-			window.setTimeout(function() {
-				$(".loading").hide();
-			}, 1500);
-
-			$(".location").click(function() {
-				var current = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
-				var total = book.pagination.totalPages;
-
-				var page = prompt("Jump to location [1-" + total + "]", current);
-
-				if (page) {
-					book.gotoPage(page);
-				}
-
-			}); */
 		}).then(function(locations) {
 
 			if (locations && !_pagination_stored) {
@@ -806,12 +770,6 @@
 			});
 
 			open_lastread();
-
-			window.setTimeout(function() {
-				$(".loading").hide();
-			}, 1500);
-
-
 		});
 
 		rendition.on("keyup", hotkey_handler);
@@ -874,6 +832,8 @@
 		});
 
 		rendition.on('relocated', function(location) {
+
+			$(".loading").hide();
 
 			var currentCfi = location.start.cfi;
 			var currentPage = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
