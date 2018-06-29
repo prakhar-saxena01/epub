@@ -594,10 +594,10 @@
 						var a = $("<a>")
 							.attr('href', '#')
 							.html(row.label + " <b class='pull-right'>" +
-								book.pagination.pageFromCfi(row.cfi) + "</b>")
-								.attr('data-cfi', row.cfi)
-								.click(function() {
-								book.gotoCfi(a.attr('data-cfi'));
+								"FIXME" + "</b>")
+							.attr('data-href', row.href)
+							.click(function() {
+								book.rendition.display(a.attr('data-href'));
 							});
 
 						sublist.append($("<li>").append(a));
@@ -610,7 +610,7 @@
 				}
 			}
 
-			book.getToc().then(function(toc) {
+				var toc = book.navigation.toc;
 
 				var list = $(".toc_list");
 				list.html("");
@@ -622,10 +622,10 @@
 						var a = $("<a>")
 							.attr('href', '#')
 							.html(row.label + " <b class='pull-right'>" +
-								book.pagination.pageFromCfi(row.cfi) + "</b>")
-								.attr('data-cfi', row.cfi)
-								.click(function() {
-								book.gotoCfi(a.attr('data-cfi'));
+								"FIXME" + "</b>")
+							.attr('data-href', row.href)
+							.click(function() {
+								book.rendition.display(a.attr('data-href'));
 							});
 
 						list.append($("<li>").append(a));
@@ -660,16 +660,8 @@
 				}
 
 			});
-		})
 
-		/*rendition.hooks.unloaded.register(function() {
-			console.log('unloaded');
-
-			$(".loading").show();
-			$(".loading_message").html("Opening chapter...");
-		});*/
-
-		book.on("renderer:chapterDisplayed", function() {
+		/*book.on("renderer:chapterDisplayed", function() {
 			$(".chapter").html("");
 
 			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
@@ -716,7 +708,7 @@
 			console.log('toc', toc_entry);
 
 			if (toc_entry) $(".chapter").html(toc_entry.label);
-		});
+		}); */
 
 		book.ready.then(function() {
 
@@ -824,6 +816,50 @@
 		});
 
 		rendition.on("keyup", hotkey_handler);
+
+		rendition.on('rendered', function(chapter) {
+			$(".chapter").html("");
+
+			try {
+
+				var cur_href = book.canonical(book.rendition.currentLocation().start.href);
+				var toc_entry = false;
+
+				function iterate_sublist(row, nest) {
+					if (nest == 3) return false;
+
+					if (row.subitems) {
+						$.each(row.subitems, function (i, r) {
+
+							if (book.spine.get(r.href).canonical == cur_href) {
+								toc_entry = r;
+								return true;
+							}
+
+							if (iterate_sublist(r, nest + 1))
+								return true;
+						});
+					}
+
+					return false;
+				}
+
+				$.each(book.navigation.toc, function(i, a) {
+					if (book.spine.get(a.href).canonical == cur_href) {
+						toc_entry = a;
+						return;
+					}
+
+					if (iterate_sublist(a, 0)) return;
+
+				});
+
+				if (toc_entry) $(".chapter").html(toc_entry.label);
+
+			} catch (e) {
+				console.warn(e);
+			}
+		});
 
 		rendition.on('relocated', function(location) {
 
