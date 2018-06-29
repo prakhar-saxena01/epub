@@ -32,7 +32,7 @@ function open_lastread() {
 
 		item = item || {};
 
-		if (item.cfi) book.gotoCfi(item.cfi);
+		if (item.cfi) book.rendition.display(item.cfi);
 
 		if (navigator.onLine) {
 
@@ -44,7 +44,7 @@ function open_lastread() {
 						{cfi: data.cfi, page: data.page, total: data.total});
 
 					if (item.cfi != data.cfi && (!item.page || data.page > item.page))
-						book.gotoCfi(data.cfi);
+						book.rendition.display(data.cfi);
 
 				}
 			});
@@ -205,7 +205,7 @@ function apply_styles() {
 
 function clear_lastread() {
 	if (confirm("Clear stored last read location?")) {
-		var total = window.book.pagination.totalPages;
+		var total = book.locations.length();
 
 		if (navigator.onLine) {
 			$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
@@ -221,8 +221,8 @@ function clear_lastread() {
 
 function mark_as_read() {
 	if (confirm("Mark book as read?")) {
-		var total = window.book.pagination.totalPages;
-		var lastCfi = book.pagination.cfiFromPage(total);
+		var total = book.locations.length();
+		var lastCfi = book.locations.cfiFromPercentage(1);
 
 		if (navigator.onLine) {
 			$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
@@ -237,9 +237,11 @@ function mark_as_read() {
 }
 
 function save_and_close() {
-	var currentPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
-	var currentCfi = book.getCurrentLocationCfi();
-	var totalPages = book.pagination.totalPages;
+	var location = book.rendition.currentLocation();
+
+	var currentPage = location.start.location;
+	var currentCfi = location.start.cfi;
+	var totalPages = book.locations.length();
 
 	localforage.setItem(cacheId("lastread"),
 		{cfi: currentCfi, page: currentPage, total: totalPages});
