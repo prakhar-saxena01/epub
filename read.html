@@ -226,8 +226,7 @@
 <div class="footer">
 	<div class="chapter" data-toggle="modal" data-target="#toc-modal"></div>
 	<div class="location">
-		<span id="cur_page">?</span> / <span id="total_pages">?</span>
-		(<span id="page_pct">?</span>)
+		<span id="page_pct">?</span>
 	</div>
 </div>
 
@@ -817,6 +816,19 @@
 
 		rendition.on("keyup", hotkey_handler);
 
+		rendition.on('resized', function() {
+			console.log('resized');
+
+			$(".loading").show();
+			$(".loading_message").html("Opening chapter...");
+
+			window.setTimeout(function() {
+				open_lastread();
+
+				$(".loading").hide();
+			}, 250);
+		});
+
 		rendition.on('rendered', function(chapter) {
 			$(".chapter").html("");
 
@@ -868,8 +880,6 @@
 			var totalPages = 100;
 			var pct = book.locations.percentageFromCfi(currentCfi);
 
-			$("#cur_page").html(currentPage);
-			$("#total_pages").html(totalPages);
 			$("#page_pct").html(parseInt(pct*100) + '%');
 
 			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 15) {
