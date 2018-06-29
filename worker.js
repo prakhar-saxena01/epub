@@ -24,7 +24,6 @@ const CACHE_URLS = [
 			'lib/localforage.min.js',
 			'lib/jquery.mobile.custom.js',
 			'lib/holder.min.js',
-			'lib/smartimages.js',
 			'lib/bootstrap/v3/css/bootstrap-theme.min.css',
 			'lib/bootstrap/v3/css/bootstrap.min.css',
 			'lib/bootstrap/v3/js/jquery.js',

@@ -55,16 +55,12 @@ function next_page() {
 	_store_position = 1;
 
 	window.book.rendition.next();
-
 	show_ui(false);
-	request_fullscreen();
 }
 
 function prev_page() {
 	window.book.rendition.prev();
-
 	show_ui(false);
-	request_fullscreen();
 }
 
 function hotkey_handler(e) {

@@ -170,7 +170,7 @@
 
 			<form class="form-horizontal" onsubmit="return false;">
 				<div class="form-group">
-					<label class="col-sm-4 control-label">Search (active chapter)</label>
+					<label class="col-sm-4 control-label">Search</label>
 					<div class="col-sm-8">
 						<input type="search" class="form-control search_input">
 					</div>
@@ -649,55 +649,6 @@
 
 			});
 
-		/*book.on("renderer:chapterDisplayed", function() {
-			$(".chapter").html("");
-
-			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
-				if (notransitions) {
-					$(".loading").hide();
-				} else {
-					window.setTimeout(function() {
-						$(".loading").hide();
-					}, 500);
-				}
-			} );
-
-			var toc_entry = false;
-
-			function iterate_sublist(row, nest) {
-				if (nest == 3) return false;
-
-				if (row.subitems) {
-					$.each(row.subitems, function (i, r) {
-
-						if (r.spinePos == book.currentChapter.spinePos) {
-							toc_entry = r;
-							return true;
-						}
-
-						if (iterate_sublist(r, nest + 1))
-							return true;
-					});
-				}
-
-				return false;
-			}
-
-			$.each(book.toc, function(i, a) {
-				if (a.spinePos == book.currentChapter.spinePos) {
-					toc_entry = a;
-					return;
-				}
-
-				if (iterate_sublist(a, 0)) return;
-
-			});
-
-			console.log('toc', toc_entry);
-
-			if (toc_entry) $(".chapter").html(toc_entry.label);
-		}); */
-
 		book.ready.then(function() {
 
 			var meta = book.package.metadata;
@@ -824,6 +775,10 @@
 		});
 
 		rendition.on('relocated', function(location) {
+
+			// locations not generated yet
+			if (book.locations.length() == 0)
+				return;
 
 			$(".loading").hide();
 
