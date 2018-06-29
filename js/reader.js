@@ -6,13 +6,13 @@ function enable_swipes() {
 	$(window).on("swipeleft", function() {
 		parent.show_ui(false);
 		parent.request_fullscreen();
-		parent.book.nextPage();
+		parent.book.rendition.next();
 	});
 
 	$(window).on("swiperight", function() {
 		parent.show_ui(false);
 		parent.request_fullscreen();
-		parent.book.prevPage();
+		parent.book.rendition.prev();
 	});
 }
 
