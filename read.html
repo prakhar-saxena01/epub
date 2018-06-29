@@ -414,31 +414,56 @@
 			_enable_fullscreen = enable;
 		});
 
-		/*EPUBJS.Hooks.register("beforeChapterDisplay").applyTheme = function(callback, renderer) {
+		var book = ePub({
+			restore: false,
+			minSpreadWidth: 961,
+		});
 
-			localforage.getItem("epube.theme").then(function(theme) {
-				var base_url = window.location.href.match(/^.*\//)[0];
+		window.book = book;
 
-				if (!theme)
-					theme = 'default';
-				else
-					theme = theme.replace("/", "");
+		var rendition = book.renderTo("reader", {width: '100%', height: '100%'});
+		var displayed = rendition.display();
 
-				var theme_url = base_url + 'themes/' + theme + '.css';
+		var fontSize;
+		var fontFamily;
+		var lineHeight;
+		var themeName;
 
-				$(book.renderer.doc.head)
-					.append($("<style type='text/css' id='theme_css'>")
-					.text(_res_data[theme_url]));
+		Promise.all([
+			localforage.getItem("epube.fontSize"),
+			localforage.getItem("epube.fontFamily"),
+			localforage.getItem("epube.lineHeight"),
+			localforage.getItem("epube.theme")
+		]).then(function(res) {
+			fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
+			fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
+			lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
+			themeName = res[3] ? res[3] : 'default';
 
-				if (callback) callback();
+			rendition.themes.default({
+				html: {
+					'font-size': fontSize,
+					'font-family': fontFamily,
+					'line-height': lineHeight,
+		      }
 			});
-		}
 
-		EPUBJS.Hooks.register("beforeChapterDisplay").initDict = function(callback, renderer) {
+		});
+
+		rendition.hooks.content.register(function(contents) {
+
+			$("#reader iframe")[0].contentWindow.onwheel = function(event) {
+				if (event.deltaY > 0) {
+					next_page();
+				} else if (event.deltaY < 0) {
+					prev_page();
+				}
+			};
 
 			var base_url = window.location.href.match(/^.*\//)[0];
-			var res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js", "js/reader.js", "js/dict.js" ];
-			var doc = book.renderer.doc;
+			var res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js",
+				"js/reader.js", "js/dict.js" ];
+			var doc = contents.document;
 
 			for (var i = 0; i < res_names.length; i++) {
 
@@ -450,74 +475,33 @@
 				doc.head.appendChild(elem);
 			}
 
-			$(book.renderer.doc.head)
+			$(contents.document.head)
 				.append($("<style type='text/css'>")
 				.text(_res_data[base_url + 'css/reader.css']));
 
 			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
 				if (!notransitions) {
-					$(book.renderer.doc.head)
+					$(contents.document.head)
 						.append($("<style type='text/css'>")
 						.text(_res_data[base_url + 'css/transitions.css']));
 
-					EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
+					// TODO: fix transitions somehow
+
+					/*EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
 			 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
-					}
+					}*/
 				}
 			});
 
-        if (callback) callback();
-		}*/
+			localforage.getItem("epube.theme").then(function(theme) {
 
-/*		EPUBJS.Renderer.prototype.onResized = function(e) {
-			this.trigger('renderer:beforeResize');
+				if (!theme) theme = 'default';
 
-			var width = $("#reader").width();
-			var height = $("#reader").height();
+				var theme_url = base_url + 'themes/' + theme + '.css';
 
-			this.resize(width, height, false);
-		}; */
-
-		if (_is_ios) {
-			var book = ePub({
-				restore: false,
-				width: $("#reader").width(),
-				height: $("#reader").height(),
-			});
-		} else {
-			var book = ePub({
-				restore: false,
-				minSpreadWidth: 961,
-			});
-		}
-
-		window.book = book;
-
-		var rendition = book.renderTo("reader", {width: '100%', height: '100%'});
-		var displayed = rendition.display();
-
-		rendition.hooks.content.register(function(contents) {
-
-			var fontSize;
-			var fontFamily;
-			var lineHeight;
-			var themeName;
-
-			Promise.all([
-				localforage.getItem("epube.fontSize"),
-				localforage.getItem("epube.fontFamily"),
-				localforage.getItem("epube.lineHeight"),
-				localforage.getItem("epube.theme")
-			]).then(function(res) {
-				fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
-				fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
-				lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
-				themeName = res[3] ? res[3] : 'default';
-
-				contents.css("font-size", fontSize, 1);
-				contents.css("font-family", fontFamily, 1);
-				contents.css("line-height", lineHeight, 1);
-				contents.css("text-align", "justify", 1);
+				$(contents.document.head)
+					.append($("<style type='text/css' id='theme_css'>")
+					.text(_res_data[theme_url]));
 			});
 
 		});
@@ -589,7 +573,6 @@
 
 		$('#dict-modal').on('shown.bs.modal', function() {
 			$(".dict_result").scrollTop(0);
-
 		})
 
 		$(".dict_search_btn").on("click", function() {
@@ -679,11 +662,12 @@
 			});
 		})
 
-		book.on("renderer:chapterUnloaded", function() {
+		/*rendition.hooks.unloaded.register(function() {
+			console.log('unloaded');
+
 			$(".loading").show();
 			$(".loading_message").html("Opening chapter...");
-
-		});
+		});*/
 
 		book.on("renderer:chapterDisplayed", function() {
 			$(".chapter").html("");
@@ -733,67 +717,6 @@
 
 			if (toc_entry) $(".chapter").html(toc_entry.label);
 		});
-
-		book.on("renderer:chapterDisplayed", function() {
-			$("#reader iframe")[0].contentWindow.onwheel = function(event) {
-
-				if (event.deltaY > 0) {
-					next_page();
-				} else if (event.deltaY < 0) {
-					prev_page();
-				}
-
-			};
-		});
-
-		/* book.on("renderer:chapterDisplayed", function() {
-
-			// variables defined above after reading from localforage
-
-			$("#reader iframe").contents().find("p")
-				.css("background", "")
-				.css("color", "")
-				.css("background-color", "")
-				.css("font-family", fontFamily)
-				.css("font-size", fontSize)
-				.css("line-height", lineHeight)
-				.css("text-align", "justify");
-
-		}); */
-
-		book.on("renderer:keydown", hotkey_handler);
-
-		/*book.getMetadata().then(function(meta){
-			document.title = meta.bookTitle + " – " + meta.creator;
-			$(".title").html("<b>" + meta.bookTitle + "</b> - " + meta.creator);
-		});*/
-
-		/*book.ready.then(function() {
-
-			localforage.getItem(cacheId("pagination")).then(function(pageList) {
-
-				if (pageList && book.loadPagination(pageList).length > 0) {
-					_pagination_stored = 1;
-				} else {
-					var url = "backend.php?op=getpagination&id=" + encodeURIComponent($.urlParam("id"));
-
-					EPUBJS.core.request(url).then(function(pageList) {
-						console.log("pagination: requesting remote: ");
-
-						if (book.loadPagination(pageList).length > 0) {
-							localforage.setItem(cacheId("pagination"), JSON.parse(pageList));
-							_pagination_stored = 1;
-						} else {
-							book.generatePagination(1020, 2400);
-						}
-
-					}).catch(function() {
-						book.generatePagination(1020, 2400);
-					});
-				}
-			});
-
-		}); */
 
 		book.ready.then(function() {
 
@@ -900,11 +823,13 @@
 
 		});
 
+		rendition.on("keyup", hotkey_handler);
+
 		rendition.on('relocated', function(location) {
 
-			var currentPage = location.start.location;
 			var currentCfi = location.start.cfi;
-			var totalPages = book.locations.length();
+			var currentPage = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
+			var totalPages = 100;
 			var pct = book.locations.percentageFromCfi(currentCfi);
 
 			$("#cur_page").html(currentPage);

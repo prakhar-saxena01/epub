@@ -185,27 +185,22 @@ function apply_styles() {
 		var lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
 		var themeName = res[3] ? res[3] : false;
 
-		book.setStyle("fontSize", fontSize);
-		book.setStyle("fontFamily", fontFamily);
-		book.setStyle("lineHeight", lineHeight);
-		book.setStyle("textAlign", "justify");
+		window.book.rendition.themes.default({
+			html: {
+				'font-size': fontSize,
+				'font-family': fontFamily,
+				'line-height': lineHeight,
+	      }
+		});
 
-/*		$("#reader iframe").contents().find("p")
-			.css("background", "")
-			.css("color", "")
-			.css("background-color", "")
-			.css("font-family", fontFamily)
-			.css("font-size", fontSize)
-			.css("line-height", lineHeight)
-			.css("text-align", "justify"); */
-
+		apply_theme();
 	});
 
 }
 
 function clear_lastread() {
 	if (confirm("Clear stored last read location?")) {
-		var total = book.locations.length();
+		var total = window.book.locations.length();
 
 		if (navigator.onLine) {
 			$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
@@ -221,8 +216,8 @@ function clear_lastread() {
 
 function mark_as_read() {
 	if (confirm("Mark book as read?")) {
-		var total = book.locations.length();
-		var lastCfi = book.locations.cfiFromPercentage(1);
+		var total = 100;
+		var lastCfi = window.book.locations.cfiFromPercentage(1);
 
 		if (navigator.onLine) {
 			$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
@@ -237,11 +232,11 @@ function mark_as_read() {
 }
 
 function save_and_close() {
-	var location = book.rendition.currentLocation();
+	var location = window.book.rendition.currentLocation();
 
-	var currentPage = location.start.location;
 	var currentCfi = location.start.cfi;
-	var totalPages = book.locations.length();
+	var currentPage = parseInt(window.book.locations.percentageFromCfi(currentCfi) * 100);
+	var totalPages = 100;
 
 	localforage.setItem(cacheId("lastread"),
 		{cfi: currentCfi, page: currentPage, total: totalPages});
@@ -259,7 +254,7 @@ function save_and_close() {
 function change_theme(elem) {
 	var theme = $(elem).val();
 	localforage.setItem("epube.theme", theme).then(function() {
-		apply_theme();
+		apply_styles();
 	});
 }
 
@@ -269,16 +264,15 @@ function apply_theme() {
 
 		var base_url = window.location.href.match(/^.*\//)[0];
 
-		if (!theme)
-			theme = 'default';
-		else
-			theme = theme.replace("/", "");
+		if (!theme) theme = 'default';
 
 		var theme_url = base_url + "themes/" + theme + ".css";
 
 		$("#theme_css").attr("href", theme_url);
 
-		//$(book.renderer.doc).find("#theme_css").text(_res_data[theme_url]);
+		$.each(window.book.rendition.getContents(), function(i,c) {
+			$(c.document).find("#theme_css").text(_res_data[theme_url])
+		});
 
 	});
 }
@@ -300,7 +294,7 @@ function search() {
 				.attr('data-cfi', row.cfi)
 				.attr('data-id', row.id)
 				.click(function() {
-						window.book.gotoCfi(a.attr('data-cfi'));
+						window.book.rendition.display(a.attr('data-cfi'));
 				});
 
 			list.append($("<li>").append(a));
