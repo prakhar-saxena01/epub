@@ -4,11 +4,11 @@ function enable_swipes() {
 	$(window).off("swipeleft swiperight");
 
 	$(window).on("swipeleft", function() {
-		parent.prev_page();
+		parent.next_page();
 	});
 
 	$(window).on("swiperight", function() {
-		parent.next_page();
+		parent.prev_page();
 	});
 }
 
