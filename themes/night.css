@@ -1,4 +1,4 @@
-body, .loading {
+body, .loading, html:-webkit-full-screen {
 	background : black;
 	color : #ccc;
 }

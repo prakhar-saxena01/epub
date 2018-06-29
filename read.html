@@ -14,7 +14,6 @@
 	<script src="lib/zip.min.js"></script>
 	<script src="lib/localforage.min.js"></script>
 	<script src="lib/epub.js"></script>
-	<script src="lib/smartimages.js"></script>
 	<script src="js/read.js"></script>
 	<script src="js/common.js"></script>
 
@@ -73,7 +72,7 @@
 					</div>
   				</div>
 
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<label class="col-sm-3 control-label"></label>
 					<div class="col-sm-9">
 						<div class="text-muted">Options take effect after reload:</div>
@@ -91,7 +90,7 @@
 							</label>
 						</div>
 					</div>
-  				</div>
+  				</div> -->
 
 				<hr/>
 
@@ -171,7 +170,7 @@
 
 			<form class="form-horizontal" onsubmit="return false;">
 				<div class="form-group">
-					<label class="col-sm-4 control-label">Search (active chapter)</label>
+					<label class="col-sm-4 control-label">Search query</label>
 					<div class="col-sm-8">
 						<input type="search" class="form-control search_input">
 					</div>
@@ -203,6 +202,10 @@
 			<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 		</button> -->
 
+		<button class="btn btn-default btn-xs" onclick="request_fullscreen()">
+			<span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+		</button>
+
 		<button class="btn btn-default btn-xs"
 			data-toggle="modal" data-target="#settings-modal">
 			<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
@@ -227,8 +230,7 @@
 <div class="footer">
 	<div class="chapter" data-toggle="modal" data-target="#toc-modal"></div>
 	<div class="location">
-		<span id="cur_page">?</span> / <span id="total_pages">?</span>
-		(<span id="page_pct">?</span>)
+		<span id="page_pct">?</span>
 	</div>
 </div>
 
@@ -312,8 +314,8 @@
 		$(window).on('online', function() {
 			console.log("we're online, storing lastread");
 
-			var currentPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
-			var currentCfi = book.getCurrentLocationCfi();
+			var currentCfi = book.rendition.currentLocation().start.cfi;
+			var currentPage = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
 
 			$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
 				cfi: currentCfi }, function(data) {
@@ -350,13 +352,6 @@
 
 				if (navigator.onLine) {
 					var book_url = "backend.php?op=download&id=" + $.urlParam("id");
-
-					RSVP.on('error', function(error) {
-						if ($(".loading").is(":visible")) {
-							$(".loading_message").html("Unable to load book (remote).");
-						}
-						console.log(error);
-					});
 
 					fetch(book_url, {credentials: 'same-origin'}).then(function(resp) {
 
@@ -399,6 +394,12 @@
 						} else {
 							$(".loading_message").html("Unable to download book: " + resp.status + ".");
 						}
+					}).catch(function(err) {
+						console.warn(err);
+
+						if ($(".loading").is(":visible")) {
+							$(".loading_message").html("Unable to load book (remote).");
+						}
 					});
 
 				} else {
@@ -407,77 +408,15 @@
 			}
 		});
 
-		localforage.getItem("epube.enable-fullscreen").then(function(enable) {
-			_enable_fullscreen = enable;
+		var book = ePub({
+			restore: false,
+			minSpreadWidth: 961,
 		});
 
-		EPUBJS.Hooks.register("beforeChapterDisplay").applyTheme = function(callback, renderer) {
+		window.book = book;
 
-			localforage.getItem("epube.theme").then(function(theme) {
-				var base_url = window.location.href.match(/^.*\//)[0];
-
-				if (!theme)
-					theme = 'default';
-				else
-					theme = theme.replace("/", "");
-
-				var theme_url = base_url + 'themes/' + theme + '.css';
-
-				$(book.renderer.doc.head)
-					.append($("<style type='text/css' id='theme_css'>")
-					.text(_res_data[theme_url]));
-
-				if (callback) callback();
-			});
-		}
-
-		EPUBJS.Hooks.register("beforeChapterDisplay").initDict = function(callback, renderer) {
-
-			var base_url = window.location.href.match(/^.*\//)[0];
-			var res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js", "js/reader.js", "js/dict.js" ];
-			var doc = book.renderer.doc;
-
-			for (var i = 0; i < res_names.length; i++) {
-
-				// we need to create script element with proper context, that is inside the iframe
-				var elem = doc.createElement("script");
-				elem.type = 'text/javascript';
-				elem.text = _res_data[base_url + res_names[i]];
-
-				doc.head.appendChild(elem);
-			}
-
-			$(book.renderer.doc.head)
-				.append($("<style type='text/css'>")
-				.text(_res_data[base_url + 'css/reader.css']));
-
-			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
-				if (!notransitions) {
-					$(book.renderer.doc.head)
-						.append($("<style type='text/css'>")
-						.text(_res_data[base_url + 'css/transitions.css']));
-
-					EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
-			 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
-					}
-				}
-			});
-
-        if (callback) callback();
-		}
-
-		if (_is_ios) {
-			var book = ePub({
-				restore: false,
-				width: $("#reader").width(),
-				height: $("#reader").height(),
-			});
-		} else {
-			var book = ePub({
-				restore: false,
-				minSpreadWidth: 961,
-			});
-		}
+		var rendition = book.renderTo("reader", {width: '100%', height: '100%'});
+		var displayed = rendition.display();
 
 		var fontSize;
 		var fontFamily;
@@ -495,14 +434,71 @@
 			lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
 			themeName = res[3] ? res[3] : 'default';
 
-			book.setStyle("fontSize", fontSize);
-			book.setStyle("fontFamily", fontFamily);
-			book.setStyle("lineHeight", lineHeight);
-			book.setStyle("textAlign", "justify");
+			rendition.themes.default({
+				html: {
+					'font-size': fontSize,
+					'font-family': fontFamily,
+					'line-height': lineHeight,
+		      }
+			});
+
 		});
 
-		window.book = book;
-		var rendered = book.renderTo("reader");
+		rendition.hooks.content.register(function(contents) {
+
+			$("#reader iframe")[0].contentWindow.onwheel = function(event) {
+				if (event.deltaY > 0) {
+					next_page();
+				} else if (event.deltaY < 0) {
+					prev_page();
+				}
+			};
+
+			var base_url = window.location.href.match(/^.*\//)[0];
+			var res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js",
+				"js/reader.js", "js/dict.js" ];
+			var doc = contents.document;
+
+			for (var i = 0; i < res_names.length; i++) {
+
+				// we need to create script element with proper context, that is inside the iframe
+				var elem = doc.createElement("script");
+				elem.type = 'text/javascript';
+				elem.text = _res_data[base_url + res_names[i]];
+
+				doc.head.appendChild(elem);
+			}
+
+			$(contents.document.head)
+				.append($("<style type='text/css'>")
+				.text(_res_data[base_url + 'css/reader.css']));
+
+			/*localforage.getItem("epube.disable-transitions").then(function(notransitions) {
+				if (!notransitions) {
+					$(contents.document.head)
+						.append($("<style type='text/css'>")
+						.text(_res_data[base_url + 'css/transitions.css']));
+
+					// TODO: fix transitions somehow
+
+					EPUBJS.Render.Iframe.prototype.setLeft = function(leftPos){
+			 			this.docEl.style[this.transform] = 'translate('+ (-leftPos) + 'px, 0)';
+					}
+				}
+			}); */
+
+			return localforage.getItem("epube.theme").then(function(theme) {
+
+				if (!theme) theme = 'default';
+
+				var theme_url = base_url + 'themes/' + theme + '.css';
+
+				$(contents.document.head)
+					.append($("<style type='text/css' id='theme_css'>")
+					.text(_res_data[theme_url]));
+			});
+
+		});
 
 		$('#settings-modal').on('shown.bs.modal', function() {
 
@@ -515,14 +511,6 @@
 					.attr("checked", disable)
 					.on("click", function() {
 						localforage.setItem("epube.disable-transitions", this.checked);
-					});
-			});
-
-			localforage.getItem("epube.enable-fullscreen").then(function(enable) {
-				$(".fullscreen_checkbox")
-					.attr("checked", enable)
-					.on("click", function() {
-						localforage.setItem("epube.enable-fullscreen", this.checked);
 					});
 			});
 
@@ -571,7 +559,6 @@
 
 		$('#dict-modal').on('shown.bs.modal', function() {
 			$(".dict_result").scrollTop(0);
-
 		})
 
 		$(".dict_search_btn").on("click", function() {
@@ -592,11 +579,10 @@
 
 						var a = $("<a>")
 							.attr('href', '#')
-							.html(row.label + " <b class='pull-right'>" +
-								book.pagination.pageFromCfi(row.cfi) + "</b>")
-								.attr('data-cfi', row.cfi)
-								.click(function() {
-								book.gotoCfi(a.attr('data-cfi'));
+							.html(row.label)
+							.attr('data-href', row.href)
+							.click(function() {
+								book.rendition.display(a.attr('data-href'));
 							});
 
 						sublist.append($("<li>").append(a));
@@ -609,7 +595,7 @@
 				}
 			}
 
-			book.getToc().then(function(toc) {
+				var toc = book.navigation.toc;
 
 				var list = $(".toc_list");
 				list.html("");
@@ -620,11 +606,10 @@
 					try {
 						var a = $("<a>")
 							.attr('href', '#')
-							.html(row.label + " <b class='pull-right'>" +
-								book.pagination.pageFromCfi(row.cfi) + "</b>")
-								.attr('data-cfi', row.cfi)
-								.click(function() {
-								book.gotoCfi(a.attr('data-cfi'));
+							.html(row.label)
+							.attr('data-href', row.href)
+							.click(function() {
+								book.rendition.display(a.attr('data-href'));
 							});
 
 						list.append($("<li>").append(a));
@@ -641,16 +626,15 @@
 
 					list.html("");
 
-					$.each(book.spine, function (i, row) {
+					$.each(book.spine.items, function (i, row) {
 
 						var a = $("<a>")
 							.attr('href', '#')
 							.attr('title', row.url)
-							.html("Section " + (i+1) + " <b>(Loc. " +
-								book.pagination.pageFromCfi(row.cfi) + ")</b>")
-							.attr('data-cfi', row.cfi)
+							.html("Section " + (i+1))
+							.attr('data-href', row.href)
 							.click(function() {
-								book.gotoCfi(a.attr('data-cfi'));
+								book.rendition.display(a.attr('data-href'));
 							});
 
 						list.append($("<li>").append(a));
@@ -659,193 +643,149 @@
 				}
 
 			});
-		})
 
-		book.on("renderer:chapterUnloaded", function() {
-			$(".loading").show();
-			$(".loading_message").html("Opening chapter...");
+		book.ready.then(function() {
+
+			var meta = book.package.metadata;
+
+			document.title = meta.title + " – " + meta.creator;
+			$(".title").html("<b>" + meta.title + "</b> - " + meta.creator);
+
+			return localforage.getItem(cacheId("locations")).then(function(locations) {
+
+				// legacy format is array of objects {cfi: ..., page: ...}
+				if (locations && typeof locations[0] == "string") {
+					_pagination_stored = 1;
+					return book.locations.load(locations);
+				} else {
+					var url = "backend.php?op=getpagination&id=" + encodeURIComponent($.urlParam("id"));
+
+					return fetch(url, {credentials:'same-origin'}).then(function(resp) {
+
+						if (resp.ok) {
+							return resp.json().then(function(locations) {
+								if (locations && typeof locations[0] == "string") {
+									_pagination_stored = 1;
+									return book.locations.load(locations);
+								} else {
+									return book.locations.generate(1600);
+								}
+							});
+						} else {
+							return book.locations.generate(1600);
+						}
+					}).catch(function() {
+						return book.locations.generate(1600);
+					});
+				}
+
+			});
+
+		}).then(function(locations) {
+
+			if (locations && !_pagination_stored) {
+				if (navigator.onLine) {
+					$.post("backend.php", { op: "storepagination", id: $.urlParam("id"),
+						payload: JSON.stringify(locations), total: 100});
+				}
+
+				localforage.setItem(cacheId("locations"), locations);
+
+			}
+
+			$(".location").click(function() {
+				var current = book.rendition.currentLocation().start.location;
+				var total = book.locations.length();
+
+				var page = prompt("Jump to location [1-" + total + "]", current);
+
+				if (page) {
+					book.rendition.display(book.locations._locations[page]);
+				}
+			});
+
+			open_lastread();
 		});
 
-		book.on("renderer:resized", function() {
+		rendition.on("keyup", hotkey_handler);
+
+		rendition.on('resized', function() {
+			console.log('resized');
+
 			$(".loading").show();
 			$(".loading_message").html("Opening chapter...");
 
 			window.setTimeout(function() {
 				open_lastread();
 
-				window.setTimeout(function() {
-					$(".loading").hide();
-				}, 500);
-			}, 500);
-		});
-
-		book.on("renderer:chapterDisplayed", function() {
-			$(".chapter").html("");
-
-			localforage.getItem("epube.disable-transitions").then(function(notransitions) {
-				if (notransitions) {
-					$(".loading").hide();
-				} else {
-					window.setTimeout(function() {
-						$(".loading").hide();
-					}, 500);
-				}
-			} );
-
-			var toc_entry = false;
-
-			function iterate_sublist(row, nest) {
-				if (nest == 3) return false;
-
-				if (row.subitems) {
-					$.each(row.subitems, function (i, r) {
-
-						if (r.spinePos == book.currentChapter.spinePos) {
-							toc_entry = r;
-							return true;
-						}
-
-						if (iterate_sublist(r, nest + 1))
-							return true;
-					});
-				}
-
-				return false;
-			}
-
-			$.each(book.toc, function(i, a) {
-				if (a.spinePos == book.currentChapter.spinePos) {
-					toc_entry = a;
-					return;
-				}
-
-				if (iterate_sublist(a, 0)) return;
-
-			});
-
-			console.log('toc', toc_entry);
-
-			if (toc_entry) $(".chapter").html(toc_entry.label);
-		});
-
-		book.on("renderer:chapterDisplayed", function() {
-			$("#reader iframe")[0].contentWindow.onwheel = function(event) {
-
-				if (event.deltaY > 0) {
-					next_page();
-				} else if (event.deltaY < 0) {
-					prev_page();
-				}
-
-			};
-		});
-
-		/* book.on("renderer:chapterDisplayed", function() {
-
-			// variables defined above after reading from localforage
-
-			$("#reader iframe").contents().find("p")
-				.css("background", "")
-				.css("color", "")
-				.css("background-color", "")
-				.css("font-family", fontFamily)
-				.css("font-size", fontSize)
-				.css("line-height", lineHeight)
-				.css("text-align", "justify");
-
-		}); */
-
-		book.on("renderer:keydown", hotkey_handler);
-
-		book.getMetadata().then(function(meta){
-			document.title = meta.bookTitle + " – " + meta.creator;
-			$(".title").html("<b>" + meta.bookTitle + "</b> - " + meta.creator);
-		});
-
-		rendered.then(function() {
-
-			localforage.getItem(cacheId("pagination")).then(function(pageList) {
-
-				if (pageList && book.loadPagination(pageList).length > 0) {
-					_pagination_stored = 1;
-				} else {
-					var url = "backend.php?op=getpagination&id=" + encodeURIComponent($.urlParam("id"));
-
-					EPUBJS.core.request(url).then(function(pageList) {
-						console.log("pagination: requesting remote: ");
-
-						if (book.loadPagination(pageList).length > 0) {
-							localforage.setItem(cacheId("pagination"), JSON.parse(pageList));
-							_pagination_stored = 1;
-						} else {
-							book.generatePagination(1020, 2400);
-						}
-
-					}).catch(function() {
-						book.generatePagination(1020, 2400);
-					});
-				}
-			});
-
-		});
-
-		book.pageListReady.then(function(pageList) {
-			if (!_pagination_stored) {
-				if (navigator.onLine) {
-					$.post("backend.php", { op: "storepagination", id: $.urlParam("id"),
-						payload: JSON.stringify(pageList), total: book.pagination.totalPages });
-				}
-
-				localforage.setItem(cacheId("pagination"), pageList);
-			}
-
-			var curPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
-
-			$("#total_pages").html(book.pagination.totalPages);
-			$("#cur_page").html(curPage);
-
-			if (book.pagination.totalPages > 0) {
-				var pct = parseInt(curPage / book.pagination.totalPages * 100);
-				$("#page_pct").html(pct + "%");
-			}
-
-			open_lastread();
-
-			window.setTimeout(function() {
 				$(".loading").hide();
-			}, 1500);
-
-			$(".location").click(function() {
-				var current = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
-				var total = book.pagination.totalPages;
-
-				var page = prompt("Jump to location [1-" + total + "]", current);
-
-				if (page) {
-					book.gotoPage(page);
-				}
-
-			});
-
+			}, 250);
 		});
 
-		book.on('book:pageChanged', function(location) {
+		rendition.on('rendered', function(chapter) {
+			$(".chapter").html($("<span>").addClass("glyphicon glyphicon-th-list"));
 
-			$("#cur_page").html(location.anchorPage);
+			try {
+				var location = book.rendition.currentLocation();
 
-			var total = book.pagination.totalPages;
+				if (location.start) {
+					var cur_href = book.canonical(location.start.href);
+					var toc_entry = false;
 
-			if (book.pagination.totalPages > 0) {
-				var pct = parseInt(location.anchorPage / book.pagination.totalPages * 100);
-				$("#page_pct").html(pct + "%");
+					function iterate_sublist(row, nest) {
+						if (nest == 3) return false;
+
+						if (row.subitems) {
+							$.each(row.subitems, function (i, r) {
+
+								if (book.spine.get(r.href).canonical == cur_href) {
+									toc_entry = r;
+									return true;
+								}
+
+								if (iterate_sublist(r, nest + 1))
+									return true;
+							});
+						}
+
+						return false;
+					}
+
+					$.each(book.navigation.toc, function(i, a) {
+						if (book.spine.get(a.href).canonical == cur_href) {
+							toc_entry = a;
+							return;
+						}
+
+						if (iterate_sublist(a, 0)) return;
+
+					});
+
+					if (toc_entry && toc_entry.label.trim())
+						$(".chapter").html(toc_entry.label);
+				}
+
+			} catch (e) {
+				console.warn(e);
 			}
+		});
+
+		rendition.on('relocated', function(location) {
+
+			// locations not generated yet
+			if (book.locations.length() == 0)
+				return;
+
+			$(".loading").hide();
+
+			var currentCfi = location.start.cfi;
+			var currentPage = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
+			var pct = book.locations.percentageFromCfi(currentCfi);
+
+			$("#page_pct").html(parseInt(pct*100) + '%');
 
 			if (_store_position && new Date().getTime()/1000 - _last_position_sync > 15) {
 				console.log("storing lastread");
-
-				var currentCfi = book.getCurrentLocationCfi();
-				var currentPage = location.anchorPage;
-				var totalPages = book.pagination.totalPages;
 
 				if (navigator.onLine) {
 
@@ -859,13 +799,12 @@
 					});
 
 					_store_position = 0;
-
 				} else {
 					_last_position_sync = 0;
 				}
 
 				localforage.setItem(cacheId("lastread"),
-					{cfi: currentCfi, page: currentPage, total: totalPages});
+					{cfi: currentCfi, page: currentPage, total: 100});
 
 			}
 		});

@@ -4,15 +4,11 @@ function enable_swipes() {
 	$(window).off("swipeleft swiperight");
 
 	$(window).on("swipeleft", function() {
-		parent.show_ui(false);
-		parent.request_fullscreen();
-		parent.book.nextPage();
+		parent.next_page();
 	});
 
 	$(window).on("swiperight", function() {
-		parent.show_ui(false);
-		parent.request_fullscreen();
-		parent.book.prevPage();
+		parent.prev_page();
 	});
 }
 
@@ -22,10 +18,8 @@ $(document).ready(function() {
 	$(window).on("click tap", function() {
 		if (parent.$(".header").is(":visible")) {
 			parent.show_ui(false);
-			parent.request_fullscreen();
 		} else {
 			parent.show_ui(true);
-			parent.disable_fullscreen();
 		}
 	});
 

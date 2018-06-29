@@ -1,11 +1,17 @@
 'use strict';
 
 var _store_position = 0;
-var _enable_fullscreen = 0;
 
 function request_fullscreen() {
-	if (_enable_fullscreen)
-		document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+	var element = document.documentElement;
+
+	if (element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if (element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+	} else if (element.webkitRequestFullScreen) {
+		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+	}
 }
 
 function disable_fullscreen() {
@@ -32,7 +38,7 @@ function open_lastread() {
 
 		item = item || {};
 
-		if (item.cfi) book.gotoCfi(item.cfi);
+		if (item.cfi) book.rendition.display(item.cfi);
 
 		if (navigator.onLine) {
 
@@ -44,7 +50,7 @@ function open_lastread() {
 						{cfi: data.cfi, page: data.page, total: data.total});
 
 					if (item.cfi != data.cfi && (!item.page || data.page > item.page))
-						book.gotoCfi(data.cfi);
+						book.rendition.display(data.cfi);
 
 				}
 			});
@@ -56,17 +62,13 @@ function open_lastread() {
 function next_page() {
 	_store_position = 1;
 
-	window.book.nextPage();
-
+	window.book.rendition.next();
 	show_ui(false);
-	request_fullscreen();
 }
 
 function prev_page() {
-	window.book.prevPage();
-
+	window.book.rendition.prev();
 	show_ui(false);
-	request_fullscreen();
 }
 
 function hotkey_handler(e) {
@@ -169,27 +171,22 @@ function apply_styles() {
 		var lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
 		var themeName = res[3] ? res[3] : false;
 
-		book.setStyle("fontSize", fontSize);
-		book.setStyle("fontFamily", fontFamily);
-		book.setStyle("lineHeight", lineHeight);
-		book.setStyle("textAlign", "justify");
+		window.book.rendition.themes.default({
+			html: {
+				'font-size': fontSize,
+				'font-family': fontFamily,
+				'line-height': lineHeight,
+	      }
+		});
 
-/*		$("#reader iframe").contents().find("p")
-			.css("background", "")
-			.css("color", "")
-			.css("background-color", "")
-			.css("font-family", fontFamily)
-			.css("font-size", fontSize)
-			.css("line-height", lineHeight)
-			.css("text-align", "justify"); */
-
+		apply_theme();
 	});
 
 }
 
 function clear_lastread() {
 	if (confirm("Clear stored last read location?")) {
-		var total = window.book.pagination.totalPages;
+		var total = window.book.locations.length();
 
 		if (navigator.onLine) {
 			$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
@@ -205,8 +202,8 @@ function clear_lastread() {
 
 function mark_as_read() {
 	if (confirm("Mark book as read?")) {
-		var total = window.book.pagination.totalPages;
-		var lastCfi = book.pagination.cfiFromPage(total);
+		var total = 100;
+		var lastCfi = window.book.locations.cfiFromPercentage(1);
 
 		if (navigator.onLine) {
 			$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
@@ -221,9 +218,11 @@ function mark_as_read() {
 }
 
 function save_and_close() {
-	var currentPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
-	var currentCfi = book.getCurrentLocationCfi();
-	var totalPages = book.pagination.totalPages;
+	var location = window.book.rendition.currentLocation();
+
+	var currentCfi = location.start.cfi;
+	var currentPage = parseInt(window.book.locations.percentageFromCfi(currentCfi) * 100);
+	var totalPages = 100;
 
 	localforage.setItem(cacheId("lastread"),
 		{cfi: currentCfi, page: currentPage, total: totalPages});
@@ -241,7 +240,7 @@ function save_and_close() {
 function change_theme(elem) {
 	var theme = $(elem).val();
 	localforage.setItem("epube.theme", theme).then(function() {
-		apply_theme();
+		apply_styles();
 	});
 }
 
@@ -251,16 +250,15 @@ function apply_theme() {
 
 		var base_url = window.location.href.match(/^.*\//)[0];
 
-		if (!theme)
-			theme = 'default';
-		else
-			theme = theme.replace("/", "");
+		if (!theme) theme = 'default';
 
 		var theme_url = base_url + "themes/" + theme + ".css";
 
 		$("#theme_css").attr("href", theme_url);
 
-		$(book.renderer.doc).find("#theme_css").text(_res_data[theme_url]);
+		$.each(window.book.rendition.getContents(), function(i,c) {
+			$(c.document).find("#theme_css").text(_res_data[theme_url])
+		});
 
 	});
 }
@@ -272,21 +270,27 @@ function search() {
 	list.html("");
 
 	if (query) {
-		var results = window.book.currentChapter.find(query);
 
-		$.each(results, function (i, row) {
-			var a = $("<a>")
-				.attr('href', '#')
-				.html(row.excerpt +
-					" <b>(Loc.&nbsp;" + window.book.pagination.pageFromCfi(row.cfi) + ")</b>")
-				.attr('data-cfi', row.cfi)
-				.attr('data-id', row.id)
-				.click(function() {
-						window.book.gotoCfi(a.attr('data-cfi'));
-				});
+		Promise.all(
+			book.spine.spineItems.map(
+				item => item.load(book.load.bind(book))
+				.then(item.find.bind(item, query))
+				.finally(item.unload.bind(item)))
+	    )
+		.then(results => Promise.resolve([].concat.apply([], results)))
+		.then(function(results) {
+			$.each(results, function (i, row) {
+				var a = $("<a>")
+					.attr('href', '#')
+					.html(row.excerpt)
+					.attr('data-cfi', row.cfi)
+					.attr('data-id', row.id)
+					.click(function() {
+							window.book.rendition.display(a.attr('data-cfi'));
+					});
 
-			list.append($("<li>").append(a));
-
+				list.append($("<li>").append(a));
+			});
 		});
 	}
 }

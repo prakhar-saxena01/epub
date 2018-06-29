@@ -1,6 +1,6 @@
 //importScripts('lib/localforage.min.js');
 
-const CACHE_NAME = 'epube-v1';
+const CACHE_NAME = 'epube-v2';
 const CACHE_URLS = [
 			'read.html',
 			'js/common.js',
@@ -24,14 +24,11 @@ const CACHE_URLS = [
 			'lib/localforage.min.js',
 			'lib/jquery.mobile.custom.js',
 			'lib/holder.min.js',
-			'lib/smartimages.js',
 			'lib/bootstrap/v3/css/bootstrap-theme.min.css',
 			'lib/bootstrap/v3/css/bootstrap.min.css',
 			'lib/bootstrap/v3/js/jquery.js',
 			'lib/bootstrap/v3/js/bootstrap.min.js',
-			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
-			'lib/qtip2/jquery.qtip.min.css',
-			'lib/qtip2/jquery.qtip.min.js',
+			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2'
 		];
 
 
