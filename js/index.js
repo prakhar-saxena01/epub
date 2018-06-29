@@ -109,7 +109,7 @@ function offline_cache(bookId, callback) {
 						console.log(cacheId + ' got pagination');
 
 						resp.text().then(function(text) {
-							localforage.setItem(cacheId + '.pagination', JSON.parse(text));
+							localforage.setItem(cacheId + '.locations', JSON.parse(text));
 						});
 					}
 				});
