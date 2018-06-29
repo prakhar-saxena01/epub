@@ -270,21 +270,27 @@ function search() {
 	list.html("");
 
 	if (query) {
-		var results = window.book.currentChapter.find(query);
 
-		$.each(results, function (i, row) {
-			var a = $("<a>")
-				.attr('href', '#')
-				.html(row.excerpt +
-					" <b>(Loc.&nbsp;" + window.book.pagination.pageFromCfi(row.cfi) + ")</b>")
-				.attr('data-cfi', row.cfi)
-				.attr('data-id', row.id)
-				.click(function() {
-						window.book.rendition.display(a.attr('data-cfi'));
-				});
+		Promise.all(
+			book.spine.spineItems.map(
+				item => item.load(book.load.bind(book))
+				.then(item.find.bind(item, query))
+				.finally(item.unload.bind(item)))
+	    )
+		.then(results => Promise.resolve([].concat.apply([], results)))
+		.then(function(results) {
+			$.each(results, function (i, row) {
+				var a = $("<a>")
+					.attr('href', '#')
+					.html(row.excerpt)
+					.attr('data-cfi', row.cfi)
+					.attr('data-id', row.id)
+					.click(function() {
+							window.book.rendition.display(a.attr('data-cfi'));
+					});
 
-			list.append($("<li>").append(a));
-
+				list.append($("<li>").append(a));
+			});
 		});
 	}
 }
