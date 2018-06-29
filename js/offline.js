@@ -127,6 +127,8 @@ function populate_list() {
 
 					if (cover) {
 
+						cell.find("img").attr("src", cover);
+
 						cell.find(".series_link")
 							.attr("title", info.series_name + " [" + info.series_index  + "]")
 							.attr("href", "offline.html?query=" + encodeURIComponent(info.series_name));

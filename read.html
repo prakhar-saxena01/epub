@@ -584,8 +584,7 @@
 
 						var a = $("<a>")
 							.attr('href', '#')
-							.html(row.label + " <b class='pull-right'>" +
-								"FIXME" + "</b>")
+							.html(row.label)
 							.attr('data-href', row.href)
 							.click(function() {
 								book.rendition.display(a.attr('data-href'));
@@ -612,8 +611,7 @@
 					try {
 						var a = $("<a>")
 							.attr('href', '#')
-							.html(row.label + " <b class='pull-right'>" +
-								"FIXME" + "</b>")
+							.html(row.label)
 							.attr('data-href', row.href)
 							.click(function() {
 								book.rendition.display(a.attr('data-href'));
@@ -633,16 +631,15 @@
 
 					list.html("");
 
-					$.each(book.spine, function (i, row) {
+					$.each(book.spine.items, function (i, row) {
 
 						var a = $("<a>")
 							.attr('href', '#')
 							.attr('title', row.url)
-							.html("Section " + (i+1) + " <b>(Loc. " +
-								book.pagination.pageFromCfi(row.cfi) + ")</b>")
-							.attr('data-cfi', row.cfi)
+							.html("Section " + (i+1))
+							.attr('data-href', row.href)
 							.click(function() {
-								book.gotoCfi(a.attr('data-cfi'));
+								book.rendition.display(a.attr('data-href'));
 							});
 
 						list.append($("<li>").append(a));
