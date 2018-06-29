@@ -705,6 +705,9 @@
 			});
 
 			open_lastread();
+
+			$(".loading").hide();
+
 		});
 
 		rendition.on("keyup", hotkey_handler);
@@ -775,8 +778,6 @@
 			// locations not generated yet
 			if (book.locations.length() == 0)
 				return;
-
-			$(".loading").hide();
 
 			var currentCfi = location.start.cfi;
 			var currentPage = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
