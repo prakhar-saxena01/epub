@@ -314,8 +314,8 @@
 		$(window).on('online', function() {
 			console.log("we're online, storing lastread");
 
-			var currentPage = book.pagination.pageFromCfi(book.getCurrentLocationCfi());
-			var currentCfi = book.getCurrentLocationCfi();
+			var currentCfi = book.rendition.currentLocation().start.cfi;
+			var currentPage = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
 
 			$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
 				cfi: currentCfi }, function(data) {
@@ -352,13 +352,6 @@
 
 				if (navigator.onLine) {
 					var book_url = "backend.php?op=download&id=" + $.urlParam("id");
-
-					/*RSVP.on('error', function(error) {
-						if ($(".loading").is(":visible")) {
-							$(".loading_message").html("Unable to load book (remote).");
-						}
-						console.log(error);
-					});*/
 
 					fetch(book_url, {credentials: 'same-origin'}).then(function(resp) {
 
@@ -401,7 +394,9 @@
 						} else {
 							$(".loading_message").html("Unable to download book: " + resp.status + ".");
 						}
-					}).catch(function() {
+					}).catch(function(err) {
+						console.warn(err);
+
 						if ($(".loading").is(":visible")) {
 							$(".loading_message").html("Unable to load book (remote).");
 						}
@@ -784,7 +779,6 @@
 
 			var currentCfi = location.start.cfi;
 			var currentPage = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
-			var totalPages = 100;
 			var pct = book.locations.percentageFromCfi(currentCfi);
 
 			$("#page_pct").html(parseInt(pct*100) + '%');
@@ -809,7 +803,7 @@
 				}
 
 				localforage.setItem(cacheId("lastread"),
-					{cfi: currentCfi, page: currentPage, total: totalPages});
+					{cfi: currentCfi, page: currentPage, total: 100});
 
 			}
 		});
