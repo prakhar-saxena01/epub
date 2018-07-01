@@ -30,13 +30,14 @@ $(document).ready(function() {
 					return;
 
 			var reader = $("body");
-			var doc = document.documentElement;
 			var margin_side = parseInt(reader.css("padding-left"), 10);
 
-			if (evt.clientX >= doc.clientWidth - margin_side) {
+			//console.log(evt, evt.screenX);
+
+			if (evt.screenX >= reader.width() - margin_side) {
 				console.log("iframe: RIGHT SIDE");
 				parent.next_page();
-			} else if (evt.clientX <= margin_side) {
+			} else if (evt.screenX <= margin_side) {
 				console.log("iframe: LEFT SIDE");
 				parent.prev_page();
 			}
