@@ -15,14 +15,6 @@ function enable_swipes() {
 $(document).ready(function() {
 	console.log('setting taps');
 
-	$(window).on("click tap", function() {
-		if (parent.$(".header").is(":visible")) {
-			parent.show_ui(false);
-		} else {
-			parent.show_ui(true);
-		}
-	});
-
 	$(window).on("mouseup", function(evt) {
 		if (evt.button == 0) {
 
@@ -40,6 +32,12 @@ $(document).ready(function() {
 			} else if (evt.screenX <= margin_side) {
 				console.log("iframe: LEFT SIDE");
 				parent.prev_page();
+			} else {
+				if (parent.$(".header").is(":visible")) {
+					parent.show_ui(false);
+				} else {
+					parent.show_ui(true);
+				}
 			}
 		}
 	});
