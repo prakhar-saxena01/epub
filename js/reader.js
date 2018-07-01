@@ -23,6 +23,26 @@ $(document).ready(function() {
 		}
 	});
 
+	$(window).on("mouseup", function(evt) {
+		if (evt.button == 0) {
+
+			if ($(".modal").is(":visible"))
+					return;
+
+			var reader = $("body");
+			var doc = document.documentElement;
+			var margin_side = parseInt(reader.css("padding-left"), 10);
+
+			if (evt.clientX >= doc.clientWidth - margin_side) {
+				console.log("iframe: RIGHT SIDE");
+				parent.next_page();
+			} else if (evt.clientX <= margin_side) {
+				console.log("iframe: LEFT SIDE");
+				parent.prev_page();
+			}
+		}
+	});
+
 	$(window).on("touchstart", function() {
 		enable_swipes();
 	});
