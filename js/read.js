@@ -120,21 +120,23 @@ $(document).ready(function() {
 			if ($(".modal").is(":visible"))
 					return;
 
+			var reader = $("#reader");
 			var doc = document.documentElement;
-			var margin_x = 64;
-			var margin_y_top = 48;
-			var margin_y_bottom = 48;
+			var margin_side = parseInt(reader.css("left"), 10);
+			var margin_top = parseInt(reader.css("top"), 10);
+			var margin_bottom = parseInt(reader.css("bottom"), 10);
 
+			//console.log(margin_side, margin_top, margin_bottom);
 			//console.log(event.clientY + " " + doc.clientHeight);
 
-			if (evt.clientY < margin_y_top || evt.clientY >= doc.clientHeight - margin_y_bottom) {
+			if (evt.clientY < margin_top || evt.clientY >= doc.clientHeight - margin_bottom) {
 				return;
 			}
 
-			if (evt.clientX >= doc.clientWidth - margin_x) {
+			if (evt.clientX >= doc.clientWidth - margin_side) {
 				console.log("RIGHT SIDE");
 				next_page();
-			} else if (evt.clientX <= margin_x) {
+			} else if (evt.clientX <= margin_side) {
 				console.log("LEFT SIDE");
 				prev_page();
 			}
