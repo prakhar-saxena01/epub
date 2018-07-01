@@ -68,8 +68,8 @@
 	position : absolute;
 	top : 32px;
 	bottom : 32px;
-	left : 24px;
-	right : 24px;
+	left : 32px;
+	right : 32px;
 }
 
 @media (max-width: 992px) {
@@ -88,10 +88,10 @@
 	.toolbar {
 		width : 96px;
 	}
-	/*#reader {
-		left : 16px;
-		right : 16px;
-	}*/
+	#reader {
+		left : 24px;
+		right : 24px;
+	}
 }
 
 .chapter {
