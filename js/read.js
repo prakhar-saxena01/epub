@@ -180,12 +180,10 @@ function apply_styles() {
 		var lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
 		var themeName = res[3] ? res[3] : false;
 
-		window.book.rendition.themes.default({
-			html: {
-				'font-size': fontSize,
-				'font-family': fontFamily,
-				'line-height': lineHeight,
-	      }
+		$.each(window.book.rendition.getContents(), function(i, c) {
+			c.css("font-size", fontSize);
+			c.css("font-family", fontFamily);
+			c.css("line-height", lineHeight);
 		});
 
 		apply_theme();
