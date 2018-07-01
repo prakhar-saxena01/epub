@@ -489,16 +489,16 @@
 		$('#settings-modal').on('shown.bs.modal', function() {
 
 			$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
-				$(".lastread_input").val(data.page);
+				$(".lastread_input").val(data.page + '%');
 			});
 
-			localforage.getItem("epube.disable-transitions").then(function(disable) {
+			/*localforage.getItem("epube.disable-transitions").then(function(disable) {
 				$(".transition_checkbox")
 					.attr("checked", disable)
 					.on("click", function() {
 						localforage.setItem("epube.disable-transitions", this.checked);
 					});
-			});
+			});*/
 
 			localforage.getItem("epube.fontFamily").then(function(font) {
 				if (!font) font = DEFAULT_FONT_FAMILY;
