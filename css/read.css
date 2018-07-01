@@ -61,7 +61,8 @@
 	text-align : right;
 }
 .toolbar > * {
-	margin-left : 5px;
+	margin-left : 10px;
+	cursor : pointer;
 }
 #reader {
 	position : absolute;
