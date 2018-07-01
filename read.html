@@ -692,8 +692,11 @@
 
 			open_lastread();
 
-			$(".loading").hide();
+			window.setTimeout(function() {
+				open_lastread();
 
+				$(".loading").hide();
+			}, 250);
 		});
 
 		rendition.on("keyup", hotkey_handler);
