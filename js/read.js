@@ -199,7 +199,7 @@ function clear_lastread() {
 
 		if (navigator.onLine) {
 			$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
-				$(".lastread_input").val(data.page);
+				$(".lastread_input").val(data.page + '%');
 			});
 		}
 
@@ -216,7 +216,7 @@ function mark_as_read() {
 
 		if (navigator.onLine) {
 			$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
-				$(".lastread_input").val(data.page);
+				$(".lastread_input").val(data.page + '%');
 			});
 		}
 

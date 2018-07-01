@@ -68,8 +68,8 @@
 	position : absolute;
 	top : 32px;
 	bottom : 32px;
-	left : 96px;
-	right : 96px;
+	left : 24px;
+	right : 24px;
 }
 
 @media (max-width: 992px) {
@@ -78,30 +78,19 @@
 	}
 }
 
-@media (max-width: 801px) {
-	#reader {
-		left : 64px;
-		right : 64px;
-	}
-}
-
 @media (max-width: 767px) {
-	#reader {
-		left : 48px;
-		right : 48px;
-	}
 	.toolbar {
 		width : 96px;
 	}
 }
 
 @media (max-width: 576px) {
-	#reader {
-		left : 32px;
-		right : 32px;
-	}
 	.toolbar {
 		width : 96px;
+	}
+	#reader {
+		left : 16px;
+		right : 16px;
 	}
 }
 
