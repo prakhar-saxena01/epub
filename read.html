@@ -214,6 +214,9 @@
 	</div>
 </div>
 
+<div id="left"></div>
+<div id="right"></div>
+
 <div id="reader"></div>
 
 <div class="loading">
@@ -720,6 +723,8 @@
 
 		rendition.on('rendered', function(chapter) {
 			$(".chapter").html($("<span>").addClass("glyphicon glyphicon-th-list"));
+
+			resize_side_columns();
 
 			try {
 				var location = book.rendition.currentLocation();

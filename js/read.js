@@ -117,36 +117,28 @@ function hotkey_handler(e) {
 	}
 }
 
+function resize_side_columns() {
+	var width = $("#reader").position().left;
+
+	var iframe = $("#reader iframe")[0];
+
+	if (iframe && iframe.contentWindow.$)
+		width += parseInt(iframe.contentWindow.$("body").css("padding-left"), 10);
+
+	$("#left, #right").width(width);
+}
+
 $(document).ready(function() {
 	document.onkeydown = hotkey_handler;
 
-	$(window).on("mouseup", function(evt) {
-		if (evt.button == 0) {
-
-			if ($(".modal").is(":visible"))
-					return;
-
-			var reader = $("#reader");
-			var doc = $(document);
-			var margin_side = parseInt(reader.css("left"), 10);
-			var margin_top = parseInt(reader.css("top"), 10);
-			var margin_bottom = parseInt(reader.css("bottom"), 10);
-
-			//console.log(margin_side, margin_top, margin_bottom);
-
-			if (evt.clientY < margin_top || evt.clientY >= doc.height() - margin_bottom) {
-				return;
-			}
-
-			if (evt.clientX >= doc.width() - margin_side) {
-				console.log("RIGHT SIDE");
-				next_page();
-			} else if (evt.clientX <= margin_side) {
-				console.log("LEFT SIDE");
-				prev_page();
-			}
-		}
+	$("#left").on("mouseup", function(evt) {
+		prev_page();
 	});
+
+	$("#right").on("mouseup", function(evt) {
+		next_page();
+	});
+
 });
 
 function apply_line_height(elem) {
