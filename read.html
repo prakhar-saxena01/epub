@@ -431,14 +431,6 @@
 
 		rendition.hooks.content.register(function(contents) {
 
-			$("#reader iframe")[0].contentWindow.onwheel = function(event) {
-				if (event.deltaY > 0) {
-					next_page();
-				} else if (event.deltaY < 0) {
-					prev_page();
-				}
-			};
-
 			var base_url = window.location.href.match(/^.*\//)[0];
 			var res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js",
 				"js/reader.js", "js/dict.js" ];

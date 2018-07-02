@@ -13,7 +13,7 @@ function enable_swipes() {
 }
 
 $(document).ready(function() {
-	$(window).on("mouseup", function(evt) {
+	$(window).on("click tap", function(evt) {
 		if (evt.button == 0) {
 
 			if ($(".modal").is(":visible"))
@@ -33,6 +33,14 @@ $(document).ready(function() {
 
 	$(window).on("mousedown", function() {
 		$(window).off("swipeleft swiperight");
+	});
+
+	$(window).on("wheel", function(evt) {
+		if (evt.originalEvent.deltaY > 0) {
+			parent.next_page();
+		} else if (evt.originalEvent.deltaY < 0) {
+			parent.prev_page();
+		}
 	});
 
 	enable_swipes();
