@@ -573,6 +573,23 @@
 		});
 
 		$('#toc-modal').on('shown.bs.modal', function() {
+			function toc_loc_msg(href) {
+				try {
+					var cfiBase = book.spine.get(href).cfiBase;
+
+					var loc = book.locations._locations.find(function(k) {
+						return k.indexOf(cfiBase) != -1
+						});
+
+					return window.book.locations.locationFromCfi(loc);
+
+				} catch (e) {
+					console.warn(e);
+				}
+
+				return "";
+			}
+
 			function process_toc_sublist(row, list, nest) {
 
 				if (nest == 3) return false;
@@ -585,7 +602,7 @@
 
 						var a = $("<a>")
 							.attr('href', '#')
-							.html(row.label)
+							.html("<b class='pull-right'>" + toc_loc_msg(row.href) + "</b>" + row.label)
 							.attr('data-href', row.href)
 							.click(function() {
 								book.rendition.display(a.attr('data-href'));
@@ -612,7 +629,7 @@
 					try {
 						var a = $("<a>")
 							.attr('href', '#')
-							.html(row.label)
+							.html("<b class='pull-right'>" + toc_loc_msg(row.href) + "</b>" + row.label)
 							.attr('data-href', row.href)
 							.click(function() {
 								book.rendition.display(a.attr('data-href'));
