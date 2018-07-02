@@ -2,20 +2,16 @@
 
 var _store_position = 0;
 
-function request_fullscreen() {
+function toggle_fullscreen() {
 	var element = document.documentElement;
 
-	if (element.requestFullscreen) {
-		element.requestFullscreen();
-	} else if (element.mozRequestFullScreen) {
-		element.mozRequestFullScreen();
-	} else if (element.webkitRequestFullScreen) {
-		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-	}
-}
+	var isFullscreen = document.webkitIsFullScreen || document.mozFullScreen || false;
 
-function disable_fullscreen() {
-	document.webkitExitFullscreen();
+	element.requestFullScreen = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || function () { return false; };
+
+	document.cancelFullScreen = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || function () { return false; };
+
+	isFullscreen ? document.cancelFullScreen() : element.requestFullScreen();
 }
 
 function show_ui(show) {
