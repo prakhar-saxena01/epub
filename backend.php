@@ -205,7 +205,7 @@
 		$bookid = (int) $_REQUEST["id"];
 		$cfi = $_REQUEST["cfi"];
 
-		if ($page && $bookid) {
+		if ($bookid) {
 
 			$ldb->beginTransaction();
 

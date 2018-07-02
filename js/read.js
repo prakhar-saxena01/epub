@@ -55,7 +55,7 @@ function open_lastread() {
 						{cfi: data.cfi, page: data.page, total: data.total});
 
 					try {
-						if (item.cfi != data.cfi && (!item.page || data.page > item.page))
+						if (item.cfi != data.cfi && (!item.page || data.page >= item.page))
 							book.rendition.display(data.cfi);
 					} catch (e) {
 						console.warn(e);
