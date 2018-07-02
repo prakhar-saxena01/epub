@@ -19,11 +19,7 @@ $(document).ready(function() {
 			if ($(".modal").is(":visible"))
 					return;
 
-			if (parent.$(".header").is(":visible")) {
-				parent.show_ui(false);
-			} else {
-				parent.show_ui(true);
-			}
+			parent.show_ui(true);
 		}
 	});
 
