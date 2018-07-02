@@ -93,13 +93,13 @@
 
 @media (max-width: 767px) {
 	.toolbar {
-		width : 96px;
+		width : 105px;
 	}
 }
 
 @media (max-width: 576px) {
 	.toolbar {
-		width : 96px;
+		width : 105px;
 	}
 	#reader {
 		left : 24px;

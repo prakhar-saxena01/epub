@@ -191,6 +191,11 @@
 	</span>
 	<span class="toolbar">
 
+		<span class="prev_location_btn"
+			onclick="open_previous_location(this)" style="display : none">
+			<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+		</span>
+
 		<span onclick="request_fullscreen()">
 			<span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
 		</span>
@@ -431,6 +436,21 @@
 		});
 
 		rendition.hooks.content.register(function(contents) {
+
+			contents.on("linkClicked", function(href) {
+				console.log('linkClicked', href);
+
+				if (href.indexOf("://") == -1) {
+					$(".prev_location_btn")
+						.attr("data-location-cfi", book.rendition.currentLocation().start.cfi)
+						.show();
+
+					window.setTimeout(function() {
+						show_ui(true);
+					}, 50);
+				}
+
+			});
 
 			var base_url = window.location.href.match(/^.*\//)[0];
 			var res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js",

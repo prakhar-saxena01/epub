@@ -314,4 +314,12 @@ function dict_lookup(word, callback) {
 	});
 }
 
+function open_previous_location(elem) {
+	var cfi = $(elem).attr("data-location-cfi");
 
+	if (cfi) {
+		window.book.rendition.display(cfi);
+	}
+
+	$(elem).fadeOut();
+}
