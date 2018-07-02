@@ -284,7 +284,7 @@ function search() {
 			$.each(results, function (i, row) {
 				var a = $("<a>")
 					.attr('href', '#')
-					.html(row.excerpt)
+					.html("<b class='pull-right'>" + window.book.locations.locationFromCfi(row.cfi) + "</b>" + row.excerpt)
 					.attr('data-cfi', row.cfi)
 					.attr('data-id', row.id)
 					.click(function() {

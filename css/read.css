@@ -117,8 +117,10 @@
 	overflow : auto;
 }
 
-.toc_list b.pull-right {
+.toc_list b.pull-right,
+.search_results b.pull-right {
 	margin-right : 16px;
+	margin-left : 16px;
 }
 
 .toc_sublist {
