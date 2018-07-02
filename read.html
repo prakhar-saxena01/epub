@@ -72,25 +72,19 @@
 					</div>
   				</div>
 
-				<!-- <div class="form-group">
+				<div class="form-group">
 					<label class="col-sm-3 control-label"></label>
 					<div class="col-sm-9">
-						<div class="text-muted">Options take effect after reload:</div>
+						<!-- <div class="text-muted">Options take effect after reload:</div> -->
 
 						<div class="checkbox">
 							<label>
-								<input class="transition_checkbox"
-									type="checkbox"> Disable transitions
-							</label>
-						</div>
-						<div class="checkbox">
-							<label>
-								<input class="fullscreen_checkbox"
-									type="checkbox"> Request fullscreen mode
+								<input class="keep_ui_checkbox"
+									type="checkbox"> Keep UI when turning pages
 							</label>
 						</div>
 					</div>
-  				</div> -->
+  				</div>
 
 				<hr/>
 
@@ -501,6 +495,14 @@
 						localforage.setItem("epube.disable-transitions", this.checked);
 					});
 			});*/
+
+			localforage.getItem("epube.keep-ui-visible").then(function(keep) {
+				$(".keep_ui_checkbox")
+					.attr("checked", keep)
+					.on("click", function() {
+						localforage.setItem("epube.keep-ui-visible", this.checked);
+					});
+			});
 
 			localforage.getItem("epube.fontFamily").then(function(font) {
 				if (!font) font = DEFAULT_FONT_FAMILY;

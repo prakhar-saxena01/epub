@@ -72,12 +72,18 @@ function next_page() {
 	_store_position = 1;
 
 	window.book.rendition.next();
-	show_ui(false);
+
+	localforage.getItem("epube.keep-ui-visible").then(function(keep) {
+		if (!keep) show_ui(false);
+	});
 }
 
 function prev_page() {
 	window.book.rendition.prev();
-	show_ui(false);
+
+	localforage.getItem("epube.keep-ui-visible").then(function(keep) {
+		if (!keep) show_ui(false);
+	});
 }
 
 function hotkey_handler(e) {
@@ -121,19 +127,18 @@ $(document).ready(function() {
 					return;
 
 			var reader = $("#reader");
-			var doc = document.documentElement;
+			var doc = $(document);
 			var margin_side = parseInt(reader.css("left"), 10);
 			var margin_top = parseInt(reader.css("top"), 10);
 			var margin_bottom = parseInt(reader.css("bottom"), 10);
 
 			//console.log(margin_side, margin_top, margin_bottom);
-			//console.log(event.clientY + " " + doc.clientHeight);
 
-			if (evt.clientY < margin_top || evt.clientY >= doc.clientHeight - margin_bottom) {
+			if (evt.clientY < margin_top || evt.clientY >= doc.height() - margin_bottom) {
 				return;
 			}
 
-			if (evt.clientX >= doc.clientWidth - margin_side) {
+			if (evt.clientX >= doc.width() - margin_side) {
 				console.log("RIGHT SIDE");
 				next_page();
 			} else if (evt.clientX <= margin_side) {
