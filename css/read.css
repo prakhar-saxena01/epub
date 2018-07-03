@@ -119,10 +119,23 @@
 
 .toc_list b.pull-right,
 .search_results b.pull-right {
-	margin-right : 16px;
+	margin-right : 8px;
 	margin-left : 16px;
 }
 
 .toc_sublist {
 	margin-left : 16px;
 }
+
+::-webkit-scrollbar {
+	width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: rgba(0,0,0,0.2);
+}
+
+::-webkit-scrollbar-track {
+	background-color:rgba(0,0,0,0.1);
+}
+
