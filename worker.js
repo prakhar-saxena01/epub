@@ -18,6 +18,7 @@ const CACHE_URLS = [
 			'themes/mocca.css',
 			'themes/night.css',
 			'themes/plan9.css',
+			'themes/gray.css',
 			'lib/promise.js',
 			'lib/fetch.js',
 			'lib/zip.min.js',
