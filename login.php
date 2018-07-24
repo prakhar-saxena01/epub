@@ -3,6 +3,8 @@
 
 	@$op = $_REQUEST["op"];
 
+	$login_notice = "";
+
 	if ($op == "perform-login") {
 		$user = trim(mb_strtolower($_REQUEST["user"]));
 		$password = 'SHA256:' . hash('sha256', "$user:" . trim($_REQUEST["password"]));
@@ -19,6 +21,8 @@
 
 			$_SESSION["owner"] = $user;
 			header("Location: index.php");
+		} else {
+			$login_notice = "Incorrect username or password";
 		}
 	}
 
@@ -56,6 +60,10 @@
 </div>
 
 <div class="container">
+
+	<?php if ($login_notice) { ?>
+		<div class="alert alert-danger"><?php echo $login_notice ?></div>
+	<?php } ?>
 
 	<form method="post">
 		<input type="hidden" name="op" value="perform-login">
