@@ -1,5 +1,7 @@
 'use strict';
 
+var _dl_progress_timeout;
+
 function cache_refresh(force) {
 	if ('serviceWorker' in navigator) {
 		localforage.getItem("epube.cache-timestamp").then(function(stamp) {
@@ -94,7 +96,9 @@ function offline_cache(bookId, callback) {
 
 				console.log(cacheId + ' got data');
 
-				fetch('backend.php?op=download&id=' + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
+				var promises = [];
+
+				promises.push(fetch('backend.php?op=download&id=' + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
 					if (resp.status == 200) {
 						console.log(cacheId + ' got book');
 
@@ -102,9 +106,9 @@ function offline_cache(bookId, callback) {
 
 						localforage.setItem(cacheId + '.book', resp.blob());
 					}
-				});
+				}));
 
-				fetch("backend.php?op=getpagination&id=" + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
+				promises.push(fetch("backend.php?op=getpagination&id=" + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
 					if (resp.status == 200) {
 						console.log(cacheId + ' got pagination');
 
@@ -112,30 +116,41 @@ function offline_cache(bookId, callback) {
 							localforage.setItem(cacheId + '.locations', JSON.parse(text));
 						});
 					}
-				});
+				}));
 
-				fetch("backend.php?op=getlastread&id=" + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
+				promises.push(fetch("backend.php?op=getlastread&id=" + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
 					if (resp.status == 200) {
 						console.log(cacheId + ' got lastread');
 						resp.text().then(function(text) {
 							localforage.setItem(cacheId + '.lastread', JSON.parse(text));
 						});
 					}
-				});
+				}));
 
 				if (data.has_cover) {
 
-					fetch("backend.php?op=cover&id=" + bookId, {credentials: 'same-origin'}).then(function(resp) {
+					promises.push(fetch("backend.php?op=cover&id=" + bookId, {credentials: 'same-origin'}).then(function(resp) {
 
 						if (resp.status == 200) {
 							console.log(cacheId + ' got cover');
 							localforage.setItem(cacheId + '.cover', resp.blob());
 						}
 
-					});
+					}));
 
 				}
 
+				Promise.all(promises).then(function() {
+					$(".dl-progress")
+						.show()
+						.html("Finished downloading <b>" + data.title + "</b>");
+
+					window.clearTimeout(_dl_progress_timeout);
+
+					_dl_progress_timeout = window.setTimeout(function() {
+						$(".dl-progress").fadeOut();
+					}, 5*1000);
+				});
 			});
 		}
 

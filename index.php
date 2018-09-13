@@ -171,6 +171,7 @@
   </div>
 </div>
 
+<div style="display : none" class="alert alert-info dl-progress"></div>
 
 <?php
 
