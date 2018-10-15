@@ -24,8 +24,8 @@
 				session_commit();
 			}
 
-			session_start();
 			session_regenerate_id(true);
+			session_start();
 
 			$_SESSION["owner"] = $user;
 			header("Location: index.php");
