@@ -19,6 +19,14 @@
 		if ($line = $sth->fetch()) {
 			require_once "sessions.php";
 
+			if (session_status() != PHP_SESSION_NONE) {
+				session_destroy();
+				session_commit();
+			}
+
+			session_start();
+			session_regenerate_id(true);
+
 			$_SESSION["owner"] = $user;
 			header("Location: index.php");
 		} else {

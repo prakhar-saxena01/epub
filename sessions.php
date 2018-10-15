@@ -19,5 +19,7 @@
 
 	register_shutdown_function('session_write_close');
 
-	session_start();
+	if (isset($_COOKIE[session_name()])) {
+		session_start();
+	}
 ?>
