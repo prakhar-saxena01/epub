@@ -6,14 +6,6 @@
 
 	define('STATIC_EXPIRES', 86400*14);
 
-	// let's not start a session if there's no cookie, login is impossible
-	// via backend anyway
-	if (!isset($_COOKIE['epube_sid'])) {
-		header($_SERVER["SERVER_PROTOCOL"]." 402 Unauthorized");
-		echo "Unauthorized";
-		die;
-	}
-
 	require_once "sessions.php";
 	require_once "db.php";
 
