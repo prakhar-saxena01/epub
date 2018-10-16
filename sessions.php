@@ -9,6 +9,16 @@
 	ini_set("session.gc_maxlifetime", SESSION_LIFETIME);
 	ini_set("session.cookie_lifetime", SESSION_LIFETIME);
 
+	function logout_user() {
+		session_destroy();
+
+		if (isset($_COOKIE[session_name()])) {
+		   setcookie(session_name(), '', time()-42000, '/');
+		}
+
+		session_commit();
+	}
+
 	if (@$_SERVER['HTTPS'] == "on") {
 		ini_set("session.cookie_secure", true);
 	}

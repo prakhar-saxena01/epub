@@ -35,6 +35,8 @@
 		} else {
 			$login_notice = "Incorrect username or password";
 		}
+	} else {
+		logout_user();
 	}
 
 ?>
