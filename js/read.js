@@ -233,6 +233,9 @@ function save_and_close() {
 		$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
 			cfi: currentCfi }, function(data) {
 				window.location = $.urlParam("rt") ? "index.php?mode=" + $.urlParam("rt") : "index.php";
+			})
+			.fail(function() {
+				window.location = "index.php";
 			});
 	} else {
 		window.location = "index.php";
