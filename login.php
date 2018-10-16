@@ -1,5 +1,6 @@
 <?php
 	require_once "config.php";
+	require_once "sessions.php";
 
 	@$op = $_REQUEST["op"];
 
@@ -17,11 +18,13 @@
 		$sth->execute([$user, $password]);
 
 		if ($line = $sth->fetch()) {
-			require_once "sessions.php";
 
 			if (session_status() != PHP_SESSION_NONE) {
 				session_destroy();
 				session_commit();
+
+				header("Location: login.php");
+				return;
 			}
 
 			session_regenerate_id(true);
