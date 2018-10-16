@@ -313,6 +313,11 @@
 					if (data.cfi) {
 						_last_position_sync = new Date().getTime()/1000;
 					}
+				})
+				.fail(function(e) {
+					if (e && e.status == 401) {
+						window.location = "index.php";
+					}
 				});
 		});
 
@@ -830,6 +835,11 @@
 							_last_position_sync = new Date().getTime()/1000;
 						}
 
+					})
+					.fail(function(e) {
+						if (e && e.status == 401) {
+							window.location = "index.php";
+						}
 					});
 
 					_store_position = 0;

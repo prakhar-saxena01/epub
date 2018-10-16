@@ -58,6 +58,11 @@ function open_lastread() {
 					}
 
 				}
+			})
+			.fail(function(e) {
+				if (e && e.status == 401) {
+					window.location = "index.php";
+				}
 			});
 		}
 
