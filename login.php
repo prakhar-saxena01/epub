@@ -19,24 +19,14 @@
 
 		if ($line = $sth->fetch()) {
 
-			if (session_status() != PHP_SESSION_NONE) {
-				session_destroy();
-				session_commit();
-
-				header("Location: login.php");
-				return;
-			}
-
-			session_regenerate_id(true);
 			session_start();
+			session_regenerate_id(true);
 
 			$_SESSION["owner"] = $user;
 			header("Location: index.php");
 		} else {
 			$login_notice = "Incorrect username or password";
 		}
-	} else {
-		logout_user();
 	}
 
 ?>
