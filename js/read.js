@@ -36,7 +36,13 @@ function open_lastread() {
 
 		// CFI missing or w/e
 		try {
-			if (item.cfi) book.rendition.display(item.cfi);
+
+			// this is ridiculous tbh
+			if (item.cfi) book.rendition.display(item.cfi).then(() => {
+				book.rendition.display(item.cfi);
+			});
+
+			return;
 		} catch (e) {
 			console.warn(e);
 		}
@@ -52,7 +58,11 @@ function open_lastread() {
 
 					try {
 						if (item.cfi != data.cfi && (!item.page || data.page >= item.page))
-							book.rendition.display(data.cfi);
+							console.log('using remote lastread...');
+
+							book.rendition.display(data.cfi).then(() => {
+								book.rendition.display(data.cfi);
+							});
 					} catch (e) {
 						console.warn(e);
 					}
