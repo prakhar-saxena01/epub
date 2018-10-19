@@ -40,6 +40,8 @@
 				header("Content-type: " . mime_content_type($filename));
 				header('Cache-control: max-age=' . STATIC_EXPIRES);
 				header("Expires: " . gmdate("D, d M Y H:i:s \G\M\T", time()+STATIC_EXPIRES));
+				header("Last-Modified: " .
+					gmdate("D, d M Y H:i:s \G\M\T", filemtime($filename)));
 
 				readfile($filename);
 			} else {
