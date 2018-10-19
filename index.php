@@ -222,7 +222,14 @@
 	while ($line = $sth->fetch()) {
 		++$rows;
 
-		$cover_link = "backend.php?" . http_build_query(["op" => "cover", "id" => $line["id"]]);
+		$cover_filename = BOOKS_DIR . "/" . $line["path"] . "/" . "cover.jpg";
+
+		if (file_exists($cover_filename))
+			$cover_mtime = filemtime($cover_filename);
+		else
+			$cover_mtime = 0;
+
+		$cover_link = "backend.php?" . http_build_query(["op" => "cover", "id" => $line["id"], "ts" => $cover_mtime]);
 		$author_link = "?" . http_build_query(["query" => $line["author_sort"]]);
 
 		$in_progress = false;
