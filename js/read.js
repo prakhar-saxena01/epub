@@ -42,7 +42,6 @@ function open_lastread() {
 				book.rendition.display(item.cfi);
 			});
 
-			return;
 		} catch (e) {
 			console.warn(e);
 		}
