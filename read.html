@@ -508,8 +508,15 @@
 
 		$('#settings-modal').on('shown.bs.modal', function() {
 
-			$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
-				$(".lastread_input").val(data.page + '%');
+			localforage.getItem(cacheId("lastread")).then((item) => {
+				if (item && item.cfi) {
+					$(".lastread_input").val(item.page + '%');
+				}
+
+				$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
+					$(".lastread_input").val(data.page + '%');
+				});
+
 			});
 
 			/*localforage.getItem("epube.disable-transitions").then(function(disable) {
