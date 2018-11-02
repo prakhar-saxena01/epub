@@ -2,3 +2,5 @@ config.php
 db/scratch.db
 sessions/*
 /tags
+/.tags*
+/.gutentags
