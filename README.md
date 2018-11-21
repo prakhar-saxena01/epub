@@ -44,6 +44,7 @@ When upgrading from an older Git snapshot which used HTTP Authentication:
 Requirements
 ============
 
+* HTTPS: required for service workers to work
 * PDO::sqlite
 * Calibre books directory and metadata.db
 
