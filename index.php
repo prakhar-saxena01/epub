@@ -144,6 +144,10 @@
 					window.location.reload();
 				}
 			 });
+		} else {
+			$(".container-main")
+				.addClass("alert alert-danger")
+				.html("Service worker support missing in browser (are you using plain HTTP?).");
 		}
 
 		mark_offline_books();
@@ -152,7 +156,7 @@
 	});
 </script>
 
-<div class="container">
+<div class="container container-main">
 
 <div class="modal fade" id="summary-modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
