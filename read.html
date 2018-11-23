@@ -275,9 +275,16 @@
 
 		for (var i = 0; i < res_names.length; i++) {
 			fetch(res_names[i], {credentials: 'same-origin'}).then(function(resp) {
-				if (resp.status == 200) resp.text().then(function(data) {
-					_res_data[resp.url] = data;
-				});
+				if (resp.status == 200) {
+					resp.text().then(function(data) {
+						var url = new URL(resp.url);
+						url.searchParams.delete("ts");
+
+						_res_data[url.toString()] = data;
+					})
+				} else {
+					console.warn('loader failed for resource', res_names[i], resp);
+				}
 			});
 		}
 
