@@ -98,7 +98,7 @@ function prev_page() {
 
 function hotkey_handler(e) {
 	try {
-		//console.log('K:' + e.which, e);
+		//console.log('K3:' + e.which, e);
 
 		if ($(".modal").is(":visible"))
 			return;

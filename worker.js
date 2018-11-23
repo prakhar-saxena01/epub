@@ -3,6 +3,8 @@
 const CACHE_PREFIX = 'epube';
 const CACHE_NAME = CACHE_PREFIX + '-v2';
 const CACHE_URLS = [
+			'img/favicon_hires.png',
+			'img/favicon.png',
 			'read.html',
 			'js/common.js',
 			'js/read.js',
@@ -79,15 +81,18 @@ self.addEventListener('message', function(event){
 				if (CACHE_URLS[i].match("backend.php"))
 					continue;
 
-				//console.log(CACHE_URLS[i]);
+				var fetch_url = CACHE_URLS[i] + "?ts=" + Date.now();
 
-				var promise = fetch(CACHE_URLS[i]).then(function(resp) {
-					//console.log(resp);
+				var promise = fetch(fetch_url).then(function(resp) {
+					var url = new URL(resp.url);
+					url.searchParams.delete("ts");
+
+					console.log('got', url);
 
 					if (resp.status == 200) {
-						cache.put(resp.url, resp);
+						cache.put(url, resp);
 					} else if (resp.status == 404) {
-						cache.delete(resp.url);
+						cache.delete(url);
 					}
 				});
 
