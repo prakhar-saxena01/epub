@@ -98,7 +98,7 @@ function prev_page() {
 
 function hotkey_handler(e) {
 	try {
-		//console.log('K:' + e.which);
+		//console.log('K:' + e.which, e);
 
 		if ($(".modal").is(":visible"))
 			return;
@@ -139,7 +139,9 @@ function resize_side_columns() {
 }
 
 $(document).ready(function() {
-	document.onkeydown = hotkey_handler;
+	$(document).on("keyup", function(e) {
+		hotkey_handler(e);
+	});
 
 	$("#left").on("mouseup", function(evt) {
 		prev_page();
