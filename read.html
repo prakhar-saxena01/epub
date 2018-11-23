@@ -351,6 +351,8 @@
 				if (navigator.onLine) {
 					var book_url = "backend.php?op=download&id=" + $.urlParam("id");
 
+					$(".loading_message").html("Downloading...");
+
 					fetch(book_url, {credentials: 'same-origin'}).then(function(resp) {
 
 						if (resp.status == 200) {
