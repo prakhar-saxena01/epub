@@ -710,13 +710,16 @@
 									_pagination_stored = 1;
 									return book.locations.load(locations);
 								} else {
+									$(".loading_message").html("Paginating...");
 									return book.locations.generate(1600);
 								}
 							});
 						} else {
+							$(".loading_message").html("Paginating...");
 							return book.locations.generate(1600);
 						}
 					}).catch(function() {
+						$(".loading_message").html("Paginating...");
 						return book.locations.generate(1600);
 					});
 				}
