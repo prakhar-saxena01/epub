@@ -2,6 +2,7 @@
 
 /* global localforage, Holder */
 
+/* exported offline_search */
 function offline_search() {
 	const query = $(".search_query").val();
 
@@ -12,14 +13,17 @@ function offline_search() {
 	return false;
 }
 
+/* exported offline_remove2 */
 function offline_remove2(elem) {
 	const bookId = elem.getAttribute("data-book-id");
 
+	/* global offline_remove */
 	return offline_remove(bookId, function() {
 		$("#cell-" + bookId).remove();
 	});
 }
 
+/* exported offline_clear */
 function offline_clear() {
 
 	if (confirm("Remove all offline data?")) {
@@ -151,6 +155,7 @@ function populate_list() {
 
 }
 
+/* exported show_summary */
 function show_summary(elem) {
 	const bookId = elem.getAttribute("data-book-id");
 

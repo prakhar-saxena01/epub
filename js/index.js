@@ -4,6 +4,7 @@
 
 let _dl_progress_timeout;
 
+/* exported cache_refresh */
 function cache_refresh(force) {
 	if ('serviceWorker' in navigator) {
 		localforage.getItem("epube.cache-timestamp").then(function(stamp) {
@@ -21,6 +22,7 @@ function cache_refresh(force) {
 	return false;
 }
 
+/* exported toggle_fav */
 function toggle_fav(elem) {
 	const bookId = elem.getAttribute("data-book-id");
 
@@ -38,6 +40,7 @@ function toggle_fav(elem) {
 
 				$(elem).html(msg).attr('data-is-fav', data.status);
 
+				/* global index_mode */
 				if (index_mode == "favorites" && data.status == 0) {
 					$("#cell-" + bookId).remove();
 				}
@@ -48,6 +51,7 @@ function toggle_fav(elem) {
 	return false;
 }
 
+/* global offline_remove */
 function mark_offline(elem) {
 
 	const bookId = elem.getAttribute("data-book-id");
@@ -78,6 +82,7 @@ function mark_offline(elem) {
 	});
 }
 
+/* exported mark_offline_books */
 function mark_offline_books() {
 	const elems = $(".offline_dropitem");
 
@@ -159,6 +164,7 @@ function offline_cache(bookId, callback) {
 	});
 }
 
+/* exported show_summary */
 function show_summary(elem) {
 	const id = elem.getAttribute("data-book-id");
 
@@ -176,6 +182,7 @@ function show_summary(elem) {
 	return false;
 }
 
+/* exported offline_get_all */
 function offline_get_all() {
 
 	if (confirm("Download all books on this page?")) {
