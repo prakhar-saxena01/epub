@@ -2,7 +2,7 @@
 
 $.urlParam = function(name){
 	try {
-		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+		const results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
 		return decodeURIComponent(results[1].replace(/\+/g, " ")) || 0;
 	} catch (e) {
 		return 0;
@@ -13,8 +13,8 @@ function offline_remove(id, callback) {
 
 	if (confirm("Remove download?")) {
 
-		var cacheId = "epube-book." + id;
-		var promises = [];
+		const cacheId = "epube-book." + id;
+		const promises = [];
 
 		console.log("offline remove: " + id);
 

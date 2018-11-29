@@ -1,15 +1,16 @@
 'use strict';
 
-var _store_position = 0;
+/* global localforage, book, cacheId */
 
 function toggle_fullscreen() {
-	var element = document.documentElement;
+	const element = document.documentElement;
+	const isFullscreen = document.webkitIsFullScreen || document.mozFullScreen || false;
 
-	var isFullscreen = document.webkitIsFullScreen || document.mozFullScreen || false;
+	element.requestFullScreen = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen ||
+		function () { return false; };
 
-	element.requestFullScreen = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || function () { return false; };
-
-	document.cancelFullScreen = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || function () { return false; };
+	document.cancelFullScreen = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen ||
+		function () { return false; };
 
 	isFullscreen ? document.cancelFullScreen() : element.requestFullScreen();
 }
@@ -120,20 +121,17 @@ function hotkey_handler(e) {
 			e.preventDefault();
 			show_ui(true);
 		}
-
-
 	} catch (e) {
 		console.warn(e);
 	}
 }
 
 function resize_side_columns() {
-	var width = $("#reader").position().left;
-
-	var iframe = $("#reader iframe")[0];
+	let width = $("#reader").position().left;
+	const iframe = $("#reader iframe")[0];
 
 	if (iframe && iframe.contentWindow.$)
-		width += parseInt(iframe.contentWindow.$("body").css("padding-left"), 10);
+		width += parseInt(iframe.contentWindow.$("body").css("padding-left"));
 
 	$("#left, #right").width(width);
 }
@@ -143,18 +141,18 @@ $(document).ready(function() {
 		hotkey_handler(e);
 	});
 
-	$("#left").on("mouseup", function(evt) {
+	$("#left").on("mouseup", function() {
 		prev_page();
 	});
 
-	$("#right").on("mouseup", function(evt) {
+	$("#right").on("mouseup", function() {
 		next_page();
 	});
 
 });
 
 function apply_line_height(elem) {
-	var height = elem[elem.selectedIndex].value;
+	const height = $(elem).val();
 
 	localforage.setItem("epube.lineHeight", height).then(function() {
 		apply_styles();
@@ -162,7 +160,7 @@ function apply_line_height(elem) {
 }
 
 function apply_font(elem) {
-	var font = elem[elem.selectedIndex].value;
+	const font = $(elem).val();
 
 	localforage.setItem("epube.fontFamily", font).then(function() {
 		apply_styles();
@@ -171,7 +169,7 @@ function apply_font(elem) {
 }
 
 function apply_font_size(elem) {
-	var size = elem[elem.selectedIndex].value;
+	const size = $(elem).val();
 
 	localforage.setItem("epube.fontSize", size).then(function() {
 		apply_styles();
@@ -186,10 +184,10 @@ function apply_styles() {
 		localforage.getItem("epube.lineHeight"),
 		localforage.getItem("epube.theme")
 	]).then(function(res) {
-		var fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
-		var fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
-		var lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
-		var themeName = res[3] ? res[3] : false;
+		const fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
+		const fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
+		const lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
+		//const themeName = res[3] ? res[3] : false;
 
 		$.each(window.book.rendition.getContents(), function(i, c) {
 			c.css("font-size", fontSize);
@@ -204,7 +202,7 @@ function apply_styles() {
 
 function clear_lastread() {
 	if (confirm("Clear stored last read location?")) {
-		var total = window.book.locations.length();
+		const total = window.book.locations.length();
 
 		if (navigator.onLine) {
 			$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
@@ -220,8 +218,8 @@ function clear_lastread() {
 
 function mark_as_read() {
 	if (confirm("Mark book as read?")) {
-		var total = 100;
-		var lastCfi = window.book.locations.cfiFromPercentage(1);
+		const total = 100;
+		const lastCfi = window.book.locations.cfiFromPercentage(1);
 
 		if (navigator.onLine) {
 			$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
@@ -236,18 +234,18 @@ function mark_as_read() {
 }
 
 function save_and_close() {
-	var location = window.book.rendition.currentLocation();
+	const location = window.book.rendition.currentLocation();
 
-	var currentCfi = location.start.cfi;
-	var currentPage = parseInt(window.book.locations.percentageFromCfi(currentCfi) * 100);
-	var totalPages = 100;
+	const currentCfi = location.start.cfi;
+	const currentPage = parseInt(window.book.locations.percentageFromCfi(currentCfi) * 100);
+	const totalPages = 100;
 
 	localforage.setItem(cacheId("lastread"),
 		{cfi: currentCfi, page: currentPage, total: totalPages});
 
 	if (navigator.onLine) {
 		$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
-			cfi: currentCfi }, function(data) {
+			cfi: currentCfi }, function() {
 				window.location = $.urlParam("rt") ? "index.php?mode=" + $.urlParam("rt") : "index.php";
 			})
 			.fail(function() {
@@ -259,7 +257,8 @@ function save_and_close() {
 }
 
 function change_theme(elem) {
-	var theme = $(elem).val();
+	const theme = $(elem).val();
+
 	localforage.setItem("epube.theme", theme).then(function() {
 		apply_styles();
 	});
@@ -269,11 +268,10 @@ function apply_theme() {
 	localforage.getItem("epube.theme").then(function(theme) {
 		console.log('theme', theme);
 
-		var base_url = window.location.href.match(/^.*\//)[0];
+		const base_url = window.location.href.match(/^.*\//)[0];
 
 		if (!theme) theme = 'default';
-
-		var theme_url = base_url + "themes/" + theme + ".css";
+		const theme_url = base_url + "themes/" + theme + ".css";
 
 		$("#theme_css").attr("href", theme_url);
 
@@ -285,23 +283,24 @@ function apply_theme() {
 }
 
 function search() {
-	var query = $(".search_input").val();
-	var list = $(".search_results");
+	const query = $(".search_input").val();
+	const list = $(".search_results");
 
 	list.html("");
 
 	if (query) {
 
+		/* eslint-disable prefer-spread */
 		Promise.all(
 			book.spine.spineItems.map(
-				item => item.load(book.load.bind(book))
+				(item) => item.load(book.load.bind(book))
 				.then(item.find.bind(item, query))
 				.finally(item.unload.bind(item)))
-	    )
-		.then(results => Promise.resolve([].concat.apply([], results)))
+			)
+		.then((results) => Promise.resolve([].concat.apply([], results)))
 		.then(function(results) {
 			$.each(results, function (i, row) {
-				var a = $("<a>")
+				const a = $("<a>")
 					.attr('href', '#')
 					.html("<b class='pull-right'>" + window.book.locations.locationFromCfi(row.cfi) + "</b>" + row.excerpt)
 					.attr('data-cfi', row.cfi)
@@ -330,7 +329,7 @@ function dict_lookup(word, callback) {
 }
 
 function open_previous_location(elem) {
-	var cfi = $(elem).attr("data-location-cfi");
+	const cfi = $(elem).attr("data-location-cfi");
 
 	if (cfi) {
 		window.book.rendition.display(cfi);

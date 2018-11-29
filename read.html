@@ -236,11 +236,11 @@
 <script type='text/javascript'>
 	'use strict';
 
-	var _pagination_stored = 0;
-	var _last_position_sync = 0;
-
-	var _is_ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-	var _res_data = [];
+	let _pagination_stored = 0;
+	let _last_position_sync = 0;
+	let _store_position = 0;
+	let _is_ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+	let _res_data = [];
 
 	const DEFAULT_FONT_SIZE = 16;
 	const DEFAULT_FONT_FAMILY = "Georgia";

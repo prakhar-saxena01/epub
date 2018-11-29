@@ -1,7 +1,9 @@
 'use strict';
 
-function offline_search(form) {
-	var query = $(".search_query").val();
+/* global localforage, Holder */
+
+function offline_search() {
+	const query = $(".search_query").val();
 
 	localforage.setItem("epube.search-query", query).then(function() {
 		populate_list();
@@ -11,7 +13,7 @@ function offline_search(form) {
 }
 
 function offline_remove2(elem) {
-	var bookId = elem.getAttribute("data-book-id");
+	const bookId = elem.getAttribute("data-book-id");
 
 	return offline_remove(bookId, function() {
 		$("#cell-" + bookId).remove();
@@ -22,9 +24,9 @@ function offline_clear() {
 
 	if (confirm("Remove all offline data?")) {
 
-		var promises = [];
+		const promises = [];
 
-		localforage.iterate(function(value, key, i) {
+		localforage.iterate(function(value, key/*, i*/) {
 
 			if (key.match("epube-book")) {
 				promises.push(localforage.removeItem(key));
@@ -42,14 +44,14 @@ function offline_clear() {
 
 function populate_list() {
 
-	var query = $.urlParam("query");
+	let query = $.urlParam("query");
 
 	if (query) query = query.toLowerCase();
 
-	var books = $("#books_container");
+	const books = $("#books_container");
 	books.html("");
 
-	localforage.iterate(function(value, key, i) {
+	localforage.iterate(function(value, key/*, i*/) {
 		if (key.match(/epube-book\.\d{1,}$/)) {
 
 			Promise.all([
@@ -60,10 +62,10 @@ function populate_list() {
 			]).then(function(results) {
 
 				if (results[0] && results[3]) {
-					var info = results[0];
+					const info = results[0];
 
 					if (query) {
-						var match =
+						const match =
 							(info.series_name && info.series_name.toLowerCase().match(query)) ||
 							(info.title && info.title.toLowerCase().match(query)) ||
 							(info.author_sort && info.author_sort.toLowerCase().match(query));
@@ -72,26 +74,26 @@ function populate_list() {
 					}
 
 
-					var cover = false;
+					let cover = false;
 
 					if (results && results[1]) {
 						cover = URL.createObjectURL(results[1]);
 					}
 
-					var in_progress = false;
-					var is_read = false;
+					let in_progress = false;
+					let is_read = false;
 
-					var lastread = results[2];
+					const lastread = results[2];
 					if (lastread) {
 
 						in_progress = lastread.page > 0;
 						is_read = lastread.total > 0 && lastread.total - lastread.page < 5;
 					}
 
-					var cell = "<div class='col-xs-6 col-sm-3 col-md-2 index_cell' id=\"cell-"+info.id+"\">";
+					let cell = "<div class='col-xs-6 col-sm-3 col-md-2 index_cell' id=\"cell-"+info.id+"\">";
 
-					var cover_read = is_read ? "read" : "";
-					var title_class = in_progress ? "in_progress" : "";
+					const cover_read = is_read ? "read" : "";
+					const title_class = in_progress ? "in_progress" : "";
 
 					cell += "<div class=\"thumb "+cover_read+"\">";
 					cell += "<a href=\"read.html?id="+info.epub_id+"&b="+info.id+"\"><img data-src=\"holder.js/120x180\"></a>";
@@ -100,7 +102,7 @@ function populate_list() {
 					cell += "<div><a class=\""+title_class+"\" href=\"read.html?id="+info.epub_id+"&b="+info.id+"\">" +
 						info.title + "</a></div>";
 
-					cell += "<div><a href=\#\" class=\"author_link\">" + info.author_sort + "</a></div>";
+					cell += "<div><a href=\"#\" class=\"author_link\">" + info.author_sort + "</a></div>";
 
 					if (info.series_name) {
 						cell += "<div><a href=\"\" class=\"series_link\">" +
@@ -111,7 +113,7 @@ function populate_list() {
 
 					cell += "<div class=\"dropdown\" style=\"white-space : nowrap\">";
 					cell += "<a href=\"#\" data-toggle=\"dropdown\" role=\"button\">" +
-						"More..." + "<span class=\"caret\"></span></a>";
+						"More...<span class=\"caret\"></span></a>";
 
 					cell += "<ul class=\"dropdown-menu\">";
 					cell += "<li><a href=\"#\" data-book-id=\""+info.id+"\" onclick=\"return show_summary(this)\">Summary</a></li>";
@@ -123,7 +125,7 @@ function populate_list() {
 					cell += "</div>";
 					cell += "</div>";
 
-					var cell = $(cell);
+					cell = $(cell);
 
 					if (cover) {
 
@@ -150,11 +152,11 @@ function populate_list() {
 }
 
 function show_summary(elem) {
-	var bookId = elem.getAttribute("data-book-id");
+	const bookId = elem.getAttribute("data-book-id");
 
 	localforage.getItem("epube-book." + bookId).then(function(data) {
 
-		var comment = data.comment ? data.comment : 'No description available';
+		const comment = data.comment ? data.comment : 'No description available';
 
 		$("#summary-modal .modal-title").html(data.title);
 		$("#summary-modal .book-summary").html(comment);
@@ -165,5 +167,3 @@ function show_summary(elem) {
 
 	return false;
 }
-
-
