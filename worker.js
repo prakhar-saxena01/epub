@@ -3,7 +3,7 @@
 const CACHE_PREFIX = 'epube';
 const CACHE_NAME = CACHE_PREFIX + '-v2';
 const CACHE_URLS = [
-			'img/launcher.png',
+			'img/ic_launcher_web.png',
 			'img/favicon.png',
 			'read.html',
 			'js/common.js',
