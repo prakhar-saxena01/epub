@@ -2,8 +2,8 @@
   "name": "The Epube",
   "icons": [
     {
-      "src": "img/favicon_hires.png",
-      "sizes": "192x192",
+      "src": "img/ic_launcher_web.png",
+      "sizes": "512x512",
       "type": "image/png",
       "density": 4.0
     }

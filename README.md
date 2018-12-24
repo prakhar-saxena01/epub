@@ -51,8 +51,7 @@ Requirements
 Acknowledgements
 ================
 
-1. Hires favicon by Flaticon - https://www.shareicon.net/business-school-material-open-book-education-leisure-reader-reading-794233
-2. Normal favicon from Silk icon pack - http://www.famfamfam.com/lab/icons/silk/
+Normal favicon from Silk icon pack - http://www.famfamfam.com/lab/icons/silk/
 
 License
 =======
