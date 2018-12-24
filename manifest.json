@@ -2,7 +2,7 @@
   "name": "The Epube",
   "icons": [
     {
-      "src": "img/ic_launcher_web.png?3",
+      "src": "img/ic_launcher_web.png?v4",
       "sizes": "512x512",
       "type": "image/png",
       "density": 4.0
