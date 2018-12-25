@@ -89,47 +89,34 @@ function populate_list() {
 
 					const lastread = results[2];
 					if (lastread) {
-
 						in_progress = lastread.page > 0;
 						is_read = lastread.total > 0 && lastread.total - lastread.page < 5;
 					}
 
-					let cell = "<div class='col-xs-6 col-sm-3 col-md-2 index_cell' id=\"cell-"+info.id+"\">";
-
-					const cover_read = is_read ? "read" : "";
+					const thumb_class = is_read ? "read" : "";
 					const title_class = in_progress ? "in_progress" : "";
 
-					cell += "<div class=\"thumb "+cover_read+"\">";
-					cell += "<a href=\"read.html?id="+info.epub_id+"&b="+info.id+"\"><img data-src=\"holder.js/120x180\"></a>";
+					const series_link = info.series_name ? `<div><a class="series_link" href="#">${info.series_name + " [" + info.series_index + "]"}</a></div>` : "";
 
-					cell += "<div class=\"caption\">";
-					cell += "<div><a class=\""+title_class+"\" href=\"read.html?id="+info.epub_id+"&b="+info.id+"\">" +
-						info.title + "</a></div>";
-
-					cell += "<div><a href=\"#\" class=\"author_link\">" + info.author_sort + "</a></div>";
-
-					if (info.series_name) {
-						cell += "<div><a href=\"\" class=\"series_link\">" +
-							info.series_name + " [" + info.series_index + "]</a></div>";
-					}
-
-					cell += "</div>";
-
-					cell += "<div class=\"dropdown\" style=\"white-space : nowrap\">";
-					cell += "<a href=\"#\" data-toggle=\"dropdown\" role=\"button\">" +
-						"More...<span class=\"caret\"></span></a>";
-
-					cell += "<ul class=\"dropdown-menu\">";
-					cell += "<li><a href=\"#\" data-book-id=\""+info.id+"\" onclick=\"return show_summary(this)\">Summary</a></li>";
-					cell += "<li><a href=\"#\" data-book-id=\""+info.id+"\" onclick=\"offline_remove2(this)\">Remove offline data</a></li>";
-					cell += "</ul>";
-
-					cell += "</div>";
-
-					cell += "</div>";
-					cell += "</div>";
-
-					cell = $(cell);
+					const cell = $(`<div class="col-xs-6 col-sm-3 col-md-2 index_cell" id="cell-${info.id}">
+							<div class="thumb ${thumb_class}">
+								<a href="read.html?id=${info.epub_id}&b=${info.id}">
+									<img data-src="holder.js/120x180">
+								</a>
+								<div class="caption">
+									<div><a class="${title_class}" href="read.html?id=${info.epub_id}&b=${info.id}">${info.title}</a></div>
+									<div><a class="author_link" href="#">${info.author_sort}</a></div>
+									${series_link}
+								</div>
+								<div class="dropdown" style="white-space : nowrap">
+									<a href="#" data-toggle="dropdown" role="button">More...<span class="caret"></span></a>
+									<ul class="dropdown-menu">
+										<li><a href="#" data-book-id="${info.id}" onclick="return show_summary(this)">Summary</a></li>
+										<li><a href="#" data-book-id="${info.id}" onclick="offline_remove2(this)">Remove offline data</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>`);
 
 					if (cover) {
 
