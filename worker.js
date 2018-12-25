@@ -35,12 +35,10 @@ const CACHE_URLS = [
 			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2'
 		];
 
-
-
 self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
-		return cache.addAll(CACHE_URLS.map(url => new Request(url, {credentials: 'same-origin'})));
+		return cache.addAll(CACHE_URLS.map((url) => new Request(url, {credentials: 'same-origin'})));
     })
   );
 });
@@ -48,12 +46,13 @@ self.addEventListener('install', function(event) {
 self.addEventListener('activate', function(event) {
 	event.waitUntil(
 		caches.keys().then(function(keyList) {
-			return Promise.all(keyList.map(function(key) {
+			return Promise.all(keyList.map((key) => {
 				if (key.indexOf(CACHE_PREFIX) != -1 && key != CACHE_NAME) {
 					return caches.delete(key);
 				}
-	      }));
-	    })
+				return false;
+			}));
+		})
     );
 });
 
@@ -62,8 +61,8 @@ function send_message(client, msg) {
 }
 
 function send_broadcast(msg) {
-	clients.matchAll().then(clients => {
-		clients.forEach(client => {
+	self.clients.matchAll().then((clients) => {
+		clients.forEach((client) => {
 			send_message(client, msg);
 		})
 	})
@@ -74,17 +73,17 @@ self.addEventListener('message', function(event){
 		console.log("refreshing cache...");
 
 		caches.open(CACHE_NAME).then(function(cache) {
-			var promises = [];
+			const promises = [];
 
-			for (var i = 0; i < CACHE_URLS.length; i++) {
+			for (let i = 0; i < CACHE_URLS.length; i++) {
 
 				if (CACHE_URLS[i].match("backend.php"))
 					continue;
 
-				var fetch_url = CACHE_URLS[i] + "?ts=" + Date.now();
+				const fetch_url = CACHE_URLS[i] + "?ts=" + Date.now();
 
-				var promise = fetch(fetch_url).then(function(resp) {
-					var url = new URL(resp.url);
+				const promise = fetch(fetch_url).then(function(resp) {
+					const url = new URL(resp.url);
 					url.searchParams.delete("ts");
 
 					console.log('got', url);
@@ -110,7 +109,7 @@ self.addEventListener('message', function(event){
 });
 
 this.addEventListener('fetch', function(event) {
-	var req = event.request.clone();
+	const req = event.request.clone();
 
 	event.respondWith(
 		caches.match(req).then(function(resp) {
