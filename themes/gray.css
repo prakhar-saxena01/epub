@@ -3,14 +3,6 @@ body, .loading, html:-webkit-full-screen {
 	color : #424242;
 }
 
-body a {
-	color : #22b9b2;
-}
-
-body a:hover {
-	color : #28d7cf;
-}
-
 body .header,
 body .footer {
 	color : #B85C57;

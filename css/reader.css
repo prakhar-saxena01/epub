@@ -1,5 +1,5 @@
 a {
-	color : #337ab7;
+	color : #007d71;
 	text-decoration : none;
 }
 
@@ -9,7 +9,6 @@ a:visited {
 
 a:hover,
 a:focus {
-	color: #23527c;
+	color: #00302c;
 	text-decoration: underline;
 }
-
