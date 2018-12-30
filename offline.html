@@ -41,15 +41,21 @@
 			<li class="active"><a href="offline.html">Local</a></li>
 		</ul>
 
-		<form onsubmit="return false;" class="navbar-form navbar-right">
-			<button type="submit" onclick="offline_clear()" class="btn btn-danger">Remove all</button>
+		<form class="navbar-form navbar-right">
+			<div class="input-group">
+				<input type="text" class="form-control search_query" name="query"
+					placeholder="Search for..." class="form-control" value="">
+					<span class="input-group-btn">
+						<button type="submit" class="btn btn-default">Go</button>
+					</span>
+			</div>
 		</form>
 
-		<form class="navbar-form navbar-right">
-			<input type="text" class="form-control search_query" name="query" class="form-control"
-				value="">
-			<button type="submit" class="btn btn-default">Search</button>
-		</form>
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="#" onclick="offline_clear()" title="Remove all downloads">
+				<span class="glyphicon glyphicon-remove-circle text-danger"></span> <span class='hidden-md hidden-lg'>Remove all downloads</span>
+			</a></li>
+		</ul>
 
 	</div>
 

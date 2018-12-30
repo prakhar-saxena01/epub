@@ -100,27 +100,32 @@
 			<li><a href="offline.html">Local</a></li>
 		</ul>
 
-		<?php if ($mode == "favorites") { ?>
-			<form onsubmit="return false;" class="navbar-form navbar-right">
-				<button type="submit" onclick="offline_get_all()" class="btn btn-primary">Get all</button>
-			</form>
-		<?php } ?>
-
 		<form class="navbar-form navbar-right">
-			<input type="text" name="query" class="form-control"
-				value="<?php echo htmlspecialchars($query) ?>">
-			<input type="hidden" name="mode" value="<?php echo $mode ?>">
-			<button type="submit" class="btn btn-default">Search</button>
+			<div class="input-group">
+				<input type="text" name="query" class="form-control" placeholder="Search for..."
+					value="<?php echo htmlspecialchars($query) ?>">
+				<input type="hidden" name="mode" value="<?php echo $mode ?>">
+				<span class="input-group-btn">
+					<button type="submit" class="btn btn-default">Go</button>
+				</span>
+			</div>
 		</form>
 
-		<?php if ($mode != "favorites") { ?>
-
-			<ul class="nav navbar-nav navbar-right">
-			<li><a href="logout.php">Logout</a></li>
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="#" title="Refresh script cache" onclick="return cache_refresh(true)">
+				<span class="glyphicon glyphicon-refresh"></span> <span class='hidden-md hidden-lg'>Refresh script cache</span></a></li>
 			</li>
-
-		<?php } ?>
-
+			<?php if ($mode !== "favorites") { ?>
+				<li><a href="logout.php" title="Log out">
+					<span class="glyphicon glyphicon-log-out"></span> <span class='hidden-md hidden-lg'>Log out</span>
+				</a></li>
+			<?php } ?>
+			<?php if ($mode == "favorites") { ?>
+				<li><a href="#" onclick="offline_get_all()" title="Download all">
+					<span class="glyphicon glyphicon-download-alt text-primary"></span> <span class='hidden-md hidden-lg'>Download all</span>
+				</a></li>
+			<?php } ?>
+		</ul>
 	</div>
 
 </div>
@@ -403,9 +408,9 @@
 		<?php } ?>
 	</ul>
 
-	<p class="text-center small">
+	<!-- <p class="text-center small">
 		<a class="text-muted" href="#" onclick="return cache_refresh(true)">Refresh cache</a>
-	</p>
+	</p> -->
 
 
 </div>

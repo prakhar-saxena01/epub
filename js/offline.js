@@ -26,7 +26,7 @@ function offline_remove2(elem) {
 /* exported offline_clear */
 function offline_clear() {
 
-	if (confirm("Remove all offline data?")) {
+	if (confirm("Remove all downloaded books?")) {
 
 		const promises = [];
 
