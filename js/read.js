@@ -118,47 +118,59 @@ function init_reader() {
 					if (resp.status == 200) {
 						const bookId = $.urlParam("b");
 
-						// let's store this for later
-						localforage.setItem(cacheId('book'), resp.clone().blob());
-
-						// if there's no base information cached yet, let's do that too
-						localforage.getItem(cacheId()).then(function(info) {
-							if (!info) {
-								$.post("backend.php", {op: "getinfo", id: bookId }, function(data) {
-									if (data) {
-										localforage.setItem(cacheId(), data);
-
-										if (data.has_cover) {
-											fetch("backend.php?op=cover&id=" + bookId, {credentials: 'same-origin'}).then(function(resp) {
-												if (resp.status == 200) {
-													localforage.setItem(cacheId('cover'), resp.blob());
-												}
-											});
-										}
-									}
-								});
-							}
-						});
-
 						resp.blob().then(function(blob) {
+
+							// if there's no base information cached yet, let's do that too
+							localforage.getItem(cacheId()).then(function(info) {
+								if (!info) {
+									$.post("backend.php", {op: "getinfo", id: bookId }, function(data) {
+										if (data) {
+											localforage.setItem(cacheId(), data);
+
+											if (data.has_cover) {
+												fetch("backend.php?op=cover&id=" + bookId, {credentials: 'same-origin'}).then(function(resp) {
+													if (resp.status == 200) {
+														localforage.setItem(cacheId('cover'), resp.blob());
+													}
+												});
+											}
+										}
+									});
+								}
+							});
 
 							const fileReader = new FileReader();
 
 							fileReader.onload = function() {
-								book.open(this.result);
+								book.open(this.result).then(() => {
+
+									// let's store this for later
+									localforage.setItem(cacheId('book'), blob);
+
+								}).catch((e) => {
+									$(".loading_message").html("Unable to open book.<br/><small>" + e + "</small>");
+								});
 							};
+
+							fileReader.onerror = function(e) {
+								console.log('filereader error', e);
+								$(".loading_message").html("Unable to open book.<br/><small>" + e + "</small>");
+							}
 
 							fileReader.readAsArrayBuffer(blob);
 
+						}).catch((e) => {
+							console.log('blob error', e);
+							$(".loading_message").html("Unable to download book.<br/><small>" + e + "</small>");
 						});
 					} else {
 						$(".loading_message").html("Unable to download book: " + resp.status + ".");
 					}
-				}).catch(function(err) {
-					console.warn(err);
+				}).catch(function(e) {
+					console.warn(e);
 
 					if ($(".loading").is(":visible")) {
-						$(".loading_message").html("Unable to load book (remote).");
+						$(".loading_message").html("Unable to load book (remote).<br/><small>" + e + "</small>");
 					}
 				});
 
