@@ -287,8 +287,8 @@ function init_reader() {
 		localforage.getItem("epube.keep-ui-visible").then(function(keep) {
 			$(".keep_ui_checkbox")
 				.attr("checked", keep)
-				.on("click", function(elem) {
-					localforage.setItem("epube.keep-ui-visible", elem.checked);
+				.on("click", function(evt) {
+					localforage.setItem("epube.keep-ui-visible", evt.target.checked);
 				});
 		});
 
