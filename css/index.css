@@ -30,3 +30,20 @@
 	overflow : auto;
 }
 
+::selection {
+	background : #007d71;
+	color : white;
+}
+
+::-webkit-scrollbar {
+	width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #007d71;
+}
+
+::-webkit-scrollbar-track {
+	background-color: #eee;
+}
+
