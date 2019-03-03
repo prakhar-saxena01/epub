@@ -113,16 +113,16 @@
 
 		<ul class="nav navbar-nav navbar-right">
 			<li><a href="#" title="Refresh script cache" onclick="return cache_refresh(true)">
-				<span class="glyphicon glyphicon-refresh"></span> <span class='hidden-md hidden-lg'>Refresh script cache</span></a></li>
+				<span class="glyphicon glyphicon-refresh"></span> <span class='hidden-sm hidden-md hidden-lg'>Refresh script cache</span></a></li>
 			</li>
 			<?php if ($mode !== "favorites") { ?>
 				<li><a href="logout.php" title="Log out">
-					<span class="glyphicon glyphicon-log-out"></span> <span class='hidden-md hidden-lg'>Log out</span>
+					<span class="glyphicon glyphicon-log-out"></span> <span class='hidden-sm hidden-md hidden-lg'>Log out</span>
 				</a></li>
 			<?php } ?>
 			<?php if ($mode == "favorites") { ?>
 				<li><a href="#" onclick="offline_get_all()" title="Download all">
-					<span class="glyphicon glyphicon-download-alt text-primary"></span> <span class='hidden-md hidden-lg'>Download all</span>
+					<span class="glyphicon glyphicon-download-alt text-primary"></span> <span class='hidden-sm hidden-md hidden-lg'>Download all</span>
 				</a></li>
 			<?php } ?>
 		</ul>
