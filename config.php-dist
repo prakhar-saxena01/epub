@@ -2,7 +2,7 @@
 	// vim:ft=php:
 
 	define('SCRATCH_DB', 'db/scratch.db');
-	// Please set this to a secure first (see README.md)
+	// Please set this to a secure value first (see README.md)
 
 	define('BOOKS_DIR', '/home/fox/Books');
 	define('CALIBRE_DB', BOOKS_DIR . "/metadata.db");
