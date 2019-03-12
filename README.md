@@ -18,6 +18,17 @@ See here: https://git.tt-rss.org/fox/the-epube/wiki/Home
 Installation
 ============
 
+WARNING: since database folder is, by default, accessible for unauthenticated HTTP requests
+it is recommended to set ``SCRATCH_DB`` to a secure random value (i.e. ``db/long-random-string.db``) 
+or put it outside of scope accessible by your http server. Alternatively, you can block access
+to ``db`` using your HTTP server:
+
+```
+location /the-epube/db {
+   deny all;
+}
+```
+
 1. Initialize scratch.db 
 
     <pre>sqlite3 db/scratch.db &lt; schema.sql</pre>
