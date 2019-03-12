@@ -1,5 +1,10 @@
-.index_cell {
-	height : 270px;
+.display-flex {
+	display: flex;
+ 	flex-wrap: wrap;
+}
+
+.row > div {
+	padding-top : 10px;
 }
 
 .thumb img {
@@ -46,4 +51,3 @@
 ::-webkit-scrollbar-track {
 	background-color: #eee;
 }
-

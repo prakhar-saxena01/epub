@@ -223,7 +223,7 @@
 
 	$sth->execute([':limit' => $limit, ':offset' => $offset, ':query' => '%' . $query . '%']);
 
-	print "<div class='row'>";
+	print "<div class='row display-flex'>";
 
 	$rows = 0;
 
