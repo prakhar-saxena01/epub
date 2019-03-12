@@ -20,8 +20,8 @@ Installation
 
 WARNING: since database folder is, by default, accessible for unauthenticated HTTP requests
 it is recommended to set ``SCRATCH_DB`` to a secure random value (i.e. ``db/long-random-string.db``) 
-or put it outside of scope accessible by your http server. Alternatively, you can block access
-to ``db`` using your HTTP server:
+or put it outside of scope accessible by your http server. Alternatively, you can simply block access
+to ``db``:
 
 ```
 location /the-epube/db {
