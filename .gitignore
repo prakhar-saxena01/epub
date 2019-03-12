@@ -1,5 +1,5 @@
 config.php
-db/scratch.db
+db/*.db
 sessions/*
 /tags
 /.tags*
