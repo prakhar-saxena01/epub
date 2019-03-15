@@ -284,14 +284,20 @@
 		$data_sth->execute([$line['id']]);
 
 		?>
-			<div class='col-xs-6 col-sm-3 col-md-2' id="cell-<?php echo $line["id"] ?>">
-				<?php if ($read_link) { ?> <a href="<?php echo $read_link ?>"> <?php } ?>
+			<div class="col-xs-6 col-sm-3 col-md-2" id="cell-<?php echo $line["id"] ?>">
+				<?php if ($read_link) { ?>
+					<a class="thumbnail <?php echo $cover_class ?>" href="<?php echo $read_link ?>">
+				<?php } else { ?>
+					<span class="thumbnail <?php echo $cover_class ?>">
+				<?php } ?>
 
-				<div class="thumbnail <?php echo $cover_class ?>">
 					<img style="display : none" data-book-id="<?php echo $line['id'] ?>" data-cover-link="<?php echo $cover_link ?>">
-				</div>
 
-				<?php if ($read_link) { ?> </a> <?php } ?>
+				<?php if ($read_link) { ?>
+					</a>
+				<?php } else { ?>
+					</span>
+				<?php } ?>
 
 				<div class="caption">
 					<div title="<?php echo htmlspecialchars($line['title']) ?>" class="<?php echo $title_class ?>">
