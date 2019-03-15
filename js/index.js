@@ -91,6 +91,22 @@ function mark_offline_books() {
 	});
 }
 
+/* exported show_covers */
+function show_covers() {
+	$("img[data-cover-link]").each((i,e) => {
+		e = $(e);
+
+		const img = $("<img>")
+            .on("load", function() {
+               e.css("background-image", "url(" + e.attr('data-cover-link') + ")")
+               e.fadeIn();
+
+               img.attr("src", null);
+            })
+            .attr("src", e.attr('data-cover-link'));
+	});
+}
+
 function offline_cache(bookId, callback) {
 	console.log("offline cache: " + bookId);
 
@@ -187,7 +203,7 @@ function offline_get_all() {
 
 	if (confirm("Download all books on this page?")) {
 
-		$(".index_cell").each(function (i, row) {
+		$(".row > div").each(function (i, row) {
 			const bookId = $(row).attr("id").replace("cell-", "");
 			const dropitem = $(row).find(".offline_dropitem")[0];
 

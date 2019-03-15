@@ -98,29 +98,31 @@ function populate_list() {
 
 					const series_link = info.series_name ? `<div><a class="series_link" href="#">${info.series_name + " [" + info.series_index + "]"}</a></div>` : "";
 
-					const cell = $(`<div class="col-xs-6 col-sm-3 col-md-2 index_cell" id="cell-${info.id}">
-							<div class="thumb ${thumb_class}">
+					const cell = $(`<div class="col-xs-6 col-sm-3 col-md-2" id="cell-${info.id}">
+							<div class="thumbnail ${thumb_class}">
 								<a href="read.html?id=${info.epub_id}&b=${info.id}">
-									<img data-src="holder.js/120x180">
+									<img style="display : none">
 								</a>
-								<div class="caption">
-									<div><a class="${title_class}" href="read.html?id=${info.epub_id}&b=${info.id}">${info.title}</a></div>
-									<div><a class="author_link" href="#">${info.author_sort}</a></div>
-									${series_link}
-								</div>
-								<div class="dropdown" style="white-space : nowrap">
-									<a href="#" data-toggle="dropdown" role="button">More...<span class="caret"></span></a>
-									<ul class="dropdown-menu">
-										<li><a href="#" data-book-id="${info.id}" onclick="return show_summary(this)">Summary</a></li>
-										<li><a href="#" data-book-id="${info.id}" onclick="offline_remove2(this)">Remove offline data</a></li>
-									</ul>
-								</div>
+							</div>
+							<div class="caption">
+								<div><a class="${title_class}" href="read.html?id=${info.epub_id}&b=${info.id}">${info.title}</a></div>
+								<div><a class="author_link" href="#">${info.author_sort}</a></div>
+								${series_link}
+							</div>
+							<div class="dropdown" style="white-space : nowrap">
+								<a href="#" data-toggle="dropdown" role="button">More...<span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="#" data-book-id="${info.id}" onclick="return show_summary(this)">Summary</a></li>
+									<li><a href="#" data-book-id="${info.id}" onclick="offline_remove2(this)">Remove offline data</a></li>
+								</ul>
 							</div>
 						</div>`);
 
 					if (cover) {
 
-						cell.find("img").attr("src", cover);
+						cell.find("img")
+							.css("background-image", "url(" + cover + ")")
+							.fadeIn();
 
 						cell.find(".series_link")
 							.attr("title", info.series_name + " [" + info.series_index  + "]")

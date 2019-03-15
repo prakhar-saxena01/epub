@@ -60,12 +60,12 @@
 	<script src="lib/holder.min.js"></script>
 	<script src="lib/localforage.min.js"></script>
 	<title>The Epube</title>
-	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css" />
+	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css?<?php echo time() ?>" />
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
-	<script src="js/index.js"></script>
-	<script src="js/common.js"></script>
+	<script src="js/index.js?<?php echo time() ?>"></script>
+	<script src="js/common.js?<?php echo time() ?>"></script>
 </head>
 <body>
 
@@ -154,6 +154,7 @@
 				.html("Service worker support missing in browser (are you using plain HTTP?).");
 		}
 
+		show_covers();
 		mark_offline_books();
 		cache_refresh();
 
@@ -230,14 +231,19 @@
 	while ($line = $sth->fetch()) {
 		++$rows;
 
-		$cover_filename = BOOKS_DIR . "/" . $line["path"] . "/" . "cover.jpg";
+		if ($line['has_cover']) {
+			$cover_filename = BOOKS_DIR . "/" . $line["path"] . "/" . "cover.jpg";
 
-		if (file_exists($cover_filename))
-			$cover_mtime = filemtime($cover_filename);
-		else
-			$cover_mtime = 0;
+			if (file_exists($cover_filename))
+				$cover_mtime = filemtime($cover_filename);
+			else
+				$cover_mtime = 0;
 
-		$cover_link = "backend.php?" . http_build_query(["op" => "cover", "id" => $line["id"], "ts" => $cover_mtime]);
+			$cover_link = "backend.php?" . http_build_query(["op" => "cover", "id" => $line["id"], "ts" => $cover_mtime]);
+		} else {
+			$cover_link = "holder.js/120x180";
+		}
+
 		$author_link = "?" . http_build_query(["query" => $line["author_sort"]]);
 
 		$in_progress = false;
@@ -263,129 +269,103 @@
 			$read_link = "";
 		}
 
-		$cover_read = $is_read ? "read" : "";
-
-		print "<div class='col-xs-6 col-sm-3 col-md-2 index_cell' id=\"cell-".$line["id"]."\">";
-		print "<div class=\"thumb $cover_read\">";
-
-		if ($read_link) print "<a href=\"$read_link\">";
-
-		if ($line["has_cover"]) {
-			print "<img data-book-id='".$line["id"]."' src='$cover_link'>";
-		} else {
-			print "<img data-book-id='".$line["id"]."' data-src='holder.js/120x180'>";
-		}
-
-		if ($read_link) print "</a>";
-
-		print "<div class='caption'>";
-
+		$cover_class = $is_read ? "read" : "";
 		$title_class = $in_progress ? "in_progress" : "";
-
-		print "<div title=\"".htmlspecialchars($line["title"])."\" class=\"$title_class\">";
-
-		if ($read_link) {
-			print "<a href=\"$read_link\">" . $line["title"] . "</a>";
-		} else {
-			print $line["title"];
-		}
-
-		print "</div>";
 
 		if ($line["series_name"]) {
 			$series_link = "?" . http_build_query(["query" => $line["series_name"]]);
 			$series_full = $line["series_name"] . " [" . $line["series_index"] . "]";
-
-			print "<div><a title=\"".htmlspecialchars($series_full)."\"
-				href=\"$series_link\">$series_full</a></div>";
+		} else {
+			$series_link = "";
+			$series_full = "";
 		}
-
-		print "<div><a title=\"".htmlspecialchars($line["author_sort"])."\"
-			href=\"$author_link\">" . $line["author_sort"] . "</a></div>";
 
 		$data_sth = $db->prepare("SELECT * FROM data WHERE book = ? LIMIT 3");
 		$data_sth->execute([$line['id']]);
 
-		/*print "<span class=\"label label-default\">
-			<span class=\"glyphicon glyphicon-download-alt\">
-			</span>";*/
-
-		print "</div>";
-
 		?>
-		<div class="dropdown" style="white-space : nowrap">
-		  <a href="#" data-toggle="dropdown" role="button">
-		  		More...
-				<span class="caret"></span>
-  			</a>
+			<div class='col-xs-6 col-sm-3 col-md-2' id="cell-<?php echo $line["id"] ?>">
+				<?php if ($read_link) { ?> <a href="<?php echo $read_link ?>"> <?php } ?>
 
-			<ul class="dropdown-menu" aria-labelledby="dLabel">
+				<div class="thumbnail <?php echo $cover_class ?>">
+					<img style="display : none" data-book-id="<?php echo $line['id'] ?>" data-cover-link="<?php echo $cover_link ?>">
+				</div>
 
-				<!-- <?php if ($line["series_name"]) {
-					$series_link = "?" . http_build_query(["query" => $line["series_name"]]);
-					$series_full = $line["series_name"] . " [" . $line["series_index"] . "]";
+				<?php if ($read_link) { ?> </a> <?php } ?>
 
-					print "<li><a title=\"".htmlspecialchars($series_full)."\"
-						href=\"$series_link\">$series_full</a></li>";
-				}
-				?> -->
+				<div class="caption">
+					<div title="<?php echo htmlspecialchars($line['title']) ?>" class="<?php echo $title_class ?>">
+						<?php if ($read_link) { ?>
+							<a href="<?php echo $read_link ?>"><?php echo $line['title'] ?></a>
+						<?php } else { ?>
+							<?php echo $line['title'] ?>
+						<?php } ?>
+					</div>
 
-				<?php
+					<div><a title="<?php echo htmlspecialchars($series_full) ?>" href="<?php echo $series_link ?>">
+							<?php echo $series_full ?></a></div>
 
-					$fav_sth = $ldb->prepare("SELECT id FROM epube_favorites
-						WHERE bookid = ?  AND owner = ? LIMIT 1");
-					$fav_sth->execute([$line['id'], $owner]);
+ 					<div><a title="<?php echo htmlspecialchars($line["author_sort"]) ?>" href="<?php echo $author_link ?>">
+						<?php echo $line["author_sort"] ?></a></div>
 
-					$found_id = false;
+				</div>
 
-					while ($fav_line = $fav_sth->fetch()) {
-						$found_id = $fav_line["id"];
-					}
+				<div class="dropdown" style="white-space : nowrap">
+				  <a href="#" data-toggle="dropdown" role="button">
+				  		More...
+						<span class="caret"></span>
+		  			</a>
 
-					if ($found_id) {
-						$toggle_fav_prompt = "Remove from favorites";
-						$fav_attr = "1";
-					} else {
-						$toggle_fav_prompt = "Add to favorites";
-						$fav_attr = "0";
-					}
-				?>
+					<ul class="dropdown-menu" aria-labelledby="dLabel">
+						<?php
 
-				<li><a href="#" onclick="return show_summary(this)"
-					data-book-id="<?php echo $line["id"] ?>">Summary</a></li>
+							$fav_sth = $ldb->prepare("SELECT id FROM epube_favorites
+								WHERE bookid = ?  AND owner = ? LIMIT 1");
+							$fav_sth->execute([$line['id'], $owner]);
 
-				<li><a href="#" onclick="return toggle_fav(this)"
-					data-is-fav="<?php echo $fav_attr ?>"
-					class="fav_item" data-book-id="<?php echo $line["id"] ?>">
-					<?php echo $toggle_fav_prompt ?></a></li>
+							$found_id = false;
 
-				<?php if ($line["epub_id"]) { ?>
-				<li><a href="#" onclick=""
-					data-book-id="<?php echo $line["id"] ?>" class="offline_dropitem"></a></li>
-				<li class="divider"></li>
-				<?php } ?>
+							while ($fav_line = $fav_sth->fetch()) {
+								$found_id = $fav_line["id"];
+							}
 
-				<?php while ($data_line = $data_sth->fetch()) {
-					if ($data_line["format"] != "ORIGINAL_EPUB") {
-						$label_class = $data_line["format"] == "EPUB" ? "label-success" : "label-primary";
+							if ($found_id) {
+								$toggle_fav_prompt = "Remove from favorites";
+								$fav_attr = "1";
+							} else {
+								$toggle_fav_prompt = "Add to favorites";
+								$fav_attr = "0";
+							}
+						?>
 
-						$download_link = "backend.php?op=download&id=" . $data_line["id"];
+						<li><a href="#" onclick="return show_summary(this)"
+							data-book-id="<?php echo $line["id"] ?>">Summary</a></li>
 
-						print "<li><a target=\"_blank\" href=\"$download_link\">Download: <span class=\"label $label_class\">" .
-							$data_line["format"] . "</span></a></li>";
-					}
-				} ?>
-			</ul>
-		</div>
+						<li><a href="#" onclick="return toggle_fav(this)"
+							data-is-fav="<?php echo $fav_attr ?>"
+							class="fav_item" data-book-id="<?php echo $line["id"] ?>">
+							<?php echo $toggle_fav_prompt ?></a></li>
 
-		<?php
+						<?php if ($line["epub_id"]) { ?>
+						<li><a href="#" onclick=""
+							data-book-id="<?php echo $line["id"] ?>" class="offline_dropitem"></a></li>
+						<li class="divider"></li>
+						<?php } ?>
 
-		print "</div>";
-		print "</div>";
+						<?php while ($data_line = $data_sth->fetch()) {
+							if ($data_line["format"] != "ORIGINAL_EPUB") {
+								$label_class = $data_line["format"] == "EPUB" ? "label-success" : "label-primary";
 
-	}
+								$download_link = "backend.php?op=download&id=" . $data_line["id"];
 
-	?>
+								print "<li><a target=\"_blank\" href=\"$download_link\">Download: <span class=\"label $label_class\">" .
+									$data_line["format"] . "</span></a></li>";
+							}
+						} ?>
+					</ul>
+				</div>
+			</div>
+		<?php } /* while */ ?>
 
 	</div>
 
@@ -407,12 +387,6 @@
 			<li class="next disabled"><a href="#">Next&rarr;</a></li>
 		<?php } ?>
 	</ul>
-
-	<!-- <p class="text-center small">
-		<a class="text-muted" href="#" onclick="return cache_refresh(true)">Refresh cache</a>
-	</p> -->
-
-
 </div>
 </body>
 </html>
