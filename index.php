@@ -241,7 +241,7 @@
 
 			$cover_link = "backend.php?" . http_build_query(["op" => "cover", "id" => $line["id"], "ts" => $cover_mtime]);
 		} else {
-			$cover_link = "holder.js/120x180";
+			$cover_link = "";
 		}
 
 		$author_link = "?" . http_build_query(["query" => $line["author_sort"]]);

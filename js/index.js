@@ -93,18 +93,24 @@ function mark_offline_books() {
 
 /* exported show_covers */
 function show_covers() {
-	$("img[data-cover-link]").each((i,e) => {
+	$("img[data-book-id]").each((i,e) => {
 		e = $(e);
 
-		const img = $("<img>")
-            .on("load", function() {
-               e.css("background-image", "url(" + e.attr('data-cover-link') + ")")
-               e.fadeIn();
+		if (e.attr('data-cover-link')) {
+			const img = $("<img>")
+				.on("load", function() {
+					e.css("background-image", "url(" + e.attr('data-cover-link') + ")")
+					.fadeIn();
 
-               img.attr("src", null);
-            })
-            .attr("src", e.attr('data-cover-link'));
+					img.attr("src", null);
+				})
+				.attr("src", e.attr('data-cover-link'));
+		} else {
+			e.attr('src', 'holder.js/130x190?auto=yes').fadeIn();
+		}
 	});
+
+	Holder.run();
 }
 
 function offline_cache(bookId, callback) {

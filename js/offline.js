@@ -117,20 +117,22 @@ function populate_list() {
 						</div>`);
 
 					if (cover) {
-
 						cell.find("img")
 							.css("background-image", "url(" + cover + ")")
 							.fadeIn();
-
-						cell.find(".series_link")
-							.attr("title", info.series_name + " [" + info.series_index  + "]")
-							.attr("href", "offline.html?query=" + encodeURIComponent(info.series_name));
-
-						cell.find(".author_link")
-							.attr("title", info.author_sort)
-							.attr("href", "offline.html?query=" + encodeURIComponent(info.author_sort));
-
+					} else {
+						cell
+							.find("img").attr("data-src", 'holder.js/130x190?auto=yes')
+							.fadeIn();
 					}
+
+					cell.find(".series_link")
+						.attr("title", info.series_name + " [" + info.series_index  + "]")
+						.attr("href", "offline.html?query=" + encodeURIComponent(info.series_name));
+
+					cell.find(".author_link")
+						.attr("title", info.author_sort)
+						.attr("href", "offline.html?query=" + encodeURIComponent(info.author_sort));
 
 					books.append(cell);
 
