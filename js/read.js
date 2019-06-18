@@ -338,9 +338,10 @@ function init_reader() {
 		$(".dict_result").scrollTop(0);
 	})
 
+	// TODO: make configurable
 	$(".dict_search_btn").on("click", function() {
 		$("#dict-modal").modal('hide');
-		window.open("https://google.com/search?q=" + $(".dict_query").val());
+		window.open("https://duckduckgo.com/?q=" + $(".dict_query").val());
 	});
 
 	function toc_loc_msg(href) {
