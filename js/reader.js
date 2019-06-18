@@ -14,8 +14,13 @@ function enable_swipes() {
 
 $(document).ready(function() {
 
-	$(window).on("doubletap", function(evt) {
-		parent.toggle_fullscreen();
+	$(window).on("doubletap", function(/* evt */) {
+
+		const sel = getSelection().toString().trim();
+
+		if (!sel.match(/^\w+$/)) {
+			parent.toggle_fullscreen();
+		}
 	});
 
 	$(window).on("click tap", function(evt) {
