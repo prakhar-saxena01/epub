@@ -13,6 +13,11 @@ function enable_swipes() {
 }
 
 $(document).ready(function() {
+
+	$(window).on("doubletap", function(evt) {
+		parent.toggle_fullscreen();
+	});
+
 	$(window).on("click tap", function(evt) {
 		if (evt.button == 0) {
 

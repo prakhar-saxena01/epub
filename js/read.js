@@ -20,7 +20,7 @@ function cacheId(suffix) {
 function init_loader() {
 	// we need to preload resources for reader iframe because it can't utilize our
 	// service worker because while offline it is created outside our base server context
-	const res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js",
+	const res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile-events.min.js",
 		"css/transitions.css",
 		"js/reader.js", "css/reader.css", "js/dict.js",
 		"themes/default.css", "themes/mocca.css", "themes/night.css",
@@ -241,7 +241,7 @@ function init_reader() {
 		});
 
 		const base_url = window.location.href.match(/^.*\//)[0];
-		const res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile.custom.js",
+		const res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile-events.min.js",
 			"js/reader.js", "js/dict.js" ];
 		const doc = contents.document;
 
