@@ -344,6 +344,30 @@ function init_reader() {
 		window.open("https://duckduckgo.com/?q=" + $(".dict_query").val());
 	});
 
+	$(".wiki_search_btn").on("click", function() {
+		$(".dict_result").html("Loading, please wait...");
+
+		$.post("backend.php", {op: "wikisearch", query: $(".dict_query").val()})
+			.then((resp) => {
+				try {
+					let tmp = "";
+
+					$.each(resp.query.pages, (i,p) => {
+						tmp += p.extract;
+					});
+
+					$(".dict_result").html(tmp && tmp != "undefined" ? tmp : "No definition found for " + $(".dict_query").val() + ".");
+				} catch (e) {
+					console.error(e);
+					$(".dict_result").text("Error while processing data: " + e);
+				}
+			})
+			.fail((e) => {
+				console.error(e);
+				$(".dict_result").text("Error while retrieving data.");
+			})
+	});
+
 	function toc_loc_msg(href) {
 		try {
 			const cfiBase = book.spine.get(href).cfiBase;

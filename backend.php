@@ -231,6 +231,15 @@
 
 		break;
 
+	case "wikisearch":
+		$query = urlencode(strip_tags($_REQUEST['query']));
+		$url = "https://en.wiktionary.org/w/api.php?titles=${query}&action=query&prop=extracts&format=json&exlimit=1";
+
+		if ($resp = file_get_contents($url)) {
+			print $resp;
+		}
+
+		break;
 	case "define":
 
 		if (defined('DICT_ENABLED') && DICT_ENABLED) {
