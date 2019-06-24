@@ -128,6 +128,17 @@
 	overflow : auto;
 }
 
+.dict_result h1,
+.dict_result h2,
+.dict_result h3 {
+	font-size : 14px;
+	margin-top : 0;
+}
+
+.dict_result h2 {
+	font-weight : bold;
+}
+
 .toc_list b.pull-right,
 .search_results b.pull-right {
 	margin-right : 8px;
