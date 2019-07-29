@@ -32,7 +32,10 @@ const CACHE_URLS = [
 			'lib/bootstrap/v3/css/bootstrap.min.css',
 			'lib/bootstrap/v3/js/jquery.js',
 			'lib/bootstrap/v3/js/bootstrap.min.js',
-			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2'
+			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
+			'lib/fonts/pmn-caecilia-55.ttf',
+			'lib/fonts/pmn-caecilia-56.ttf',
+			'lib/fonts/pmn-caecilia-75.ttf'
 		];
 
 self.addEventListener('install', function(event) {
@@ -125,6 +128,8 @@ this.addEventListener('fetch', function(event) {
 			if (req.url.match("offline.html")) {
 				return caches.match("offline.html");
 			}
+
+			console.log('cache miss for', req.url);
 
 			return fetch(req).then(function(resp) {
 

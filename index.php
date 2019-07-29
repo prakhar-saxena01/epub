@@ -143,9 +143,12 @@
 			  });
 
 			 navigator.serviceWorker.addEventListener('message', function(event) {
-			   // not used yet
+				// invoked by service worker
 				if (event.data == 'client-reload') {
-					window.location.reload();
+					console.log('reloading in a moment...');
+					window.setTimeout(function() {
+						window.location.reload()
+					}, 1500);
 				}
 			 });
 		} else {

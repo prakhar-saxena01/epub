@@ -1,4 +1,5 @@
 config.php
+lib/fonts/*.ttf
 db/*.db
 sessions/*
 /tags
