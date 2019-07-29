@@ -12,6 +12,11 @@ function cache_refresh(force) {
 
 			if (force || !stamp || ts - stamp > 3600 * 24 * 7) {
 				console.log('asking worker to refresh cache');
+
+				$(".dl-progress")
+					.fadeIn()
+					.html("Loading, please wait...");
+
 				navigator.serviceWorker.controller.postMessage("refresh-cache");
 				localforage.setItem("epube.cache-timestamp", ts);
 			}
