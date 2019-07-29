@@ -214,7 +214,7 @@ function init_reader() {
 			rendition.themes.default({
 				html: {
 					'font-size': fontSize,
-					'font-family': fontFamily,
+					'font-family': "'" + fontFamily + "'",
 					'line-height': lineHeight,
 					'text-align': 'justify'
 				}
@@ -865,9 +865,11 @@ function apply_styles() {
 		const lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
 		//const themeName = res[3] ? res[3] : false;
 
+		console.log('style', fontFamily, fontSize, lineHeight);
+
 		$.each(window.book.rendition.getContents(), function(i, c) {
 			c.css("font-size", fontSize);
-			c.css("font-family", fontFamily);
+			c.css("font-family", "'" + fontFamily + "'");
 			c.css("line-height", lineHeight);
 		});
 

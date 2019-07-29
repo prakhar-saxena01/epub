@@ -12,3 +12,21 @@ a:focus {
 	color: #00302c;
 	text-decoration: underline;
 }
+
+@font-face {
+	font-family: Caecilia;
+	src: local('PMN Caecilia 55');
+	font-weight : normal;
+}
+
+@font-face {
+	font-family: Caecilia;
+	src: local('PMN Caecilia 75');
+	font-weight : bold;
+}
+
+@font-face {
+	font-family: Caecilia;
+	src: local('PMN Caecilia 56');
+	font-style : italic;
+}
