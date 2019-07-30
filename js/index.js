@@ -13,12 +13,16 @@ function cache_refresh(force) {
 			if (force || !stamp || ts - stamp > 3600 * 24 * 7) {
 				console.log('asking worker to refresh cache');
 
-				$(".dl-progress")
-					.fadeIn()
-					.html("Loading, please wait...");
+				if (navigator.serviceWorker.controller) {
+					navigator.serviceWorker.controller.postMessage("refresh-cache");
+					localforage.setItem("epube.cache-timestamp", ts);
+				} else {
+					$(".dl-progress")
+						.show()
+						.addClass("alert-danger")
+						.html("Could not communicate with service worker. Try reloading the page.");
 
-				navigator.serviceWorker.controller.postMessage("refresh-cache");
-				localforage.setItem("epube.cache-timestamp", ts);
+				}
 			}
 
 		});

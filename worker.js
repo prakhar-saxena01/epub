@@ -3,6 +3,7 @@
 const CACHE_PREFIX = 'epube';
 const CACHE_NAME = CACHE_PREFIX + '-v2';
 const CACHE_URLS = [
+			'manifest.json',
 			'img/ic_launcher_web.png',
 			'img/favicon.png',
 			'read.html',
@@ -76,6 +77,8 @@ self.addEventListener('message', function(event){
 	if (event.data == 'refresh-cache') {
 		console.log("refreshing cache...");
 
+		send_broadcast('refresh-started');
+
 		caches.open(CACHE_NAME).then(function(cache) {
 			const promises = [];
 
@@ -91,6 +94,8 @@ self.addEventListener('message', function(event){
 					url.searchParams.delete("ts");
 
 					console.log('got', url);
+
+					send_broadcast('refreshed:' + url);
 
 					if (resp.status == 200) {
 						cache.put(url, resp);

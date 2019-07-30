@@ -135,6 +135,8 @@
 	var index_mode = "<?php echo $mode ?>";
 
 	$(document).ready(function() {
+		let refreshed_files = 0;
+
 		if ('serviceWorker' in navigator) {
  			 navigator.serviceWorker
            .register('worker.js')
@@ -143,13 +145,28 @@
 			  });
 
 			 navigator.serviceWorker.addEventListener('message', function(event) {
-				// invoked by service worker
-				if (event.data == 'client-reload') {
-					console.log('reloading in a moment...');
-					window.setTimeout(function() {
-						window.location.reload()
-					}, 1500);
+
+				if (event.data == 'refresh-started') {
+					console.log('cache refresh started');
+					refreshed_files = 0;
+
+					$(".dl-progress")
+						.fadeIn()
+						.text("Loading, please wait...");
 				}
+
+				if (event.data && event.data.indexOf("refreshed:") == 0) {
+					++refreshed_files;
+
+					$(".dl-progress")
+						.fadeIn()
+						.text("Updated " + refreshed_files + " files...");
+				}
+
+				if (event.data == 'client-reload') {
+					window.location.reload()
+				}
+
 			 });
 		} else {
 			$(".container-main")
