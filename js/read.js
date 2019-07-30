@@ -24,7 +24,7 @@ function init_loader() {
 		"css/transitions.css",
 		"js/reader.js", "css/reader.css", "js/dict.js",
 		"themes/default.css", "themes/mocca.css", "themes/night.css",
-		"themes/plan9.css", "themes/gray.css" ];
+		"themes/plan9.css", "themes/gray.css", "themes/sepia.css" ];
 
 	for (let i = 0; i < res_names.length; i++) {
 		fetch(res_names[i], {credentials: 'same-origin'}).then(function(resp) {
@@ -954,6 +954,12 @@ function apply_theme() {
 
 		if (!theme) theme = 'default';
 		const theme_url = base_url + "themes/" + theme + ".css";
+		const theme_data = _res_data[theme_url];
+
+		if (!theme_data) {
+			console.error('theme data not found for', theme, '- check resource loader configuration');
+			return;
+		}
 
 		$("#theme_css").attr("href", theme_url);
 

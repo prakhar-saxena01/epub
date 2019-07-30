@@ -21,6 +21,7 @@ const CACHE_URLS = [
 			'themes/night.css',
 			'themes/plan9.css',
 			'themes/gray.css',
+			'themes/sepia.css',
 			'lib/promise.js',
 			'lib/fetch.js',
 			'lib/zip.min.js',
