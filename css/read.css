@@ -57,7 +57,7 @@
 	margin-left : 10px;
 	flex-grow : 2;
 	text-align : center;
-	letter-spacing : 0.5px;
+	font-weight : bold;
 }
 
 .footer .chapter {

@@ -469,7 +469,7 @@ function init_reader() {
 		const meta = book.package.metadata;
 
 		document.title = meta.title + " – " + meta.creator + " – The Epube";
-		$(".title").html("<b>" + meta.title + "</b>"); // + " – " + meta.creator);
+		$(".title").text(meta.title);
 
 		return localforage.getItem(cacheId("locations")).then(function(locations) {
 
