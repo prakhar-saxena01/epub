@@ -1,0 +1,9 @@
+body, .loading, html:-webkit-full-screen {
+	background : #FAEFDB;
+	color : #4a422b;
+}
+
+body .header,
+body .footer {
+	color : #B85C57;
+}
