@@ -3,17 +3,16 @@ The Epube
 
 web EPUB reader using EPUB.js, Bootstrap, and Calibre.
 
-* responsive design
-* has transparent offline mode via service workers
-* can optionally store files locally for later reading
-* supports word definition lookups using dictd
-* supports Chrome homescreen "app mode"
-* has several color themes
+https://git.tt-rss.org/fox/the-epube/wiki
 
-Screenshots
-===========
+Copyright (c) 2017 Andrew Dolgov (unless explicitly stated otherwise).
 
-See here: https://git.tt-rss.org/fox/the-epube/wiki/Home
+Requirements
+============
+
+* HTTPS: required for service workers to work
+* PDO::sqlite
+* Calibre books directory and metadata.db
 
 Installation
 ============
@@ -52,13 +51,6 @@ When upgrading from an older Git snapshot which used HTTP Authentication:
 3. Add two new tables to scratch.db (epube_users & epube_sessions)
 4. Add users via useradm.php (use same names as http auth, all data will be kept)
 
-Requirements
-============
-
-* HTTPS: required for service workers to work
-* PDO::sqlite
-* Calibre books directory and metadata.db
-
 Acknowledgements
 ================
 
@@ -68,3 +60,4 @@ License
 =======
 
 GNU GPL version 3.
+
