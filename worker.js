@@ -40,6 +40,7 @@ const CACHE_URLS = [
 			'lib/fonts/pmn-caecilia-75.ttf'
 		];
 
+/*
 self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
@@ -47,6 +48,7 @@ self.addEventListener('install', function(event) {
     })
   );
 });
+*/
 
 self.addEventListener('activate', function(event) {
 	event.waitUntil(
