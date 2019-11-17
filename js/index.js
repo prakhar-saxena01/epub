@@ -28,9 +28,10 @@ function cache_refresh(force) {
 								.html("Could not communicate with service worker. Try reloading the page.");
 						} else {
 							localforage.setItem("epube.initial-load-done", true).then(function() {
-								window.setTimeout(function() {
-									window.location.reload();
-								}, 1000);
+								$(".dl-progress")
+								.show()
+								.addClass("alert-info")
+								.html("Please reload the page once to activate service worker and populate offline cache.");
 							});
 						}
 

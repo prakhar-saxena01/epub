@@ -123,15 +123,17 @@ this.addEventListener('fetch', function(event) {
 				return resp;
 			}
 
-			if (req.url.match("read.html")) {
-				return caches.match("read.html");
+			if (!navigator.onLine) {
+				if (req.url.match("read.html")) {
+					return caches.match("read.html");
+				}
+
+				if (req.url.match("offline.html")) {
+					return caches.match("offline.html");
+				}
 			}
 
-			if (req.url.match("offline.html")) {
-				return caches.match("offline.html");
-			}
-
-			console.log('cache miss for', req.url);
+			console.log('cache miss for', req.url, 'OL:', navigator.onLine);
 
 			return fetch(req).then(function(resp) {
 
@@ -148,6 +150,8 @@ this.addEventListener('fetch', function(event) {
 			}).catch(function() {
 				if (req.url[req.url.length-1] == "/" || req.url.match("index.php")) {
 					return caches.match("offline.html");
+				} else {
+					return caches.match(req.url);
 				}
 			});
 		})
