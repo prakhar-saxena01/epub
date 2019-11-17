@@ -139,7 +139,7 @@
 
 		if ('serviceWorker' in navigator) {
  			 navigator.serviceWorker
-           .register('worker.js')
+           .register('worker.js?<?php echo time() ?>')
            .then(function() {
 					console.log("service worker registered");
 			  });
