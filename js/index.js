@@ -17,11 +17,24 @@ function cache_refresh(force) {
 					navigator.serviceWorker.controller.postMessage("refresh-cache");
 					localforage.setItem("epube.cache-timestamp", ts);
 				} else {
-					$(".dl-progress")
-						.show()
-						.addClass("alert-danger")
-						.html("Could not communicate with service worker. Try reloading the page.");
+					localforage.getItem("epube.initial-load-done").then(function(done) {
 
+						console.log("initial load done", done);
+
+						if (done) {
+							$(".dl-progress")
+								.show()
+								.addClass("alert-danger")
+								.html("Could not communicate with service worker. Try reloading the page.");
+						} else {
+							localforage.setItem("epube.initial-load-done", true).then(function() {
+								window.setTimeout(function() {
+									window.location.reload();
+								}, 1000);
+							});
+						}
+
+					});
 				}
 			}
 
