@@ -17,6 +17,12 @@ Requirements
 Installation
 ============
 
+Always use latest Git code from master branch. Ignore the releases page, it doesn't mean anything.
+
+```
+git clone https://git.tt-rss.org/fox/the-epube.git the-epube
+```
+
 **WARNING:** since database folder is, by default, accessible for unauthenticated HTTP requests
 it is recommended to set ``SCRATCH_DB`` to a secure random value (i.e. ``db/long-random-string.db``) 
 or put it outside of scope accessible by your http server. Alternatively, you can simply block access
