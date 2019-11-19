@@ -30,7 +30,12 @@ function cache_refresh(force) {
 								$(".dl-progress")
 								.show()
 								.addClass("alert-info")
-								.html("Please reload the page once to activate service worker and populate offline cache.");
+								.html("Page will reload to activate service worker...");
+
+								window.setTimeout(function() {
+                           window.location.reload();
+								}, 3*1000);
+
 							});
 						}
 
