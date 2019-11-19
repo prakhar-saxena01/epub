@@ -164,6 +164,8 @@
 				}
 
 				if (event.data == 'client-reload') {
+					const ts = parseInt(new Date().getTime()/1000);
+					localforage.setItem("epube.cache-timestamp", ts);
 					window.location.reload()
 				}
 

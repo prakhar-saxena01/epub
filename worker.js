@@ -75,40 +75,25 @@ self.addEventListener('message', function(event){
 
 		send_broadcast('refresh-started');
 
-		caches.open(CACHE_NAME).then(function(cache) {
-			const promises = [];
+		return caches.open(CACHE_NAME).then(function(cache) {
 
-			for (let i = 0; i < CACHE_URLS.length; i++) {
+			Promise.all(CACHE_URLS.map((url) => {
+				return fetch(url + "?ts=" + Date.now()).then((resp) => {
+					console.log('got', resp.url, resp);
 
-				if (CACHE_URLS[i].match("backend.php"))
-					continue;
-
-				const fetch_url = CACHE_URLS[i] + "?ts=" + Date.now();
-
-				const promise = fetch(fetch_url).then(function(resp) {
-					const url = new URL(resp.url);
-					url.searchParams.delete("ts");
-
-					console.log('got', url);
-
-					send_broadcast('refreshed:' + url);
+					send_broadcast('refreshed:' + resp.url);
 
 					if (resp.status == 200) {
-						cache.put(url, resp);
+						return cache.put(url, resp);
 					} else if (resp.status == 404) {
-						cache.delete(url);
+						return cache.delete(url);
 					}
 				});
 
-				promises.push(promise);
-
-			}
-
-			Promise.all(promises).then(function() {
+			})).then(function() {
 				console.log('all done');
 				send_broadcast('client-reload');
 			});
-
 		});
 	}
 });

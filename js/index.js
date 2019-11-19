@@ -15,7 +15,6 @@ function cache_refresh(force) {
 
 				if (navigator.serviceWorker.controller) {
 					navigator.serviceWorker.controller.postMessage("refresh-cache");
-					localforage.setItem("epube.cache-timestamp", ts);
 				} else {
 					localforage.getItem("epube.initial-load-done").then(function(done) {
 
