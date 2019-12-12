@@ -1,1 +1,6 @@
-/* placeholder */
+@media (prefers-color-scheme: dark) {
+	body, .loading, html:-webkit-full-screen {
+		background : black;
+		color : #ccc;
+	}
+}

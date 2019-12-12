@@ -18,6 +18,7 @@ const CACHE_URLS = [
 			'css/transitions.css',
 			'offline.html',
 			'themes/default.css',
+			'themes/light.css',
 			'themes/mocca.css',
 			'themes/night.css',
 			'themes/plan9.css',

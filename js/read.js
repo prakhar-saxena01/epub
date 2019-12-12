@@ -23,7 +23,7 @@ function init_loader() {
 	const res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile-events.min.js",
 		"css/transitions.css",
 		"js/reader.js", "css/reader.css", "js/dict.js",
-		"themes/default.css", "themes/mocca.css", "themes/night.css",
+		"themes/default.css", "themes/light.css", "themes/mocca.css", "themes/night.css",
 		"themes/plan9.css", "themes/gray.css", "themes/sepia.css" ];
 
 	for (let i = 0; i < res_names.length; i++) {
