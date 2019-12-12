@@ -32,4 +32,21 @@ function offline_remove(id, callback) {
 	}
 }
 
+function init_night_mode() {
+	if (window.matchMedia) {
+		const mql = window.matchMedia('(prefers-color-scheme: dark)');
 
+		mql.addEventListener("change", () => {
+			apply_night_mode(mql.matches);
+		});
+
+		apply_night_mode(mql.matches);
+	}
+}
+
+function apply_night_mode(is_night) {
+	console.log("night mode changed to", is_night);
+
+	$("#theme_css").attr("href",
+		"lib/bootstrap/v3/css/" + (is_night ? "theme-dark.min.css" : "bootstrap-theme.min.css"));
+}

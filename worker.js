@@ -33,6 +33,7 @@ const CACHE_URLS = [
 			'lib/holder.min.js',
 			'lib/bootstrap/v3/css/bootstrap-theme.min.css',
 			'lib/bootstrap/v3/css/bootstrap.min.css',
+			'lib/bootstrap/v3/css/theme-dark.min.css',
 			'lib/bootstrap/v3/js/jquery.js',
 			'lib/bootstrap/v3/js/bootstrap.min.js',
 			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
