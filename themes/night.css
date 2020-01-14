@@ -3,3 +3,6 @@ body, .loading, html:-webkit-full-screen {
 	color : #ccc;
 }
 
+body .modal {
+	color : #333;
+}
