@@ -1,6 +1,6 @@
 @media (prefers-color-scheme: dark) {
 	body, .loading, html:-webkit-full-screen {
-		background : black;
+		background : #222;
 		color : #ccc;
 	}
 
