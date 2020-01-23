@@ -19,7 +19,7 @@ Installation
 
 Always use latest Git code from master branch. Ignore the releases page, it doesn't mean anything.
 
-```
+```sh
 git clone https://git.tt-rss.org/fox/the-epube.git the-epube
 ```
 
@@ -28,7 +28,7 @@ it is recommended to set ``SCRATCH_DB`` to a secure random value (i.e. ``db/long
 or put it outside of scope accessible by your http server. Alternatively, you can simply block access
 to ``db``:
 
-```
+```nginx
 location /the-epube/db {
    deny all;
 }
@@ -36,12 +36,16 @@ location /the-epube/db {
 
 1. Initialize scratch.db 
 
-    <pre>sqlite3 db/scratch.db &lt; schema.sql</pre>
+```sh
+sqlite3 db/scratch.db < schema.sql
+```
     
 2. Ensure both <code>scratch.db</code> and its containing folder (i.e. <code>db/</code>) are writable by the 
 application, normally this means chown-ing them as <code>www-data</code> or whatever user your httpd is running under.
 
-    <pre>chown www-data db/ db/scratch.db</pre>
+```sh
+chown www-data db/ db/scratch.db
+```
 
 3. Copy <code>config.php-dist</code> to <code>config.php</code> and edit path to Calibre, etc.
 
