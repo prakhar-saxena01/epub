@@ -10,5 +10,5 @@
   ],
   "start_url": "index.php",
   "display": "standalone",
-  "orientation": "portrait-primary"
+  "orientation": "any"
 }
