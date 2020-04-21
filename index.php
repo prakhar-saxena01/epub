@@ -120,7 +120,7 @@
 				</a></li>
 			<?php } ?>
 			<?php if ($mode == "favorites") { ?>
-				<li><a href="#" onclick="App.offlineGetAll()" title="Download all">
+				<li><a href="#" onclick="App.Offline.getAll()" title="Download all">
 					<span class="glyphicon glyphicon-download-alt text-primary"></span> <span class='hidden-sm hidden-md hidden-lg'>Download all</span>
 				</a></li>
 			<?php } ?>
