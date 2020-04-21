@@ -175,41 +175,9 @@ const Reader = {
 			Reader.applyStyles();
 		});
 
-		/*rendition.display().then(function() {
-			Reader.applyStyles();
-		});*/
-
-		// this sets default theme, then we apply CSS to already rendered content
-		// with apply_styles()
-		/* displayed.then(function () {
-
-			let fontSize;
-			let fontFamily;
-			let lineHeight;
-			//let themeName;
-
-			Promise.all([
-				localforage.getItem("epube.fontSize"),
-				localforage.getItem("epube.fontFamily"),
-				localforage.getItem("epube.lineHeight"),
-				localforage.getItem("epube.theme")
-			]).then(function(res) {
-				fontSize = res[0] ? res[0] + "px" : DEFAULT_FONT_SIZE + "px";
-				fontFamily = res[1] ? res[1] : DEFAULT_FONT_FAMILY;
-				lineHeight = res[2] ? res[2] + "%" : DEFAULT_LINE_HEIGHT + "%";
-				//themeName = res[3] ? res[3] : 'default';
-
-				rendition.themes.default({
-					html: {
-						'font-size': fontSize,
-						'font-family': "'" + fontFamily + "'",
-						'line-height': lineHeight,
-						'text-align': 'justify'
-					}
-				});
-
-			});
-		}); */
+		rendition.display().then(function() {
+			console.log("book displayed");
+		});
 
 		rendition.hooks.content.register(function(contents) {
 
@@ -966,7 +934,6 @@ const Reader = {
 				}
 
 				if (navigator.onLine) {
-
 					$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
 						console.log('lr remote', data);
 
@@ -978,9 +945,9 @@ const Reader = {
 								if (item.cfi != data.cfi && (!item.page || data.page >= item.page))
 									console.log('using remote lastread...');
 
-								book.rendition.display(data.cfi).then(() => {
-									book.rendition.display(data.cfi);
-								});
+									book.rendition.display(data.cfi).then(() => {
+										book.rendition.display(data.cfi);
+									});
 							} catch (e) {
 								console.warn(e);
 							}
