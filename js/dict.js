@@ -7,7 +7,7 @@ $(document).ready(function() {
 		const sel = getSelection().toString().trim();
 
 		if (sel.match(/^\w+$/)) {
-			parent.dict_lookup(sel, function() {
+			parent.Reader.lookupWord(sel, function() {
 				getSelection().removeAllRanges();
 			});
 		}

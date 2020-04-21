@@ -16,7 +16,7 @@
 	<script src="lib/epub.js"></script>
 
 	<script src="js/app.js"></script>
-	<script src="js/read.js"></script>
+	<script src="js/reader.js"></script>
 
 	<link id="favicon" rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link type="text/css" rel="stylesheet" media="screen" href="css/read.css" />
@@ -38,7 +38,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Font:</label>
 					<div class="col-sm-9">
-						<select class="font_family form-control" onchange="apply_font(this)">
+						<select class="font_family form-control" onchange="Reader.Settings.onFontChanged(this)">
 							<option>Arial</option>
 							<option>Caecilia</option>
 							<option>Times New Roman</option>
@@ -51,21 +51,21 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Text size:</label>
 					<div class="col-sm-9">
-						<select class="font_size form-control" onchange="apply_font_size(this)"></select>
+						<select class="font_size form-control" onchange="Reader.Settings.onTextSizeChanged(this)"></select>
 					</div>
   				</div>
 
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Line height:</label>
 					<div class="col-sm-9">
-						<select class="line_height form-control" onchange="apply_line_height(this)"></select>
+						<select class="line_height form-control" onchange="Reader.Settings.onLineHeightChanged(this)"></select>
 					</div>
   				</div>
 
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Theme:</label>
 					<div class="col-sm-9">
-						<select class="theme_name form-control" onchange="change_theme(this)">
+						<select class="theme_name form-control" onchange="Reader.Settings.onThemeChanged(this)">
 							<option value="default">Default</option>
 						 	<option value="light">Light</option>
 						 	<option value="gray">Gray</option>
@@ -100,7 +100,7 @@
 						<div class="input-group">
 							<input type="numeric" disabled="disabled" class="form-control lastread_input">
 							<span class="input-group-btn">
-								<button class="btn btn-danger" type="button" onclick="clear_lastread()">Clear</button>
+								<button class="btn btn-danger" type="button" onclick="Reader.Page.clearLastRead()">Clear</button>
 							</span>
 						</div>
 					</div>
@@ -109,8 +109,8 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label"></label>
 					<div class="col-sm-9">
-						<button class="btn btn-default" type="button" onclick="open_lastread()">Open last read page</button>
-						<button class="btn btn-primary" type="button" onclick="mark_as_read()">Mark as read</button>
+						<button class="btn btn-default" type="button" onclick="Reader.Page.openLastRead()">Open last read page</button>
+						<button class="btn btn-primary" type="button" onclick="Reader.markAsRead()">Mark as read</button>
 					</div>
   				</div>
 
@@ -183,7 +183,7 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="search()">Search</button>
+        <button type="button" class="btn btn-primary" onclick="Reader.search()">Search</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -192,14 +192,14 @@
 
 <div class="container">
 <div class="header">
-	<a href="#" onclick="save_and_close()">
+	<a href="#" onclick="Reader.close()">
 		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back
 	</a>
 	<div class="title"> </div>
 	<div class="toolbar">
 
 		<div class="prev_location_btn"
-			onclick="open_previous_location(this)" style="display : none">
+			onclick="Reader.Page.openPrevious(this)" style="display : none">
 			<div class="glyphicon glyphicon-chevron-left" aria-hidden="true"></div>
 		</div>
 
@@ -207,7 +207,7 @@
 			<div class="glyphicon glyphicon-search" aria-hidden="true"></div>
 		</div>
 
-		<div onclick="toggle_fullscreen()">
+		<div onclick="Reader.toggleFullscreen()">
 			<div class="glyphicon glyphicon-fullscreen" aria-hidden="true"></div>
 		</div>
 
