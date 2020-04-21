@@ -639,6 +639,7 @@ const Reader = {
 				c.css("font-size", fontSize);
 				c.css("font-family", "'" + fontFamily + "'");
 				c.css("line-height", lineHeight);
+				c.css("text-align", "justify");
 			});
 
 			Reader.applyTheme();

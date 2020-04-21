@@ -163,10 +163,8 @@
 	background-color:rgba(0,0,0,0.1);
 }
 
-body.is-epube-app .header {
-	display : none ! important;
+body.is-epube-app .header .toolbar,
+body.is-epube-app .header a {
+	display : none;
 }
 
-body.is-epube-app #reader {
-	top : 0px;
-}

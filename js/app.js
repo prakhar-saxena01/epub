@@ -51,6 +51,7 @@ const App = {
         }
 
         App.initNightMode();
+        App.initOfflineEvents();
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker
@@ -199,7 +200,19 @@ const App = {
             });
         }
     },
+    initOfflineEvents: function() {
+        if (typeof EpubeApp != "undefined") {
+            $(window).on('online', function() {
+                EpubeApp.setOffline(false);
+            });
 
+            $(window).on('offline', function() {
+                EpubeApp.setOffline(true);
+            });
+
+            EpubeApp.setOffline(!navigator.onLine);
+        }
+    },
     initNightMode: function() {
         if (window.matchMedia) {
             const mql = window.matchMedia('(prefers-color-scheme: dark)');
@@ -227,6 +240,7 @@ const App = {
             }
 
             App.initNightMode();
+            App.initOfflineEvents();
 
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker
