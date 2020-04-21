@@ -5,3 +5,4 @@ sessions/*
 /tags
 /.tags*
 /.gutentags
+.idea/*

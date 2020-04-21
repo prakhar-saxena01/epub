@@ -14,8 +14,7 @@
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
-	<script src="js/offline.js"></script>
-	<script src="js/common.js"></script>
+	<script src="js/app.js"></script>
 </head>
 <body>
 
@@ -52,7 +51,7 @@
 		</form>
 
 		<ul class="nav navbar-nav navbar-right">
-			<li><a href="#" onclick="offline_clear()" title="Remove all downloads">
+			<li><a href="#" onclick="App.Offline.removeAll()" title="Remove all downloads">
 				<span class="glyphicon glyphicon-remove-circle text-danger"></span> <span class='hidden-sm hidden-md hidden-lg'>Remove all downloads</span>
 			</a></li>
 		</ul>
@@ -68,31 +67,7 @@
 	'use strict';
 
 	$(document).ready(function() {
-
-		if (typeof EpubeApp != "undefined") {
-			$(".navbar").hide();
-			$(".epube-app-filler").show();
-
-			EpubeApp.setPage("PAGE_OFFLINE");
-		}
-
-		init_night_mode();
-
-		if ('serviceWorker' in navigator) {
- 			 navigator.serviceWorker
-           .register('worker.js')
-           .then(function() {
-					console.log("service worker registered");
-				});
-		}
-
-		var query = $.urlParam("query");
-
-		if (query)
-			$(".search_query").val(query);
-
-		populate_list();
-
+		App.Offline.init();
 	});
 </script>
 

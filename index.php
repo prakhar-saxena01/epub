@@ -64,8 +64,7 @@
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
-	<script src="js/index.js?<?php echo time() ?>"></script>
-	<script src="js/common.js?<?php echo time() ?>"></script>
+	<script src="js/app.js?<?php echo time() ?>"></script>
 </head>
 <body>
 
@@ -112,7 +111,7 @@
 		</form>
 
 		<ul class="nav navbar-nav navbar-right">
-			<li><a href="#" title="Refresh script cache" onclick="return cache_refresh(true)">
+			<li><a href="#" title="Refresh script cache" onclick="return App.refreshCache(true)">
 				<span class="glyphicon glyphicon-refresh"></span> <span class='hidden-sm hidden-md hidden-lg'>Refresh script cache</span></a></li>
 			</li>
 			<?php if ($mode !== "favorites") { ?>
@@ -121,7 +120,7 @@
 				</a></li>
 			<?php } ?>
 			<?php if ($mode == "favorites") { ?>
-				<li><a href="#" onclick="offline_get_all()" title="Download all">
+				<li><a href="#" onclick="App.offlineGetAll()" title="Download all">
 					<span class="glyphicon glyphicon-download-alt text-primary"></span> <span class='hidden-sm hidden-md hidden-lg'>Download all</span>
 				</a></li>
 			<?php } ?>
@@ -134,66 +133,9 @@
 <div class="epube-app-filler"></div>
 
 <script type="text/javascript">
-	var index_mode = "<?php echo $mode ?>";
-
 	$(document).ready(function() {
-		let refreshed_files = 0;
-
-		if (typeof EpubeApp != "undefined") {
-			$(".navbar").hide();
-			$(".epube-app-filler").show();
-
-			if ($.urlParam("mode") == "favorites")
-				EpubeApp.setPage("PAGE_FAVORITES");
-			else
-				EpubeApp.setPage("PAGE_LIBRARY");
-		}
-
-		init_night_mode();
-
-		if ('serviceWorker' in navigator) {
- 			 navigator.serviceWorker
-           .register('worker.js?<?php echo time() ?>')
-           .then(function() {
-					console.log("service worker registered");
-			  });
-
-			 navigator.serviceWorker.addEventListener('message', function(event) {
-
-				if (event.data == 'refresh-started') {
-					console.log('cache refresh started');
-					refreshed_files = 0;
-
-					$(".dl-progress")
-						.fadeIn()
-						.text("Loading, please wait...");
-				}
-
-				if (event.data && event.data.indexOf("refreshed:") == 0) {
-					++refreshed_files;
-
-					$(".dl-progress")
-						.fadeIn()
-						.text("Updated " + refreshed_files + " files...");
-				}
-
-				if (event.data == 'client-reload') {
-					const ts = parseInt(new Date().getTime()/1000);
-					localforage.setItem("epube.cache-timestamp", ts);
-					window.location.reload()
-				}
-
-			 });
-		} else {
-			$(".container-main")
-				.addClass("alert alert-danger")
-				.html("Service worker support missing in browser (are you using plain HTTP?).");
-		}
-
-		show_covers();
-		mark_offline_books();
-		cache_refresh();
-
+        App.index_mode = "<?php echo $mode ?>";
+        App.init();
 	});
 </script>
 
@@ -380,10 +322,10 @@
 							}
 						?>
 
-						<li><a href="#" onclick="return show_summary(this)"
+						<li><a href="#" onclick="return App.showSummary(this)"
 							data-book-id="<?php echo $line["id"] ?>">Summary</a></li>
 
-						<li><a href="#" onclick="return toggle_fav(this)"
+						<li><a href="#" onclick="return App.toggleFavorite(this)"
 							data-is-fav="<?php echo $fav_attr ?>"
 							class="fav_item" data-book-id="<?php echo $line["id"] ?>">
 							<?php echo $toggle_fav_prompt ?></a></li>
