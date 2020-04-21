@@ -1,6 +1,6 @@
 'use strict';
 
-/* globals ePub, localforage, book, cacheId */
+/* globals ePub, localforage, book, cacheId, EpubeApp */
 
 let _pagination_stored = 0;
 let _last_position_sync = 0;
@@ -62,7 +62,17 @@ function check_resource_load(res_names, res_data, attempt) {
 }
 
 function init_reader() {
+	if (typeof EpubeApp != "undefined") {
+		EpubeApp.setPage("PAGE_READER");
+	}
+
 	apply_theme();
+
+	/* global Cookie */
+
+	if (Cookie.get("is-epube-app") == "true") {
+		$("body").addClass("is-epube-app");
+	}
 
 	$(window).on('online', function() {
 		console.log("we're online, storing lastread");
@@ -471,6 +481,11 @@ function init_reader() {
 		document.title = meta.title + " – " + meta.creator + " – The Epube";
 		$(".title").text(meta.title);
 
+		if (typeof EpubeApp != "undefined") {
+			EpubeApp.setTitle(meta.title);
+			EpubeApp.showActionBar(false);
+		}
+
 		return localforage.getItem(cacheId("locations")).then(function(locations) {
 
 			console.log('stored pagination', locations != null);
@@ -664,16 +679,20 @@ function init_reader() {
 
 /* exported toggle_fullscreen */
 function toggle_fullscreen() {
-	const element = document.documentElement;
-	const isFullscreen = document.webkitIsFullScreen || document.mozFullScreen || false;
+	if (typeof EpubeApp != "undefined") {
+		EpubeApp.toggleSystemUI();
+	} else {
+		const element = document.documentElement;
+		const isFullscreen = document.webkitIsFullScreen || document.mozFullScreen || false;
 
-	element.requestFullScreen = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen ||
-		function () { return false; };
+		element.requestFullScreen = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen ||
+			function () { return false; };
 
-	document.cancelFullScreen = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen ||
-		function () { return false; };
+		document.cancelFullScreen = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen ||
+			function () { return false; };
 
-	isFullscreen ? document.cancelFullScreen() : element.requestFullScreen();
+		isFullscreen ? document.cancelFullScreen() : element.requestFullScreen();
+	}
 }
 
 function show_ui(show) {
@@ -746,17 +765,23 @@ function next_page() {
 
 	window.book.rendition.next();
 
-	localforage.getItem("epube.keep-ui-visible").then(function(keep) {
-		if (!keep) show_ui(false);
-	});
+	if (typeof EpubeApp != "undefined")
+		EpubeApp.showActionBar(false);
+	else
+		localforage.getItem("epube.keep-ui-visible").then(function(keep) {
+			if (!keep) show_ui(false);
+		});
 }
 
 function prev_page() {
 	window.book.rendition.prev();
 
-	localforage.getItem("epube.keep-ui-visible").then(function(keep) {
-		if (!keep) show_ui(false);
-	});
+	if (typeof EpubeApp != "undefined")
+		EpubeApp.showActionBar(false);
+	else
+		localforage.getItem("epube.keep-ui-visible").then(function(keep) {
+			if (!keep) show_ui(false);
+		});
 }
 
 function hotkey_handler(e) {

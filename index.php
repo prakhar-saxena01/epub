@@ -131,11 +131,23 @@
 </div>
 </div>
 
+<div class="epube-app-filler"></div>
+
 <script type="text/javascript">
 	var index_mode = "<?php echo $mode ?>";
 
 	$(document).ready(function() {
 		let refreshed_files = 0;
+
+		if (typeof EpubeApp != "undefined") {
+			$(".navbar").hide();
+			$(".epube-app-filler").show();
+
+			if ($.urlParam("mode") == "favorites")
+				EpubeApp.setPage("PAGE_FAVORITES");
+			else
+				EpubeApp.setPage("PAGE_LIBRARY");
+		}
 
 		init_night_mode();
 

@@ -26,6 +26,11 @@
 	filter : grayscale(100%);
 }
 
+.epube-app-filler {
+	height : 60px;
+	display : none;
+}
+
 .in_progress {
 	font-style : italic;
 }

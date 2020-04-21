@@ -1,5 +1,7 @@
 'use strict';
 
+/* global EpubeApp */
+
 function enable_swipes() {
 	$(window).off("swipeleft swiperight");
 
@@ -15,7 +17,6 @@ function enable_swipes() {
 $(document).ready(function() {
 
 	$(window).on("doubletap", function(/* evt */) {
-
 		const sel = getSelection().toString().trim();
 
 		if (sel.match(/^$/)) {
@@ -29,7 +30,10 @@ $(document).ready(function() {
 			if ($(".modal").is(":visible"))
 					return;
 
-			parent.show_ui(true);
+			if (typeof EpubeApp != "undefined")
+				EpubeApp.toggleActionBar();
+			else
+				parent.show_ui(true);
 		}
 	});
 

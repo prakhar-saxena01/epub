@@ -62,10 +62,19 @@
 </div>
 </div>
 
+<div class="epube-app-filler"></div>
+
 <script type="text/javascript">
 	'use strict';
 
 	$(document).ready(function() {
+
+		if (typeof EpubeApp != "undefined") {
+			$(".navbar").hide();
+			$(".epube-app-filler").show();
+
+			EpubeApp.setPage("PAGE_OFFLINE");
+		}
 
 		init_night_mode();
 

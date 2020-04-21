@@ -50,3 +50,26 @@ function apply_night_mode(is_night) {
 	$("#theme_css").attr("href",
 		"lib/bootstrap/v3/css/" + (is_night ? "theme-dark.min.css" : "bootstrap-theme.min.css"));
 }
+
+const Cookie = {
+	set: function (name, value, lifetime) {
+		const d = new Date();
+		d.setTime(d.getTime() + lifetime * 1000);
+		const expires = "expires=" + d.toUTCString();
+		document.cookie = name + "=" + encodeURIComponent(value) + "; " + expires;
+	},
+	get: function (name) {
+		name = name + "=";
+		const ca = document.cookie.split(';');
+		for (let i=0; i < ca.length; i++) {
+			let c = ca[i];
+			while (c.charAt(0) == ' ') c = c.substring(1);
+			if (c.indexOf(name) == 0) return decodeURIComponent(c.substring(name.length, c.length));
+		}
+		return "";
+	},
+	delete: function(name) {
+		const expires = "expires=Thu, 01-Jan-1970 00:00:01 GMT";
+		document.cookie = name + "=" + "" + "; " + expires;
+	}
+};
