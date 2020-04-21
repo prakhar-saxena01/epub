@@ -416,7 +416,7 @@ const App = {
 
                             const series_link = info.series_name ? `<div><a class="series_link" href="#">${info.series_name + " [" + info.series_index + "]"}</a></div>` : "";
 
-                            const cell = $(`<div class="col-xs-6 col-sm-3 col-md-2" id="cell-${info.id}">
+                            const cell = $(`<div class="col-xxs-6 col-xs-4 col-sm-3 col-md-2" id="cell-${info.id}">
 							<a class="thumbnail ${thumb_class}" href="read.html?id=${info.epub_id}&b=${info.id}">
 								<img style="display : none">
 							</a>

@@ -262,7 +262,7 @@
 		$data_sth->execute([$line['id']]);
 
 		?>
-			<div class="col-xs-6 col-sm-3 col-md-2" id="cell-<?php echo $line["id"] ?>">
+			<div class="col-xxs-6 col-xs-3 col-sm-3 col-md-2" id="cell-<?php echo $line["id"] ?>">
 				<?php if ($read_link) { ?>
 					<a class="thumbnail <?php echo $cover_class ?>" href="<?php echo $read_link ?>">
 				<?php } else { ?>
