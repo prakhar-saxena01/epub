@@ -753,7 +753,7 @@ const Reader = {
 	},
 	toggleFullscreen: function() {
 		if (typeof EpubeApp != "undefined") {
-			EpubeApp.toggleSystemUI();
+			/* noop, handled elsewhere */
 		} else {
 			const element = document.documentElement;
 			const isFullscreen = document.webkitIsFullScreen || document.mozFullScreen || false;
