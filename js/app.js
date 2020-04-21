@@ -214,6 +214,13 @@ const App = {
         }
     },
     initNightMode: function() {
+        if (typeof EpubeApp != "undefined") {
+            if (!EpubeApp.isAutoNightModeSupported()) {
+                App.applyNightMode(EpubeApp.isNightMode());
+                return;
+            }
+        }
+
         if (window.matchMedia) {
             const mql = window.matchMedia('(prefers-color-scheme: dark)');
 
