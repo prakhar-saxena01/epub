@@ -46,6 +46,15 @@
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            /* global EpubeApp */
+
+            if (typeof EpubeApp != "undefined") {
+                EpubeApp.setPage("PAGE_LOGIN");
+            }
+        });
+    </script>
 </head>
 <body>
 
