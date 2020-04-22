@@ -54,12 +54,6 @@ const App = {
         App.initOfflineEvents();
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker
-                .register('worker.js?<?php echo time() ?>')
-                .then(function() {
-                    console.log("service worker registered");
-                });
-
             navigator.serviceWorker.addEventListener('message', function(event) {
 
                 if (event.data == 'refresh-started') {
@@ -246,14 +240,6 @@ const App = {
 
             App.initNightMode();
             App.initOfflineEvents();
-
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker
-                    .register('worker.js')
-                    .then(function() {
-                        console.log("service worker registered");
-                    });
-            }
 
             const query = $.urlParam("query");
 

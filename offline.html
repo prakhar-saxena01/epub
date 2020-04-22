@@ -15,6 +15,23 @@
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
 	<script src="js/app.js"></script>
+	<script type="text/javascript">
+		'use strict';
+
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker
+					.register('worker.js')
+					.then(function() {
+						console.log("service worker registered");
+
+						$(document).ready(function() {
+							App.Offline.init();
+						});
+					});
+		} else {
+			alert("Service worker support missing in browser (are you using plain HTTP?).");
+		}
+	</script>
 </head>
 <body>
 
@@ -62,14 +79,6 @@
 </div>
 
 <div class="epube-app-filler"></div>
-
-<script type="text/javascript">
-	'use strict';
-
-	$(document).ready(function() {
-		App.Offline.init();
-	});
-</script>
 
 <div class="container">
 

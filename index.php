@@ -65,6 +65,24 @@
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
 	<script src="js/app.js?<?php echo time() ?>"></script>
+    <script type="text/javascript">
+        'use strict';
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker
+                .register('worker.js')
+                .then(function() {
+                    console.log("service worker registered");
+
+                    $(document).ready(function() {
+                        App.index_mode = "<?php echo $mode ?>";
+                        App.init();
+                    });
+                });
+        } else {
+            alert("Service worker support missing in browser (are you using plain HTTP?).");
+        }
+    </script>
 </head>
 <body>
 
@@ -131,13 +149,6 @@
 </div>
 
 <div class="epube-app-filler"></div>
-
-<script type="text/javascript">
-	$(document).ready(function() {
-        App.index_mode = "<?php echo $mode ?>";
-        App.init();
-	});
-</script>
 
 <div class="container container-main">
 

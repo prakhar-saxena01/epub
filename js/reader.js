@@ -8,18 +8,6 @@ const DEFAULT_LINE_HEIGHT = 140;
 
 const Reader = {
 	init: function() {
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker
-				.register('worker.js')
-				.then(function() {
-					console.log("service worker registered");
-
-					Reader.Loader.init();
-				});
-		} else {
-			alert("Service worker support missing in browser (are you using plain HTTP?).");
-		}
-
 		$(document).on("keyup", function(e) {
 			Reader.hotkeyHandler(e);
 		});
@@ -31,6 +19,8 @@ const Reader = {
 		$("#right").on("mouseup", function() {
 			Reader.Page.next();
 		});
+
+		Reader.Loader.init();
 	},
 	initSecondStage: function() {
 
@@ -1014,10 +1004,6 @@ const Reader = {
 		}
 	}
 };
-
-$(document).ready(function() {
-	Reader.init();
-});
 
 function __get_reader() {
 	return Reader;
