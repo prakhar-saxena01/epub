@@ -133,6 +133,8 @@ this.addEventListener('fetch', function(event) {
 			}).catch(function() {
 				if (req.url[req.url.length-1] == "/" || req.url.match("index.php")) {
 					return caches.match("offline.html");
+				} else if (req.url.match("read.html")) {
+					return caches.match("read.html");
 				} else {
 					return caches.match(req.url);
 				}
