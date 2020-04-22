@@ -648,11 +648,17 @@ const Reader = {
 	},
 	applyTheme: function() {
 		localforage.getItem("epube.theme").then(function(theme) {
-			console.log('theme', theme);
-
 			const base_url = window.location.href.match(/^.*\//)[0];
 
 			if (!theme) theme = 'default';
+
+			console.log('called for theme', theme);
+
+			if (theme == "default" && typeof EpubeApp != "undefined")
+				if (EpubeApp.isNightMode())
+					theme = "night";
+
+			console.log('theme', theme);
 
 			const theme_url = base_url + "themes/" + theme + ".css";
 			const theme_data = Reader.Loader._res_data[theme_url];
