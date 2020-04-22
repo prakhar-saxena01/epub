@@ -60,11 +60,11 @@
 	<script src="lib/holder.min.js"></script>
 	<script src="lib/localforage.min.js"></script>
 	<title>The Epube</title>
-	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css?<?php echo time() ?>" />
+	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css" />
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
-	<script src="js/app.js?<?php echo time() ?>"></script>
+	<script src="js/app.js?"></script>
     <script type="text/javascript">
         'use strict';
 

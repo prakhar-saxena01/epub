@@ -5,7 +5,7 @@ const CACHE_NAME = CACHE_PREFIX + '-v2';
 const CACHE_URLS = [
 			'manifest.json',
 			'worker.js',
-			'img/ic_launcher_web.png',
+			'img/ic_launcher_web.png?v4',
 			'img/favicon.png',
 			'read.html',
 			'js/app.js',
