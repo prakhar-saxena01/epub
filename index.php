@@ -64,7 +64,7 @@
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
-	<script src="js/app.js?"></script>
+	<script src="js/app.js"></script>
     <script type="text/javascript">
         'use strict';
 
