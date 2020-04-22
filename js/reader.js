@@ -664,11 +664,25 @@ const Reader = {
 
 			$("#theme_css").attr("href", theme_url);
 
+			if (typeof EpubeApp != "undefined") {
+				window.setTimeout(function() {
+					const bg_color = window.getComputedStyle(document.querySelector("body"), null)
+						.getPropertyValue("background-color");
+
+					const match = bg_color.match(/rgb\((\d{1,}), (\d{1,}), (\d{1,})\)/);
+
+					if (match) {
+						console.log("sending bgcolor", match);
+
+						EpubeApp.setStatusBarColor(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
+					}
+				}, 250);
+			}
+
 			/* apply to existing reader */
 			$.each(window.book.rendition.getContents(), function(i, c) {
 				$(c.document).find("#theme_css").text(Reader.Loader._res_data[theme_url])
 			});
-
 		});
 	},
 	hotkeyHandler: function(e) {

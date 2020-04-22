@@ -215,10 +215,8 @@ const App = {
     },
     initNightMode: function() {
         if (typeof EpubeApp != "undefined") {
-            if (!EpubeApp.isAutoNightModeSupported()) {
-                App.applyNightMode(EpubeApp.isNightMode());
-                return;
-            }
+            App.applyNightMode(EpubeApp.isNightMode());
+            return;
         }
 
         if (window.matchMedia) {
