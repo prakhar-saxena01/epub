@@ -248,6 +248,77 @@ const App = {
 
             App.Offline.populateList();
         },
+        get: function(bookId, callback) {
+            console.log("offline cache: " + bookId);
+
+            $.post("backend.php", {op: "getinfo", id: bookId}, function(data) {
+
+                if (data) {
+                    const cacheId = 'epube-book.' + bookId;
+
+                    localforage.setItem(cacheId, data).then(function(data) {
+
+                        console.log(cacheId + ' got data');
+
+                        const promises = [];
+
+                        promises.push(fetch('backend.php?op=download&id=' + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
+                            if (resp.status == 200) {
+                                console.log(cacheId + ' got book');
+
+                                callback();
+
+                                localforage.setItem(cacheId + '.book', resp.blob());
+                            }
+                        }));
+
+                        promises.push(fetch("backend.php?op=getpagination&id=" + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
+                            if (resp.status == 200) {
+                                console.log(cacheId + ' got pagination');
+
+                                resp.text().then(function(text) {
+                                    localforage.setItem(cacheId + '.locations', JSON.parse(text));
+                                });
+                            }
+                        }));
+
+                        promises.push(fetch("backend.php?op=getlastread&id=" + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
+                            if (resp.status == 200) {
+                                console.log(cacheId + ' got lastread');
+                                resp.text().then(function(text) {
+                                    localforage.setItem(cacheId + '.lastread', JSON.parse(text));
+                                });
+                            }
+                        }));
+
+                        if (data.has_cover) {
+
+                            promises.push(fetch("backend.php?op=cover&id=" + bookId, {credentials: 'same-origin'}).then(function(resp) {
+
+                                if (resp.status == 200) {
+                                    console.log(cacheId + ' got cover');
+                                    localforage.setItem(cacheId + '.cover', resp.blob());
+                                }
+
+                            }));
+
+                        }
+
+                        Promise.all(promises).then(function() {
+                            $(".dl-progress")
+                                .show()
+                                .html("Finished downloading <b>" + data.title + "</b>");
+
+                            window.clearTimeout(App._dl_progress_timeout);
+
+                            App._dl_progress_timeout = window.setTimeout(function() {
+                                $(".dl-progress").fadeOut();
+                            }, 5*1000);
+                        });
+                    });
+                }
+            });
+        },
         getAll: function() {
             if (confirm("Download all books on this page?")) {
 
@@ -475,76 +546,5 @@ const App = {
                 }
             });
         }
-    },
-    get: function(bookId, callback) {
-        console.log("offline cache: " + bookId);
-
-        $.post("backend.php", {op: "getinfo", id: bookId}, function(data) {
-
-            if (data) {
-                const cacheId = 'epube-book.' + bookId;
-
-                localforage.setItem(cacheId, data).then(function(data) {
-
-                    console.log(cacheId + ' got data');
-
-                    const promises = [];
-
-                    promises.push(fetch('backend.php?op=download&id=' + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
-                        if (resp.status == 200) {
-                            console.log(cacheId + ' got book');
-
-                            callback();
-
-                            localforage.setItem(cacheId + '.book', resp.blob());
-                        }
-                    }));
-
-                    promises.push(fetch("backend.php?op=getpagination&id=" + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
-                        if (resp.status == 200) {
-                            console.log(cacheId + ' got pagination');
-
-                            resp.text().then(function(text) {
-                                localforage.setItem(cacheId + '.locations', JSON.parse(text));
-                            });
-                        }
-                    }));
-
-                    promises.push(fetch("backend.php?op=getlastread&id=" + data.epub_id, {credentials: 'same-origin'}).then(function(resp) {
-                        if (resp.status == 200) {
-                            console.log(cacheId + ' got lastread');
-                            resp.text().then(function(text) {
-                                localforage.setItem(cacheId + '.lastread', JSON.parse(text));
-                            });
-                        }
-                    }));
-
-                    if (data.has_cover) {
-
-                        promises.push(fetch("backend.php?op=cover&id=" + bookId, {credentials: 'same-origin'}).then(function(resp) {
-
-                            if (resp.status == 200) {
-                                console.log(cacheId + ' got cover');
-                                localforage.setItem(cacheId + '.cover', resp.blob());
-                            }
-
-                        }));
-
-                    }
-
-                    Promise.all(promises).then(function() {
-                        $(".dl-progress")
-                            .show()
-                            .html("Finished downloading <b>" + data.title + "</b>");
-
-                        window.clearTimeout(App._dl_progress_timeout);
-
-                        App._dl_progress_timeout = window.setTimeout(function() {
-                            $(".dl-progress").fadeOut();
-                        }, 5*1000);
-                    });
-                });
-            }
-        });
     },
 };
