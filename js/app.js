@@ -248,6 +248,30 @@ const App = {
 
             App.Offline.populateList();
         },
+        getAll: function() {
+            if (confirm("Download all books on this page?")) {
+
+                $(".row > div").each(function (i, row) {
+                    const bookId = $(row).attr("id").replace("cell-", "");
+                    const dropitem = $(row).find(".offline_dropitem")[0];
+
+                    if (bookId) {
+
+                        const cacheId = 'epube-book.' + bookId;
+                        localforage.getItem(cacheId).then(function(book) {
+
+                            if (!book) {
+                                App.Offline.get(bookId, function() {
+                                    App.Offline.mark(dropitem);
+                                });
+                            }
+
+                        });
+
+                    }
+                });
+            }
+        },
         markBooks: function() {
             const elems = $(".offline_dropitem");
 
@@ -448,30 +472,6 @@ const App = {
                             Holder.run();
                         }
                     });
-                }
-            });
-        }
-    },
-    getAll: function() {
-        if (confirm("Download all books on this page?")) {
-
-            $(".row > div").each(function (i, row) {
-                const bookId = $(row).attr("id").replace("cell-", "");
-                const dropitem = $(row).find(".offline_dropitem")[0];
-
-                if (bookId) {
-
-                    const cacheId = 'epube-book.' + bookId;
-                    localforage.getItem(cacheId).then(function(book) {
-
-                        if (!book) {
-                            App.Offline.get(bookId, function() {
-                                App.Offline.mark(dropitem);
-                            });
-                        }
-
-                    });
-
                 }
             });
         }
