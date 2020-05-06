@@ -937,6 +937,8 @@ const Reader = {
 
 					// this is ridiculous tbh
 					if (item.cfi) book.rendition.display(item.cfi).then(() => {
+						$(".loading").hide();
+
 						book.rendition.display(item.cfi);
 					});
 
