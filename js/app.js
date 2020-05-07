@@ -37,6 +37,7 @@ const Cookie = {
 const App = {
     _dl_progress_timeout: false,
     index_mode: "",
+    last_mtime: -1,
     init: function() {
         let refreshed_files = 0;
 
@@ -74,8 +75,7 @@ const App = {
                 }
 
                 if (event.data == 'client-reload') {
-                    const ts = parseInt(new Date().getTime()/1000);
-                    localforage.setItem("epube.cache-timestamp", ts);
+                    localforage.setItem("epube.cache-timestamp", App.last_mtime);
                     window.location.reload()
                 }
 
@@ -156,9 +156,7 @@ const App = {
     refreshCache: function(force) {
         if ('serviceWorker' in navigator) {
             localforage.getItem("epube.cache-timestamp").then(function(stamp) {
-                const ts = parseInt(new Date().getTime()/1000);
-
-                if (force || !stamp || ts - stamp > 3600 * 24 * 7) {
+                if (force || stamp != App.last_mtime) {
                     console.log('asking worker to refresh cache');
 
                     if (navigator.serviceWorker.controller) {
@@ -190,8 +188,12 @@ const App = {
                         });
                     }
                 }
-
             });
+        } else {
+            $(".dl-progress")
+                .show()
+                .addClass("alert-danger")
+                .html("Could not communicate with service worker. Try reloading the page.");
         }
     },
     initOfflineEvents: function() {

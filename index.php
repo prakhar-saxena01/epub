@@ -42,6 +42,53 @@
 		die(dirname(SCRATCH_DB) . " directory is not writable");
 	}
 
+    // TODO: this should be unified with the service worker cache list
+    $check_files_mtime = [
+        'manifest.json',
+        'worker.js',
+        'img/ic_launcher_web.png?v4',
+        'img/favicon.png',
+        'read.html',
+        'js/app.js',
+        'js/reader.js',
+        'js/reader_iframe.js',
+        'js/dict.js',
+        'css/read.css',
+        'css/reader.css',
+        'css/index.css',
+        'css/transitions.css',
+        'offline.html',
+        'themes/default.css',
+        'themes/light.css',
+        'themes/mocca.css',
+        'themes/night.css',
+        'themes/plan9.css',
+        'themes/gray.css',
+        'themes/sepia.css',
+        'lib/promise.js',
+        'lib/fetch.js',
+        'lib/zip.min.js',
+        'lib/epub.js',
+        'lib/localforage.min.js',
+        'lib/jquery.mobile-events.min.js',
+        'lib/holder.min.js',
+        'lib/bootstrap/v3/css/bootstrap-theme.min.css',
+        'lib/bootstrap/v3/css/bootstrap.min.css',
+        'lib/bootstrap/v3/css/theme-dark.min.css',
+        'lib/bootstrap/v3/js/jquery.js',
+        'lib/bootstrap/v3/js/bootstrap.min.js',
+        'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
+        'lib/fonts/pmn-caecilia-55.ttf',
+        'lib/fonts/pmn-caecilia-56.ttf',
+        'lib/fonts/pmn-caecilia-75.ttf'
+    ];
+
+	$last_mtime = array_reduce(
+	            array_map("filemtime", $check_files_mtime),
+                function ($carry, $item) {
+                       return $item > $carry ? $item : $carry;
+               }, 0);
+
 	@$mode = htmlspecialchars($_REQUEST["mode"]);
 
 	$ldb = Db::get();
@@ -76,6 +123,7 @@
 
                     $(document).ready(function() {
                         App.index_mode = "<?php echo $mode ?>";
+                        App.last_mtime = parseInt("<?php echo $last_mtime ?>");
                         App.init();
                     });
                 });
