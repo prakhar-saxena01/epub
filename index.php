@@ -200,6 +200,17 @@
 
 <div class="container container-main">
 
+<form class="form-inline separate-search" style="display : none">
+    <div class="input-group">
+        <input type="text" name="query" class="form-control" placeholder="Search for..."
+               value="<?php echo htmlspecialchars($query) ?>">
+        <input type="hidden" name="mode" value="<?php echo $mode ?>">
+        <span class="input-group-btn">
+                <button type="submit" class="btn btn-default">Go</button>
+        </span>
+    </div>
+</form>
+
 <div class="modal fade" id="summary-modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

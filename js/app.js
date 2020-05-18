@@ -44,6 +44,7 @@ const App = {
         if (typeof EpubeApp != "undefined") {
             $(".navbar").hide();
             $(".epube-app-filler").show();
+            $(".separate-search").show();
 
             if ($.urlParam("mode") == "favorites")
                 EpubeApp.setPage("PAGE_FAVORITES");

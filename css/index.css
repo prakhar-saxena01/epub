@@ -3,6 +3,10 @@
  	flex-wrap: wrap;
 }
 
+.separate-search {
+	padding : 8px;
+}
+
 .row > div {
 	padding-top : 10px;
 }
