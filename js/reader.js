@@ -161,9 +161,11 @@ const Reader = {
 			minSpreadWidth: 961
 		});
 
-		rendition.hooks.content.register(function() {
+		Reader.applyStyles(true);
+
+		/* rendition.hooks.content.register(function() {
 			Reader.applyStyles();
-		});
+		}); */
 
 		rendition.display().then(function() {
 			console.log("book displayed");
@@ -237,6 +239,13 @@ const Reader = {
 					.on("click", function(evt) {
 						localforage.setItem("epube.keep-ui-visible", evt.target.checked);
 					});
+			});
+
+			localforage.getItem("epube.cache-timestamp").then(function(stamp) {
+				if (parseInt(stamp))
+					$(".last-mod-timestamp").text("V: " + new Date(stamp*1000).toLocaleString("en-GB"))
+				else
+					$(".last-mod-timestamp").text("");
 			});
 
 			localforage.getItem("epube.fontFamily").then(function(font) {
@@ -508,6 +517,7 @@ const Reader = {
 			$(".loading_message").html("Opening chapter...");
 
 			window.setTimeout(function() {
+				Reader.resizeSideColumns();
 				Reader.Page.openLastRead();
 
 				$(".loading").hide();
@@ -611,7 +621,7 @@ const Reader = {
 			}
 		});
 	},
-	applyStyles: function() {
+	applyStyles: function(default_only) {
 		Promise.all([
 			localforage.getItem("epube.fontSize"),
 			localforage.getItem("epube.fontFamily"),
@@ -625,12 +635,27 @@ const Reader = {
 
 			console.log('style', fontFamily, fontSize, lineHeight);
 
-			$.each(window.book.rendition.getContents(), function(i, c) {
-				c.css("font-size", fontSize);
-				c.css("font-family", "'" + fontFamily + "'");
-				c.css("line-height", lineHeight);
-				c.css("text-align", "justify");
+			console.log('applying default theme...');
+
+			window.book.rendition.themes.default({
+				html: {
+					'font-size': fontSize,
+					'font-family': "'" + fontFamily + "'",
+					'line-height': lineHeight,
+					'text-align': 'justify'
+				}
 			});
+
+			if (!default_only) {
+				console.log('applying rendition themes...');
+
+				$.each(window.book.rendition.getContents(), function(i, c) {
+					c.css("font-size", fontSize);
+					c.css("font-family", "'" + fontFamily + "'");
+					c.css("line-height", lineHeight);
+					c.css("text-align", 'justify');
+				});
+			}
 
 			Reader.applyTheme();
 		});
@@ -926,7 +951,7 @@ const Reader = {
 
 			}
 		},
-		openLastRead: function() {
+		openLastRead: function(local_only) {
 			localforage.getItem(Reader.cacheId("lastread")).then(function(item) {
 				console.log('lr local', item);
 
@@ -946,17 +971,17 @@ const Reader = {
 					console.warn(e);
 				}
 
-				if (navigator.onLine) {
+				if (navigator.onLine && !local_only) {
 					$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
 						console.log('lr remote', data);
 
 						if (navigator.onLine && data) {
-							localforage.setItem(Reader.cacheId("lastread"),
-								{cfi: data.cfi, page: data.page, total: data.total});
-
 							try {
 								if (item.cfi != data.cfi && (!item.page || data.page >= item.page))
 									console.log('using remote lastread...');
+
+									localforage.setItem(Reader.cacheId("lastread"),
+										{cfi: data.cfi, page: data.page, total: data.total});
 
 									book.rendition.display(data.cfi).then(() => {
 										book.rendition.display(data.cfi);
