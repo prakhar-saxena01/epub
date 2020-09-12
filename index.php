@@ -7,12 +7,16 @@
 		die("sessions/ directory is not writable.");
 	}
 
+	require_once "config.php";
+	require_once "common.php";
+
+	sanity_check();
+
 	if (!isset($_COOKIE['epube_sid'])) {
 		header("Location: login.php");
 		exit;
 	}
 
-	require_once "config.php";
 	require_once "sessions.php";
 	require_once "db.php";
 
@@ -32,14 +36,6 @@
 		header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
 		echo "Unauthorized";
 		die;
-	}
-
-	if (!is_writable(SCRATCH_DB)) {
-		die(SCRATCH_DB . " is not writable");
-	}
-
-	if (!is_writable(dirname(SCRATCH_DB))) {
-		die(dirname(SCRATCH_DB) . " directory is not writable");
 	}
 
     // TODO: this should be unified with the service worker cache list

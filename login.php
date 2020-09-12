@@ -1,5 +1,9 @@
 <?php
 	require_once "config.php";
+	require_once "common.php";
+
+	sanity_check();
+
 	require_once "sessions.php";
 
 	@$op = $_REQUEST["op"];
