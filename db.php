@@ -4,7 +4,11 @@ class Db {
 	private $dbh;
 
 	private function __construct() {
-		$this->dbh = new PDO('sqlite:' . SCRATCH_DB);
+		try {
+			$this->dbh = new PDO('sqlite:' . SCRATCH_DB);
+		} catch (Exception $e) {
+			die("Unable to initialize database driver (SQLite): $e");
+		}
 		//$this->dbh->busyTimeout(30*1000);
 		$this->dbh->query('PRAGMA journal_mode = wal;');
 	}
