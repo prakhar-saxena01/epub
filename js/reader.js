@@ -527,6 +527,8 @@ const Reader = {
 		rendition.on('rendered', function(/*chapter*/) {
 			$(".chapter").html($("<span>").addClass("glyphicon glyphicon-th-list"));
 
+			Reader.applyTheme();
+
 			Reader.resizeSideColumns();
 
 			try {
@@ -673,7 +675,7 @@ const Reader = {
 				if (EpubeApp.isNightMode())
 					theme = "night";
 
-			console.log('theme', theme);
+			console.log('setting main UI theme', theme);
 
 			const theme_url = base_url + "themes/" + theme + ".css";
 			const theme_data = Reader.Loader._res_data[theme_url];
@@ -701,9 +703,14 @@ const Reader = {
 			}
 
 			/* apply to existing reader */
+			//$($("#reader iframe")[0].contentDocument).find("#theme_css").text(Reader.Loader._res_data[theme_url])
+
 			$.each(window.book.rendition.getContents(), function(i, c) {
+				console.log('applying rendition theme', theme);
+
 				$(c.document).find("#theme_css").text(Reader.Loader._res_data[theme_url])
 			});
+
 		});
 	},
 	hotkeyHandler: function(e) {
