@@ -50,9 +50,9 @@ $(document).ready(function() {
 
 	$(window).on("wheel", function(evt) {
 		if (evt.originalEvent.deltaY > 0) {
-			Reader.Page.prev();
-		} else if (evt.originalEvent.deltaY < 0) {
 			Reader.Page.next();
+		} else if (evt.originalEvent.deltaY < 0) {
+			Reader.Page.prev();
 		}
 	});
 
