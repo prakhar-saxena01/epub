@@ -197,6 +197,9 @@ const App = {
                 .html("Could not communicate with service worker. Try reloading the page.");
         }
     },
+	 appCheckOffline: function() {
+	    EpubeApp.setOffline(!navigator.onLine);
+    },
     initOfflineEvents: function() {
         if (typeof EpubeApp != "undefined") {
             $(window).on('online', function() {
