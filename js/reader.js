@@ -709,7 +709,7 @@ const Reader = {
 			$.each(window.book.rendition.getContents(), function(i, c) {
 				console.log('applying rendition theme', theme, 'to', c, c.document);
 
-				$(c.document).find("#theme_css").text(Reader.Loader._res_data[theme_url])
+				$(c.document).find("#theme_css").text(Reader.Loader._res_data[theme_url]);
 
 				$(c.document).find("p")
 					.filter((i, e) => { if ($(e).text().length >= MIN_LENGTH_TO_JUSTIFY) return e; })
@@ -717,7 +717,10 @@ const Reader = {
 
 				/* embedded styles may conflict with our font sizes, etc */
 				$(c.document).find("p, span, em, strong, body")
-						.attr("class", "");
+						.attr("class", "")
+						.css("color", "inherit")
+						.css("background", "inherit")
+						.css("background-color", "inherit")
 
 				$(c.document).find("p")
 						.css("text-indent", "1em");
