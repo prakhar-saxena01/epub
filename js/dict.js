@@ -10,6 +10,9 @@ $(document).ready(function() {
 
 		if (sel.match(/^\w+$/)) {
 			Reader.lookupWord(sel, function() {
+				if (typeof EpubeApp != "undefined")
+					EpubeApp.showActionBar(false);
+
 				getSelection().removeAllRanges();
 			});
 		}
