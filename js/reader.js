@@ -420,6 +420,21 @@ const Reader = {
 
 		});
 
+		/* embedded styles may conflict with our font sizes, etc */
+		book.spine.hooks.content.register(function(doc, section) {
+
+			$(doc).find("p")
+					.filter((i, e) => { if ($(e).text().length >= MIN_LENGTH_TO_JUSTIFY) return e; })
+						.css("text-align", "justify");
+
+			$(doc).find("p, span, em, strong, body")
+					.attr("class", "")
+					.css("color", "")
+					.css("background", "")
+					.css("background-color", "");
+
+		});
+
 		book.ready.then(function() {
 
 			const meta = book.package.metadata;
@@ -645,7 +660,8 @@ const Reader = {
 					'font-size': fontSize,
 					'font-family': "'" + fontFamily + "'",
 					'line-height': lineHeight,
-					'text-align': 'justify'
+					'text-align': 'justify',
+					'text-indent': '1em'
 				}
 			});
 
@@ -710,21 +726,6 @@ const Reader = {
 				console.log('applying rendition theme', theme, 'to', c, c.document);
 
 				$(c.document).find("#theme_css").text(Reader.Loader._res_data[theme_url]);
-
-				$(c.document).find("p")
-					.filter((i, e) => { if ($(e).text().length >= MIN_LENGTH_TO_JUSTIFY) return e; })
-						.css("text-align", "justify");
-
-				/* embedded styles may conflict with our font sizes, etc */
-				$(c.document).find("p, span, em, strong, body")
-						.attr("class", "")
-						.css("color", "")
-						.css("background", "")
-						.css("background-color", "")
-
-				$(c.document).find("p")
-						.css("text-indent", "1em");
-
 			});
 
 		});
