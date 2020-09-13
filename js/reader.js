@@ -718,9 +718,9 @@ const Reader = {
 				/* embedded styles may conflict with our font sizes, etc */
 				$(c.document).find("p, span, em, strong, body")
 						.attr("class", "")
-						.css("color", "inherit")
-						.css("background", "inherit")
-						.css("background-color", "inherit")
+						.css("color", "")
+						.css("background", "")
+						.css("background-color", "")
 
 				$(c.document).find("p")
 						.css("text-indent", "1em");
