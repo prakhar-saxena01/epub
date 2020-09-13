@@ -718,6 +718,10 @@ const Reader = {
 				/* embedded styles may conflict with our font sizes, etc */
 				$(c.document).find("p, span, em, strong, body")
 						.attr("class", "");
+
+				$(c.document).find("p")
+						.css("text-indent", "1em");
+
 			});
 
 		});
