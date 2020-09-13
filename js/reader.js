@@ -5,6 +5,7 @@
 const DEFAULT_FONT_SIZE = 16;
 const DEFAULT_FONT_FAMILY = "Georgia";
 const DEFAULT_LINE_HEIGHT = 140;
+const MIN_LENGTH_TO_JUSTIFY = 32; /* characters */
 
 const Reader = {
 	init: function() {
@@ -706,9 +707,13 @@ const Reader = {
 			//$($("#reader iframe")[0].contentDocument).find("#theme_css").text(Reader.Loader._res_data[theme_url])
 
 			$.each(window.book.rendition.getContents(), function(i, c) {
-				console.log('applying rendition theme', theme);
+				console.log('applying rendition theme', theme, 'to', c, c.document);
 
 				$(c.document).find("#theme_css").text(Reader.Loader._res_data[theme_url])
+
+				$(c.document).find("p")
+					.filter((i, e) => { if ($(e).text().length >= MIN_LENGTH_TO_JUSTIFY) return e; })
+						.css("text-align", "justify");
 			});
 
 		});
