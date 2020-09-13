@@ -714,6 +714,10 @@ const Reader = {
 				$(c.document).find("p")
 					.filter((i, e) => { if ($(e).text().length >= MIN_LENGTH_TO_JUSTIFY) return e; })
 						.css("text-align", "justify");
+
+				/* embedded styles may conflict with our font sizes, etc */
+				$(c.document).find("p, span, em, strong, body")
+						.attr("class", "");
 			});
 
 		});
