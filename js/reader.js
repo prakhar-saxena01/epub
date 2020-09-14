@@ -563,40 +563,16 @@ const Reader = {
 					const cur_href = book.canonical(location.start.href);
 					let toc_entry = false;
 
-					/* eslint-disable no-inner-declarations */
-					function iterate_sublist(row, nest) {
-						if (nest == 2) return false;
+					$.each(Reader.flattenToc(book), function(i, r) {
 
-						if (row.subitems) {
-							$.each(row.subitems, function (i, r) {
-
-								if (book.spine.get(r.href).canonical == cur_href) {
-									toc_entry = r;
-									return true;
-								}
-
-								if (iterate_sublist(r, nest + 0))
-									return true;
-							});
-						}
-
-						return false;
-					}
-
-					/* eslint-enable no-inner-declarations */
-
-					$.each(book.navigation.toc, function(i, a) {
-						if (book.spine.get(a.href).canonical == cur_href) {
-							toc_entry = a;
+						if (book.spine.get(r.href).canonical == cur_href) {
+							toc_entry = r;
 							return;
 						}
-
-						if (iterate_sublist(a, 0)) return;
-
 					});
 
-					if (toc_entry && toc_entry.label.trim())
-						$(".chapter").append("&nbsp;" + toc_entry.label + " | ");
+					if (toc_entry && toc_entry.label)
+						$(".chapter").append("&nbsp;" + toc_entry.label.trim() + " | ");
 				}
 
 			} catch (e) {
@@ -656,6 +632,30 @@ const Reader = {
 
 			}
 		});
+	},
+	flattenTocSubItems: function(entry, nest) {
+		const rv = [];
+
+		if (nest == 2) return false;
+
+		if (entry.subitems) {
+			$.each(entry.subitems, function (i, r) {
+				rv.push(r);
+				rv.concat(Reader.flattenTocSubItems(r, nest+1));
+			});
+		}
+
+		return rv;
+	},
+	flattenToc: function(book) {
+		const rv = [];
+
+		$.each(book.navigation.toc, function(i, a) {
+			rv.push(a);
+			rv.concat(Reader.flattenTocSubItems(a), 0);
+		});
+
+		return rv;
 	},
 	applyStyles: function(default_only) {
 		Promise.all([
