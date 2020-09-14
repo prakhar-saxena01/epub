@@ -244,10 +244,16 @@ const Reader = {
 			});
 
 			localforage.getItem("epube.cache-timestamp").then(function(stamp) {
+				let msg = "V: ";
+
 				if (parseInt(stamp))
-					$(".last-mod-timestamp").text("V: " + new Date(stamp*1000).toLocaleString("en-GB"))
+					msg += new Date(stamp*1000).toLocaleString("en-GB");
 				else
-					$(".last-mod-timestamp").text("");
+					msg += "Unknown";
+
+				msg += " (" + (navigator.onLine ? "Online" : "Offline") + ")";
+
+				$(".last-mod-timestamp").text(msg)
 			});
 
 			localforage.getItem("epube.fontFamily").then(function(font) {
