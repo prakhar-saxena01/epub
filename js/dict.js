@@ -1,7 +1,9 @@
 'use strict';
 
+/* global EpubeApp */
+
 $(document).ready(function() {
-	let Reader = parent.__get_reader();
+	const Reader = parent.__get_reader();
 
 	$(window).on("mouseup touchend", function() {
 		if (!navigator.onLine) return;

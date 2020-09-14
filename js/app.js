@@ -11,6 +11,7 @@ $.urlParam = function(name){
     }
 };
 
+/* exported Cookie */
 const Cookie = {
     set: function (name, value, lifetime) {
         const d = new Date();
@@ -30,7 +31,7 @@ const Cookie = {
     },
     delete: function(name) {
         const expires = "expires=Thu, 01-Jan-1970 00:00:01 GMT";
-        document.cookie = name + "=" + "" + "; " + expires;
+        document.cookie = name + "=; " + expires;
     }
 };
 
@@ -126,6 +127,7 @@ const App = {
             }
         });
 
+        /* global Holder */
         Holder.run();
     },
     toggleFavorite: function(elem) {
@@ -197,8 +199,8 @@ const App = {
                 .html("Could not communicate with service worker. Try reloading the page.");
         }
     },
-	 appCheckOffline: function() {
-	    EpubeApp.setOffline(!navigator.onLine);
+    appCheckOffline: function() {
+        EpubeApp.setOffline(!navigator.onLine);
     },
     initOfflineEvents: function() {
         if (typeof EpubeApp != "undefined") {
@@ -387,7 +389,6 @@ const App = {
         removeFromList: function(elem) {
             const bookId = elem.getAttribute("data-book-id");
 
-            /* global offline_remove */
             return App.Offline.remove(bookId, function() {
                 $("#cell-" + bookId).remove();
             });
@@ -400,7 +401,7 @@ const App = {
 
                 console.log("offline remove: " + id);
 
-                localforage.iterate(function(value, key, i) {
+                localforage.iterate(function(value, key /*, i */) {
                     if (key.match(cacheId)) {
                         promises.push(localforage.removeItem(key));
                     }

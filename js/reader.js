@@ -153,6 +153,7 @@ const Reader = {
 			}
 		});
 
+		/* global ePub */
 		const book = ePub();
 		window.book = book;
 
@@ -183,7 +184,7 @@ const Reader = {
 						.show();
 
 					window.setTimeout(function() {
-						show_ui(true);
+						Reader.showUI(true);
 					}, 50);
 				}
 
@@ -421,7 +422,7 @@ const Reader = {
 		});
 
 		/* embedded styles may conflict with our font sizes, etc */
-		book.spine.hooks.content.register(function(doc, section) {
+		book.spine.hooks.content.register(function(doc/*, section */) {
 
 			$(doc).find("p")
 					.filter((i, e) => { if ($(e).text().length >= MIN_LENGTH_TO_JUSTIFY) return e; })
@@ -524,7 +525,9 @@ const Reader = {
 			}, 250);
 		});
 
-		rendition.on("keyup", (e) => { Reader.hotkeyHandler(e) });
+		rendition.on("keyup", (e) => {
+			Reader.hotkeyHandler(e);
+		});
 
 		rendition.on('resized', function() {
 			console.log('resized');
@@ -869,8 +872,8 @@ const Reader = {
 
 			/* eslint-disable prefer-spread */
 			Promise.all(
-				book.spine.spineItems.map(
-					(item) => item.load(book.load.bind(book))
+				window.book.spine.spineItems.map(
+					(item) => item.load(window.book.load.bind(window.book))
 						.then(item.find.bind(item, query))
 						.finally(item.unload.bind(item)))
 			)
@@ -994,10 +997,10 @@ const Reader = {
 				try {
 
 					// this is ridiculous tbh
-					if (item.cfi) book.rendition.display(item.cfi).then(() => {
+					if (item.cfi) window.book.rendition.display(item.cfi).then(() => {
 						$(".loading").hide();
 
-						book.rendition.display(item.cfi);
+						window.book.rendition.display(item.cfi);
 					});
 
 				} catch (e) {
@@ -1016,8 +1019,8 @@ const Reader = {
 									localforage.setItem(Reader.cacheId("lastread"),
 										{cfi: data.cfi, page: data.page, total: data.total});
 
-									book.rendition.display(data.cfi).then(() => {
-										book.rendition.display(data.cfi);
+									window.book.rendition.display(data.cfi).then(() => {
+										window.book.rendition.display(data.cfi);
 									});
 							} catch (e) {
 								console.warn(e);
@@ -1065,6 +1068,7 @@ const Reader = {
 	}
 };
 
+/* exported __get_reader */
 function __get_reader() {
 	return Reader;
 }
