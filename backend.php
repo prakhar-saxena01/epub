@@ -244,7 +244,10 @@
 
 		if (defined('DICT_ENABLED') && DICT_ENABLED) {
 
-			$word = escapeshellarg($_REQUEST["word"]);
+			/* strip hyphens */
+			$word = str_replace("­", "", $_REQUEST["word"]);
+
+			$word = escapeshellarg($word);
 
 			exec(DICT_CLIENT . " -h ". DICT_SERVER ." $word 2>&1", $output, $rc);
 

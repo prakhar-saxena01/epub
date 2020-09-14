@@ -10,7 +10,7 @@ $(document).ready(function() {
 
 		const sel = getSelection().toString().trim();
 
-		if (sel.match(/^\w+$/)) {
+		if (sel.match(/^[\w­]+$/)) {
 			Reader.lookupWord(sel, function() {
 				if (typeof EpubeApp != "undefined")
 					EpubeApp.showActionBar(false);
