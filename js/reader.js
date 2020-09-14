@@ -885,6 +885,8 @@ const Reader = {
 			$(".header,.footer").fadeIn();
 	},
 	lookupWord: function(word, callback) {
+		word = word.replace(/­/g, "");
+
 		$.post("backend.php", {op: 'define', word: word}, function (data) {
 			if (data) {
 
