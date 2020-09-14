@@ -985,6 +985,9 @@ const Reader = {
 				localforage.setItem(Reader.cacheId("lastread"),
 					{cfi: "", page: 0, total: total});
 
+				window.setTimeout(function() {
+					window.book.rendition.display(window.book.locations.cfiFromPercentage(0));
+				}, 250);
 			}
 		},
 		openLastRead: function(local_only) {
