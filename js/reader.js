@@ -573,7 +573,8 @@ const Reader = {
 
 						return false;
 					}
-					/* eslint-enable no-inne-declarations */
+
+					/* eslint-enable no-inner-declarations */
 
 					$.each(book.navigation.toc, function(i, a) {
 						if (book.spine.get(a.href).canonical == cur_href) {
@@ -586,7 +587,7 @@ const Reader = {
 					});
 
 					if (toc_entry && toc_entry.label.trim())
-						$(".chapter").append("&nbsp;" + toc_entry.label);
+						$(".chapter").append("&nbsp;" + toc_entry.label + " | ");
 				}
 
 			} catch (e) {
@@ -601,20 +602,28 @@ const Reader = {
 				return;
 
 			const currentCfi = location.start.cfi;
-			const currentPage = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
-			const pct = book.locations.percentageFromCfi(currentCfi);
+			const currentPct = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
 
-			$("#cur_page").html(location.start.location);
-			$("#total_pages").html(book.locations.length());
+			$("#cur_page").text(location.start.location);
+			$("#total_pages").text(book.locations.length());
+			$("#page_pct").text(parseInt(book.locations.percentageFromCfi(currentCfi)*100) + '%');
 
-			$("#page_pct").html(parseInt(pct*100) + '%');
+			const displayed = location.start.displayed;
+
+			if (displayed) {
+				$("#chapter_cur_page").text(displayed.page);
+				$("#chapter_total_pages").text(displayed.total);
+
+				if (displayed.total > 0)
+					$("#chapter_pct").text(parseInt(displayed.page / displayed.total * 100) + '%')
+			}
 
 			if (Reader.Page._store_position && new Date().getTime()/1000 - Reader.Page._last_position_sync > 15) {
-				console.log("storing lastread", currentPage, currentCfi);
+				console.log("storing lastread", currentPct, currentCfi);
 
 				if (navigator.onLine) {
 
-					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
+					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPct,
 						cfi: currentCfi }, function(data) {
 
 						if (data.cfi) {
@@ -634,7 +643,7 @@ const Reader = {
 				}
 
 				localforage.setItem(Reader.cacheId("lastread"),
-					{cfi: currentCfi, page: currentPage, total: 100});
+					{cfi: currentCfi, page: currentPct, total: 100});
 
 			}
 		});

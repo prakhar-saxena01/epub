@@ -243,10 +243,14 @@
 <div id="reader"></div>
 
 <div class="footer">
-	<div class="chapter" data-toggle="modal" data-target="#toc-modal"></div>
+	<div class="chapter_wrapper" data-toggle="modal" data-target="#toc-modal">
+		<span class="chapter"></span>
+		<span id="chapter_cur_page"></span> of <span id="chapter_total_pages"></span>
+		(<span id="chapter_pct"></span>)
+	</div>
 	<div class="spacer"> </div>
 	<div class="location">
-		<span id="cur_page">?</span> / <span id="total_pages">?</span>
+		<span id="cur_page">?</span> of <span id="total_pages">?</span>
 		(<span id="page_pct">?</span>)
 	</div>
 </div>

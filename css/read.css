@@ -47,7 +47,7 @@
 	align-items : center;
 }
 
-.header .title, .footer .chapter {
+.header .title, .footer .chapter_wrapper {
 	overflow : hidden;
 	text-overflow: ellipsis;
 	white-space : nowrap;
@@ -60,8 +60,9 @@
 	font-weight : bold;
 }
 
-.footer .chapter {
+.footer .chapter_wrapper {
 	padding-right : 10px;
+	cursor : pointer;
 }
 
 .footer .spacer {
