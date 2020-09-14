@@ -37,6 +37,9 @@ const CACHE_URLS = [
 			'lib/bootstrap/v3/js/jquery.js',
 			'lib/bootstrap/v3/js/bootstrap.min.js',
 			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
+			'lib/hyphen/en-us.js',
+			'lib/hyphen/ru.js',
+			'lib/hyphen/hyphen.js',
 			'lib/fonts/pmn-caecilia-55.ttf',
 			'lib/fonts/pmn-caecilia-56.ttf',
 			'lib/fonts/pmn-caecilia-75.ttf'

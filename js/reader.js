@@ -163,14 +163,22 @@ const Reader = {
 			minSpreadWidth: 961
 		});
 
-		Reader.applyStyles(true);
+		localforage.getItem("epube.enable-hyphens").then(function(enable_hyphens) {
+			if (enable_hyphens) {
+				/* global hyphenationPatternsEnUs, createHyphenator */
+				Reader.hyphenateHTML = createHyphenator(hyphenationPatternsEnUs, { html: true });
+			}
 
-		/* rendition.hooks.content.register(function() {
-			Reader.applyStyles();
-		}); */
+			Reader.applyStyles(true);
 
-		rendition.display().then(function() {
-			console.log("book displayed");
+			/* rendition.hooks.content.register(function() {
+				Reader.applyStyles();
+			}); */
+
+			rendition.display().then(function() {
+				console.log("book displayed");
+			});
+
 		});
 
 		rendition.hooks.content.register(function(contents) {
@@ -232,6 +240,15 @@ const Reader = {
 					$(".lastread_input").val(data.page + '%');
 				});
 
+			});
+
+			localforage.getItem("epube.enable-hyphens").then(function(enable) {
+				$(".enable_hyphens_checkbox")
+					.attr("checked", enable)
+					.off("click")
+					.on("click", function(evt) {
+						localforage.setItem("epube.enable-hyphens", evt.target.checked);
+					});
 			});
 
 			localforage.getItem("epube.keep-ui-visible").then(function(keep) {
@@ -440,6 +457,13 @@ const Reader = {
 					.css("background", "")
 					.css("background-color", "");
 
+			if (typeof Reader.hyphenateHTML != "undefined") {
+				$(doc).find('p').each((i,p) => {
+					p = $(p);
+
+					p.html(Reader.hyphenateHTML(p.html()));
+				});
+			}
 		});
 
 		book.ready.then(function() {
