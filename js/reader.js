@@ -248,6 +248,10 @@ const Reader = {
 					.off("click")
 					.on("click", function(evt) {
 						localforage.setItem("epube.enable-hyphens", evt.target.checked);
+
+						if (confirm("Toggling hyphens requires page reload. Reload now?")) {
+							window.location.reload();
+						}
 					});
 			});
 
