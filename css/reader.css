@@ -13,9 +13,13 @@ a:focus {
 	text-decoration: underline;
 }
 
-/* ugly hack: this assumes default prefix used for epube - /books/ 
- * since CSS is loaded inline, relative urls won't work properly so 
- * it's hardcoded for the time being (the alternative is pointing to 
+blockquote {
+	font-style : italic;
+}
+
+/* ugly hack: this assumes default prefix used for epube - /books/
+ * since CSS is loaded inline, relative urls won't work properly so
+ * it's hardcoded for the time being (the alternative is pointing to
  * website root) */
 
 /* fonts below are freely available although license is likely proprietary
