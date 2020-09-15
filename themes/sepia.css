@@ -7,3 +7,7 @@ body .header,
 body .footer {
 	color : #B85C57;
 }
+
+body .footer .spacer .toc-bar-entry.current-position {
+	background : #B85C57;
+}

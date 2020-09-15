@@ -549,7 +549,6 @@ const Reader = {
 					book.rendition.display(book.locations._locations[page]);
 				}
 			});
-
 			Reader.Page.openLastRead();
 
 			window.setTimeout(function() {
@@ -601,6 +600,8 @@ const Reader = {
 
 					if (toc_entry && toc_entry.label)
 						$(".chapter").append("&nbsp;" + toc_entry.label.trim() + " | ");
+
+					Reader.generateTocBar(book, Reader.flattenToc(book));
 				}
 
 			} catch (e) {
@@ -620,6 +621,8 @@ const Reader = {
 			$("#cur_page").text(location.start.location);
 			$("#total_pages").text(book.locations.length());
 			$("#page_pct").text(parseInt(book.locations.percentageFromCfi(currentCfi)*100) + '%');
+
+			Reader.updateTocBarPosition(book, location);
 
 			const displayed = location.start.displayed;
 
@@ -662,28 +665,79 @@ const Reader = {
 		});
 	},
 	flattenTocSubItems: function(entry, nest) {
-		const rv = [];
+		let rv = [];
 
-		if (nest == 2) return false;
+		if (nest == 3) return false;
 
 		if (entry.subitems) {
 			$.each(entry.subitems, function (i, r) {
+				r._nest = nest;
+
 				rv.push(r);
-				rv.concat(Reader.flattenTocSubItems(r, nest+1));
+				rv = rv.concat(Reader.flattenTocSubItems(r, nest+1));
 			});
 		}
 
 		return rv;
 	},
 	flattenToc: function(book) {
-		const rv = [];
+		if (this._flattened_toc) {
+			return this._flattened_toc;
+		} else {
+			let rv = [];
 
-		$.each(book.navigation.toc, function(i, a) {
-			rv.push(a);
-			rv.concat(Reader.flattenTocSubItems(a), 0);
+			$.each(book.navigation.toc, function(i, r) {
+				r._nest = 0;
+
+				rv.push(r);
+				rv = rv.concat(Reader.flattenTocSubItems(r, 1));
+			});
+
+			this._flattened_toc = rv;
+
+			return rv;
+		}
+	},
+	generateTocBar: function(book, toc) {
+
+		$(".spacer")
+			.html("");
+
+		$.each(toc, function(i, te) {
+			try {
+				const cfiBase = book.spine.get(te.href).cfiBase;
+				const loc = book.locations._locations.find(function(k) {
+					return k.indexOf(cfiBase) != -1
+				});
+
+				if (loc) {
+					const pct = Math.round(book.locations.percentageFromCfi(loc) * 100);
+
+					$(".spacer").append(
+						$("<div class='toc-bar-entry'>")
+							.attr('data-nest-level', te._nest)
+							.css('left', pct + '%')
+							.css('_width', (3 - te._nest) + "px")
+							.attr("title", te.label)
+						)
+
+				}
+
+			} catch (e) {
+				console.warn(e);
+			}
 		});
 
-		return rv;
+		$(".spacer").append($("<div class='toc-bar-entry current-position'>"));
+
+		Reader.updateTocBarPosition(book, book.rendition.currentLocation())
+
+	},
+	updateTocBarPosition: function(book, location) {
+		const cur_pct = Math.round(location.start.location / book.locations.length() * 100);
+
+		$(".toc-bar-entry.current-position")
+				.css('left', cur_pct + '%');
 	},
 	applyStyles: function(default_only) {
 		Promise.all([

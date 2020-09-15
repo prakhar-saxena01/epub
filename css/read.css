@@ -67,12 +67,45 @@
 
 .footer .spacer {
 	flex-grow : 2;
+	position : relative;
+	height : 12px;
+}
+
+.footer .spacer .toc-bar-entry {
+	position : absolute;
+	background: #999;
+	top: 0;
+	bottom : 0;
+	width : 1px;
+}
+
+.footer .spacer .toc-bar-entry.current-position {
+	background : #C33;
 }
 
 .footer .location {
 	cursor : pointer;
 	text-align : right;
 }
+
+@media (max-width: 539px) {
+	.spacer > .toc-bar-entry {
+		display : none;
+	}
+}
+
+@media (min-width: 540px) {
+	.footer .chapter_wrapper, .footer .location {
+		width : 25%;
+	}
+}
+
+@media (min-width: 800px) {
+	.footer .chapter_wrapper, .footer .location {
+		width : 20%;
+	}
+}
+
 
 .toolbar {
 	text-align : right;

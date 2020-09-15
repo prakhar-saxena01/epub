@@ -26,3 +26,8 @@ body .header button.btn {
 	text-shadow : #534636 0px 0px;
 	border-color : #534636;
 }
+
+
+body .footer .spacer .toc-bar-entry.current-position {
+	background : #F4BC87;
+}
