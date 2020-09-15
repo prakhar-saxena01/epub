@@ -837,14 +837,14 @@ const Reader = {
 			if ($(".modal").is(":visible"))
 				return;
 
-			// right or space
-			if (e.which == 39 || e.which == 32) {
+			// right or space or pagedown
+			if (e.which == 39 || e.which == 32 || e.which == 34) {
 				e.preventDefault();
 				Reader.Page.next();
 			}
 
-			// left
-			if (e.which == 37) {
+			// left or pageup
+			if (e.which == 37 || e.which == 33) {
 				e.preventDefault();
 				Reader.Page.prev();
 			}
