@@ -241,50 +241,55 @@
 
 		break;
 	case "define":
-
 		if (defined('DICT_ENABLED') && DICT_ENABLED) {
+			function parse_dict_reply($reply) {
+				$tmp = [];
+
+				foreach (explode("\n", $reply) as $line) {
+					list ($code, $message) = explode(" ", $line, 2);
+
+					if (!$code && $message)
+						array_push($tmp, $message);
+				}
+
+				return $tmp;
+			}
 
 			/* strip hyphens */
-			$word = str_replace("­", "", $_REQUEST["word"]);
+			$word = strip_tags(str_replace("­", "", $_REQUEST["word"]));
+			$orig_word = $word;
 
-			$word = escapeshellarg($word);
+			$result = [];
 
-			exec(DICT_CLIENT . " -h ". DICT_SERVER ." $word 2>&1", $output, $rc);
+			for ($i = 0; $i < 3; $i++) {
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, sprintf("dict://%s/define:%s", DICT_SERVER, $word));
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				$dict_reply = curl_exec($ch);
 
-			if ($rc == 0) {
-				print json_encode(["result" => $output]);
+				if ($dict_reply) {
+					$ret_parsed = parse_dict_reply($dict_reply);
 
-			} else if ($rc == 21) {
+					if (count($ret_parsed) > 0) {
+						array_push($result, "<strong>$word</strong>");
 
-				$word_matches = [];
-
-				foreach ($output as $line) {
-					if (preg_match('/^[^ ]+: *(.*)/', $line, $match)) {
-
-						if ($match[1]) {
-							$word_matches = explode("  ", $match[1]);
-							break;
-						}
+						$result = array_merge($result, $ret_parsed);
+						break;
+					} else {
+						$word = mb_substr($word, 0, mb_strlen($word)-1);
 					}
+
+				} else {
+					array_push($result, curl_error($ch));
 				}
 
-				$word_matches = implode(" ", array_map("escapeshellarg", $word_matches));
-
-				unset($output);
-				exec(DICT_CLIENT . " -h ". DICT_SERVER ." $word_matches 2>&1", $output, $rc);
-
-				if ($rc == 0) {
-					print json_encode(["result" => $output]);
-				}
-			} else if ($rc == 20) {
-
-				exec(DICT_CLIENT . " -s soundex -h ". DICT_SERVER ." $word 2>&1", $output, $rc);
-
-				print json_encode(["result" => $output]);
-
-			} else {
-				print json_encode(["result" => $output]);
+				curl_close($ch);
 			}
+
+			if (count($result) == 0)
+				array_push($result, "No results for: <b>$orig_word</b>");
+
+			print json_encode(["result" => $result]);
 		}
 
 		break;
