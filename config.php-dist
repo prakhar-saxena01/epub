@@ -8,6 +8,5 @@
 	define('CALIBRE_DB', BOOKS_DIR . "/metadata.db");
 
 	define('DICT_ENABLED', false);
-	define('DICT_CLIENT', '/usr/bin/dict');
 	define('DICT_SERVER', 'localhost');
 
