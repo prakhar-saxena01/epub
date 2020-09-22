@@ -290,6 +290,8 @@
 				array_push($result, "No results for: <b>$orig_word</b>");
 
 			print json_encode(["result" => $result]);
+		} else {
+			print json_encode(["result" => ["Dictionary lookups are disabled."]]);
 		}
 
 		break;

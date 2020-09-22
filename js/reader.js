@@ -941,15 +941,21 @@ const Reader = {
 	lookupWord: function(word, callback) {
 		word = word.replace(/­/g, "");
 
+		$(".dict_result").html('Loading, please wait...');
+
+		$("#dict-modal").modal('show');
+
 		$.post("backend.php", {op: 'define', word: word}, function (data) {
 			if (data) {
 
 				$(".dict_result").html(data.result.join("<br/>"));
 				$(".dict_query").val(word);
-				$("#dict-modal").modal('show');
 
 				if (callback) callback();
 			}
+		}).fail(function(res) {
+			console.warn(res);
+			$(".dict_result").html('Network error while looking up word: ' + res.statusText);
 		});
 	},
 	search: function() {
