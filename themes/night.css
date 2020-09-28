@@ -3,6 +3,10 @@ body, .loading, html:-webkit-full-screen {
 	color : #ccc;
 }
 
+body a, a:hover {
+	color : #00bdaa;
+}
+
 body .modal {
 	color : #333;
 }
