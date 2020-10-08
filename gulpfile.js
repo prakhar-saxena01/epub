@@ -33,15 +33,8 @@ gulp.task('minifyLibsJS', function(cb) {
 
 gulp.task('minifyJS', function(cb) {
 	gulp
-		.src('js/app.js')
+		.src(['js/app.js', 'js/reader.js'])
 		.pipe(concat('app.min.js'))
-		.pipe(uglify())
-		.on('error', swallowError)
-		.pipe(gulp.dest('dist/'));
-
-	gulp
-		.src('js/reader.js')
-		.pipe(concat('reader.min.js'))
 		.pipe(uglify())
 		.on('error', swallowError)
 		.pipe(gulp.dest('dist/'));
@@ -58,7 +51,7 @@ gulp.task('minifyJS', function(cb) {
 
 gulp.task('minifyCSS', function(cb) {
   gulp
-    .src(['css/default.less'])
+    .src(['css/app.less'])
 		.pipe(less())
 		.pipe(minifyCSS())
 		.pipe(rename("app.min.css"))

@@ -9,7 +9,6 @@ const CACHE_URLS = [
 			'img/favicon.png',
 			'read.html',
 			'dist/app.min.js',
-			'dist/reader.min.js',
 			'dist/reader_iframe.min.js',
 			'dist/app.min.css',
 			'dist/app-libs.min.js',
