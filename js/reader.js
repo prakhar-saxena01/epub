@@ -219,11 +219,10 @@ const Reader = {
 			return localforage.getItem("epube.theme").then(function(theme) {
 				if (!theme) theme = 'default';
 
-				const theme_url = base_url + 'themes/' + theme + '.css';
+				$(contents.document).find("body")
+					.attr("class", "")
+					.addClass("theme-" + theme);
 
-				$(contents.document.head)
-					.append($("<style type='text/css' id='theme_css'>")
-						.text(Reader.Loader._res_data[theme_url]));
 			});
 
 		});
@@ -781,8 +780,6 @@ const Reader = {
 	},
 	applyTheme: function() {
 		localforage.getItem("epube.theme").then(function(theme) {
-			const base_url = window.location.href.match(/^.*\//)[0];
-
 			if (!theme) theme = 'default';
 
 			console.log('called for theme', theme);
@@ -793,15 +790,9 @@ const Reader = {
 
 			console.log('setting main UI theme', theme);
 
-			const theme_url = base_url + "themes/" + theme + ".css";
-			const theme_data = Reader.Loader._res_data[theme_url];
-
-			if (!theme_data) {
-				console.error('theme data not found for', theme, '- check resource loader configuration');
-				return;
-			}
-
-			$("#theme_css").attr("href", theme_url);
+			$("body")
+				.attr("class", "")
+				.addClass("epube-reader theme-" + theme);
 
 			if (typeof EpubeApp != "undefined") {
 				window.setTimeout(function() {
@@ -818,13 +809,12 @@ const Reader = {
 				}, 250);
 			}
 
-			/* apply to existing reader */
-			//$($("#reader iframe")[0].contentDocument).find("#theme_css").text(Reader.Loader._res_data[theme_url])
-
 			$.each(window.book.rendition.getContents(), function(i, c) {
 				console.log('applying rendition theme', theme, 'to', c, c.document);
 
-				$(c.document).find("#theme_css").text(Reader.Loader._res_data[theme_url]);
+				$(c.document).find("body")
+					.attr("class", "")
+					.addClass("theme-" + theme);
 			});
 
 		});

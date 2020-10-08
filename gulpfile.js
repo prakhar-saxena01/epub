@@ -59,7 +59,7 @@ gulp.task('minifyCSS', function(cb) {
 		.pipe(gulp.dest('dist/'));
 
 	gulp
-		.src(['css/reader_iframe.css'])
+		.src(['css/reader_iframe.less'])
 		  .pipe(less())
 		  .pipe(minifyCSS())
 		  .pipe(rename("reader_iframe.min.css"))
