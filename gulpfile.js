@@ -17,26 +17,38 @@ gulp.task('minifyLibsJS', function(cb) {
 		.src([
 				'lib/bootstrap/v3/js/jquery.js',
 				'lib/bootstrap/v3/js/bootstrap.min.js',
+				'lib/zip.min.js',
 				'lib/epub.js',
 				'lib/localforage.min.js',
 				'lib/jquery.mobile-events.min.js',
 				'lib/hyphen/*.js',
-				'lib/promise.js',
-				'lib/fetch.js',
-				'lib/zip.min.js'])
-    	.pipe(concat('app-libs.min.js'))
-	 	.pipe(uglify())
-	 	.on('error', swallowError)
+				'lib/holder.min.js'])
+		.pipe(concat('app-libs.min.js'))
+		.pipe(uglify())
+		.on('error', swallowError)
 		.pipe(gulp.dest('dist/'));
 
 		cb();
 });
 
-
 gulp.task('minifyJS', function(cb) {
 	gulp
-		.src('js/*.js')
-   	.pipe(concat('app.min.js'))
+		.src('js/app.js')
+		.pipe(concat('app.min.js'))
+		.pipe(uglify())
+		.on('error', swallowError)
+		.pipe(gulp.dest('dist/'));
+
+	gulp
+		.src('js/reader.js')
+		.pipe(concat('reader.min.js'))
+		.pipe(uglify())
+		.on('error', swallowError)
+		.pipe(gulp.dest('dist/'));
+
+	gulp
+		.src('js/reader_iframe.js')
+		.pipe(concat('reader_iframe.min.js'))
 		.pipe(uglify())
 		.on('error', swallowError)
 		.pipe(gulp.dest('dist/'));

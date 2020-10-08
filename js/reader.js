@@ -199,8 +199,7 @@ const Reader = {
 			});
 
 			const base_url = window.location.href.match(/^.*\//)[0];
-			const res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile-events.min.js",
-				"js/reader_iframe.js", "js/dict.js" ];
+			const res_names = [ "dist/app-libs.min.js", "js/reader_iframe.js" ];
 			const doc = contents.document;
 
 			for (let i = 0; i < res_names.length; i++) {
@@ -995,10 +994,8 @@ const Reader = {
 		init: function() {
 			// we need to preload resources for reader iframe because it can't utilize our
 			// service worker because while offline it is created outside our base server context
-			const res_names = [ "lib/bootstrap/v3/js/jquery.js", "lib/jquery.mobile-events.min.js",
-				"css/transitions.css", "js/reader_iframe.js", "css/reader.css", "js/dict.js",
-				"themes/default.css", "themes/light.css", "themes/mocca.css", "themes/night.css",
-				"themes/plan9.css", "themes/gray.css", "themes/sepia.css" ];
+			const res_names = [ "dist/app-libs.min.js",
+				"js/reader_iframe.js", "css/reader.css" ];
 
 			for (let i = 0; i < res_names.length; i++) {
 				fetch(res_names[i], {credentials: 'same-origin'}).then(function(resp) {

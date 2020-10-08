@@ -42,41 +42,19 @@
     $check_files_mtime = [
         'manifest.json',
         'worker.js',
-        'img/ic_launcher_web.png?v4',
+        'img/ic_launcher_web.png',
         'img/favicon.png',
         'read.html',
-        'js/app.js',
-        'js/reader.js',
-        'js/reader_iframe.js',
-        'js/dict.js',
-        'css/read.css',
-        'css/reader.css',
-        'css/index.css',
-        'css/transitions.css',
+		  'dist/app.min.js',
+		  'dist/reader.min.js',
+		  'dist/reader_iframe.min.js',
+		  'dist/app.min.css',
+		  'dist/app-libs.min.js',
         'offline.html',
-        'themes/default.css',
-        'themes/light.css',
-        'themes/mocca.css',
-        'themes/night.css',
-        'themes/plan9.css',
-        'themes/gray.css',
-        'themes/sepia.css',
-        'lib/promise.js',
-        'lib/fetch.js',
-        'lib/zip.min.js',
-        'lib/epub.js',
-        'lib/localforage.min.js',
-        'lib/jquery.mobile-events.min.js',
-        'lib/holder.min.js',
         'lib/bootstrap/v3/css/bootstrap-theme.min.css',
         'lib/bootstrap/v3/css/bootstrap.min.css',
         'lib/bootstrap/v3/css/theme-dark.min.css',
-        'lib/bootstrap/v3/js/jquery.js',
-        'lib/bootstrap/v3/js/bootstrap.min.js',
 		  'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
-		  'lib/hyphen/en-us.js',
-		  'lib/hyphen/ru.js',
-		  'lib/hyphen/hyphen.js',
         'lib/fonts/pmn-caecilia-55.ttf',
         'lib/fonts/pmn-caecilia-56.ttf',
         'lib/fonts/pmn-caecilia-75.ttf'
@@ -99,18 +77,13 @@
 	<link href="lib/bootstrap/v3/css/bootstrap.min.css" rel="stylesheet" media="screen">
 	<link id="theme_css" href="lib/bootstrap/v3/css/theme-dark.min.css" rel="stylesheet" media="screen">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<script src="lib/bootstrap/v3/js/jquery.js"></script>
-	<script src="lib/bootstrap/v3/js/bootstrap.min.js"></script>
-	<script src="lib/promise.js"></script>
-	<script src="lib/fetch.js"></script>
-	<script src="lib/holder.min.js"></script>
-	<script src="lib/localforage.min.js"></script>
+	<script src="dist/app-libs.min.js"></script>
 	<title>The Epube</title>
 	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css" />
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
-	<script src="js/app.js"></script>
+	<script src="dist/app.min.js"></script>
     <script type="text/javascript">
         'use strict';
 
