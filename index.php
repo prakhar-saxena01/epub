@@ -49,7 +49,8 @@
 		  'dist/reader_iframe.min.js',
 		  'dist/app.min.css',
 		  'dist/app-libs.min.js',
-        'offline.html',
+		  'offline.html',
+		  'dist/reader_iframe.min.css',
         'lib/bootstrap/v3/css/bootstrap-theme.min.css',
         'lib/bootstrap/v3/css/bootstrap.min.css',
         'lib/bootstrap/v3/css/theme-dark.min.css',
@@ -78,7 +79,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<script src="dist/app-libs.min.js"></script>
 	<title>The Epube</title>
-	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css" />
+	<link type="text/css" rel="stylesheet" media="screen" href="dist/app.min.css" />
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
@@ -103,7 +104,7 @@
         }
     </script>
 </head>
-<body>
+<body class="epube-index">
 
 <?php
 	@$query = $_REQUEST["query"];

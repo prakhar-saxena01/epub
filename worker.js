@@ -13,6 +13,7 @@ const CACHE_URLS = [
 			'dist/app.min.css',
 			'dist/app-libs.min.js',
 			'offline.html',
+			'dist/reader_iframe.min.css',
 			'lib/bootstrap/v3/css/bootstrap-theme.min.css',
 			'lib/bootstrap/v3/css/bootstrap.min.css',
 			'lib/bootstrap/v3/css/theme-dark.min.css',

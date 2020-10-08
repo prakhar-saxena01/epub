@@ -214,7 +214,7 @@ const Reader = {
 
 			$(contents.document.head)
 				.append($("<style type='text/css'>")
-					.text(Reader.Loader._res_data[base_url + 'css/reader.css']));
+					.text(Reader.Loader._res_data[base_url + 'dist/reader_iframe.min.css']));
 
 			return localforage.getItem("epube.theme").then(function(theme) {
 				if (!theme) theme = 'default';
@@ -995,7 +995,7 @@ const Reader = {
 			// we need to preload resources for reader iframe because it can't utilize our
 			// service worker because while offline it is created outside our base server context
 			const res_names = [ "dist/app-libs.min.js",
-				"js/reader_iframe.js", "css/reader.css" ];
+				"js/reader_iframe.js", "dist/reader_iframe.min.css" ];
 
 			for (let i = 0; i < res_names.length; i++) {
 				fetch(res_names[i], {credentials: 'same-origin'}).then(function(resp) {

@@ -58,6 +58,14 @@ gulp.task('minifyCSS', function(cb) {
 		.on('error', swallowError)
 		.pipe(gulp.dest('dist/'));
 
+	gulp
+		.src(['css/reader_iframe.css'])
+		  .pipe(less())
+		  .pipe(minifyCSS())
+		  .pipe(rename("reader_iframe.min.css"))
+		  .on('error', swallowError)
+		  .pipe(gulp.dest('dist/'));
+
   cb();
 });
 
