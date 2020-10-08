@@ -112,7 +112,7 @@ this.addEventListener('fetch', function(event) {
 
 				return resp;
 			}).catch(function() {
-				if (req.url[req.url.length-1] == "/" || req.url.match("index.php")) {
+				if (req.url[req.url.length-1] == "/" || req.url.match("index.php") || req.url.match("offline.html")) {
 					return caches.match("offline.html");
 				} else if (req.url.match("read.html")) {
 					return caches.match("read.html");
