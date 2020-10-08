@@ -1,0 +1,44 @@
+a {
+	color : #007d71;
+	text-decoration : none;
+}
+
+a:visited {
+	text-decoration: underline;
+}
+
+a:hover,
+a:focus {
+	color: #00302c;
+	text-decoration: underline;
+}
+
+blockquote {
+	font-style : italic;
+}
+
+/* ugly hack: this assumes default prefix used for epube - /books/
+ * since CSS is loaded inline, relative urls won't work properly so
+ * it's hardcoded for the time being (the alternative is pointing to
+ * website root) */
+
+/* fonts below are freely available although license is likely proprietary
+ * so i'm not bundling the files */
+
+@font-face {
+	font-family: Caecilia;
+	src: local('PMN Caecilia 55'), url('/books/lib/fonts/pmn-caecilia-55.ttf') format('truetype');
+	font-weight : normal;
+}
+
+@font-face {
+	font-family: Caecilia;
+	src: local('PMN Caecilia 75'), url('/books/lib/fonts/pmn-caecilia-75.ttf') format('truetype');
+	font-weight : bold;
+}
+
+@font-face {
+	font-family: Caecilia;
+	src: local('PMN Caecilia 56'), url('/books/lib/fonts/pmn-caecilia-56.ttf') format('truetype');
+	font-style : italic;
+}
