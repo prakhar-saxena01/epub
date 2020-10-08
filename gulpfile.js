@@ -60,11 +60,11 @@ gulp.task('minifyCSS', function(cb) {
 
 	gulp
 		.src(['css/reader_iframe.less'])
-		  .pipe(less())
-		  .pipe(minifyCSS())
-		  .pipe(rename("reader_iframe.min.css"))
-		  .on('error', swallowError)
-		  .pipe(gulp.dest('dist/'));
+		.pipe(less())
+		.pipe(minifyCSS())
+		.pipe(rename("reader_iframe.min.css"))
+		.on('error', swallowError)
+		.pipe(gulp.dest('dist/'));
 
   cb();
 });
@@ -72,6 +72,8 @@ gulp.task('minifyCSS', function(cb) {
 gulp.task(
   'default',
   function(cb) {
+		gulp.series(['minifyCSS', 'minifyJS', 'minifyLibsJS'])();
+
 		gulp.watch(['lib/**/*.js', 'lib/*.js'], gulp.series('minifyLibsJS'));
 		gulp.watch(['js/*.js'], gulp.series('minifyJS'));
 		gulp.watch(['css/*.less'], gulp.series('minifyCSS'));

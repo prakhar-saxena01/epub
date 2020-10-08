@@ -40,25 +40,25 @@
 
     // TODO: this should be unified with the service worker cache list
     $check_files_mtime = [
-        'manifest.json',
-        'worker.js',
-        'img/ic_launcher_web.png',
-        'img/favicon.png',
-        'read.html',
-		  'dist/app.min.js',
-		  'dist/reader_iframe.min.js',
-		  'dist/app.min.css',
-		  'dist/app-libs.min.js',
-		  'offline.html',
-		  'dist/reader_iframe.min.css',
-        'lib/bootstrap/v3/css/bootstrap-theme.min.css',
-        'lib/bootstrap/v3/css/bootstrap.min.css',
-        'lib/bootstrap/v3/css/theme-dark.min.css',
-		  'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
-        'lib/fonts/pmn-caecilia-55.ttf',
-        'lib/fonts/pmn-caecilia-56.ttf',
-        'lib/fonts/pmn-caecilia-75.ttf'
-    ];
+			'manifest.json',
+			'worker.js',
+			'img/ic_launcher_web.png',
+			'img/favicon.png',
+			'read.html',
+			'dist/app.min.js',
+			'dist/app.min.css',
+			'dist/app-libs.min.js',
+			'dist/reader_iframe.min.js',
+			'dist/reader_iframe.min.css',
+			'offline.html',
+			'lib/bootstrap/v3/css/bootstrap-theme.min.css',
+			'lib/bootstrap/v3/css/bootstrap.min.css',
+			'lib/bootstrap/v3/css/theme-dark.min.css',
+			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
+			'lib/fonts/pmn-caecilia-55.ttf',
+			'lib/fonts/pmn-caecilia-56.ttf',
+			'lib/fonts/pmn-caecilia-75.ttf'
+ ];
 
 	$last_mtime = array_reduce(
 	            array_map("filemtime", $check_files_mtime),
