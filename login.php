@@ -41,10 +41,7 @@
 	<link href="lib/bootstrap/v3/css/bootstrap.min.css" rel="stylesheet" media="screen">
 	<link href="lib/bootstrap/v3/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<script src="lib/bootstrap/v3/js/jquery.js"></script>
-	<script src="lib/bootstrap/v3/js/bootstrap.min.js"></script>
-	<script src="lib/holder.min.js"></script>
-	<script src="lib/localforage.min.js"></script>
+	<script src="dist/app-libs.min.js"></script>
 	<title>The Epube</title>
 	<link type="text/css" rel="stylesheet" media="screen" href="css/index.css" />
 	<link rel="shortcut icon" type="image/png" href="img/favicon.png" />
