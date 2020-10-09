@@ -453,7 +453,7 @@ const Reader = {
 					.filter((i, e) => { if ($(e).text().length >= MIN_LENGTH_TO_JUSTIFY) return e; })
 						.css("text-align", "justify");
 
-			$(doc).find("p, span, em, strong, body, div")
+			$(doc).find("p, span, em, i, strong, b, body, div, big, small")
 					.attr("class", "")
 					.css("color", "")
 					.css("background", "")
