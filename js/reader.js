@@ -27,15 +27,11 @@ const Reader = {
 
 		if (typeof EpubeApp != "undefined") {
 			EpubeApp.setPage("PAGE_READER");
+
+			$("body").addClass("is-epube-app");
 		}
 
 		Reader.applyTheme();
-
-		/* global Cookie */
-
-		if (Cookie.get("is-epube-app") == "true") {
-			$("body").addClass("is-epube-app");
-		}
 
 		$(window).on('online', function() {
 			console.log("we're online, storing lastread");
