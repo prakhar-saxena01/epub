@@ -214,7 +214,7 @@ const Reader = {
 				if (!theme) theme = 'default';
 
 				$(contents.document).find("body")
-					.attr("class", "")
+					.attr("class", typeof EpubeApp != "undefined" ? "is-epube-app" : "")
 					.addClass("theme-" + theme);
 
 			});
@@ -785,11 +785,10 @@ const Reader = {
 			console.log('setting main UI theme', theme);
 
 			$("body")
-				.attr("class", "")
+				.attr("class", typeof EpubeApp != "undefined" ? "is-epube-app" : "")
 				.addClass("epube-reader theme-" + theme);
 
 			if (typeof EpubeApp != "undefined") {
-				$("body").addClass("is-epube-app");
 
 				window.setTimeout(function() {
 					const bg_color = window.getComputedStyle(document.querySelector("body"), null)
@@ -809,7 +808,7 @@ const Reader = {
 				console.log('applying rendition theme', theme, 'to', c, c.document);
 
 				$(c.document).find("body")
-					.attr("class", "")
+					.attr("class", typeof EpubeApp != "undefined" ? "is-epube-app" : "")
 					.addClass("theme-" + theme);
 			});
 
