@@ -27,8 +27,6 @@ const Reader = {
 
 		if (typeof EpubeApp != "undefined") {
 			EpubeApp.setPage("PAGE_READER");
-
-			$("body").addClass("is-epube-app");
 		}
 
 		Reader.applyTheme();
@@ -791,6 +789,8 @@ const Reader = {
 				.addClass("epube-reader theme-" + theme);
 
 			if (typeof EpubeApp != "undefined") {
+				$("body").addClass("is-epube-app");
+
 				window.setTimeout(function() {
 					const bg_color = window.getComputedStyle(document.querySelector("body"), null)
 						.getPropertyValue("background-color");
