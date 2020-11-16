@@ -27,9 +27,6 @@ const Reader = {
 
 		if (typeof EpubeApp != "undefined") {
 			EpubeApp.setPage("PAGE_READER");
-
-			// this is handled in app actionbar
-			$(".toggle_fullscreen_btn").hide();
 		}
 
 		Reader.applyTheme();
