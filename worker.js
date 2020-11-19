@@ -97,7 +97,8 @@ this.addEventListener('fetch', function(event) {
 				}
 			}
 
-			console.log('cache miss for', req.url, 'OL:', navigator.onLine);
+			/* global EpubeApp */
+			console.log('cache miss for', req.url, 'OL:', navigator.onLine, 'EA:', typeof EpubeApp);
 
 			return fetch(req).then(function(resp) {
 

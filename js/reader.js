@@ -1,6 +1,6 @@
 'use strict';
 
-/* global localforage, EpubeApp */
+/* global localforage, EpubeApp, App */
 
 const DEFAULT_FONT_SIZE = 16;
 const DEFAULT_FONT_FAMILY = "Georgia";
@@ -75,7 +75,7 @@ const Reader = {
 
 				console.log("loading from network");
 
-				if (navigator.onLine) {
+				if (App.onLine) {
 					const book_url = "backend.php?op=download&id=" + $.urlParam("id");
 
 					$(".loading_message").html("Downloading...");
@@ -264,7 +264,7 @@ const Reader = {
 				else
 					msg += "Unknown";
 
-				msg += " (" + (navigator.onLine ? "Online" : "Offline") + ")";
+				msg += " (" + (App.onLine ? "Online" : "Offline") + ")";
 
 				$(".last-mod-timestamp").text(msg)
 			});
@@ -516,7 +516,7 @@ const Reader = {
 			console.log("locations ready, stored=", Reader.Page._pagination_stored);
 
 			if (locations) {
-				if (navigator.onLine && !Reader.Page._pagination_stored) {
+				if (App.onLine && !Reader.Page._pagination_stored) {
 					$.post("backend.php", { op: "storepagination", id: $.urlParam("id"),
 						payload: JSON.stringify(locations), total: 100});
 				}
@@ -629,7 +629,7 @@ const Reader = {
 			if (Reader.Page._store_position && new Date().getTime()/1000 - Reader.Page._last_position_sync > 15) {
 				console.log("storing lastread", currentPct, currentCfi);
 
-				if (navigator.onLine) {
+				if (App.onLine) {
 
 					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPct,
 						cfi: currentCfi }, function(data) {
@@ -858,7 +858,7 @@ const Reader = {
 			const total = 100;
 			const lastCfi = window.book.locations.cfiFromPercentage(1);
 
-			if (navigator.onLine) {
+			if (App.onLine) {
 				$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
 					$(".lastread_input").val(data.page + '%');
 				});
@@ -879,7 +879,7 @@ const Reader = {
 		localforage.setItem(Reader.cacheId("lastread"),
 			{cfi: currentCfi, page: currentPage, total: totalPages});
 
-		if (navigator.onLine) {
+		if (App.onLine) {
 			$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
 				cfi: currentCfi }, function() {
 				window.location = $.urlParam("rt") ? "index.php?mode=" + $.urlParam("rt") : "index.php";
@@ -1054,7 +1054,7 @@ const Reader = {
 			if (confirm("Clear stored last read location?")) {
 				const total = window.book.locations.length();
 
-				if (navigator.onLine) {
+				if (App.onLine) {
 					$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
 						$(".lastread_input").val(data.page + '%');
 					});
@@ -1088,11 +1088,11 @@ const Reader = {
 					console.warn(e);
 				}
 
-				if (navigator.onLine && !local_only) {
+				if (App.onLine && !local_only) {
 					$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
 						console.log('lr remote', data);
 
-						if (navigator.onLine && data) {
+						if (App.onLine && data) {
 							try {
 								if (item.cfi != data.cfi && (!item.page || data.page >= item.page))
 									console.log('using remote lastread...');
@@ -1152,4 +1152,9 @@ const Reader = {
 /* exported __get_reader */
 function __get_reader() {
 	return Reader;
+}
+
+/* exported __get_app */
+function __get_app() {
+	return App;
 }

@@ -199,8 +199,14 @@ const App = {
                 .html("Could not communicate with service worker. Try reloading the page.");
         }
     },
+    onLine: function() {
+        if (typeof EpubeApp != "undefined" && typeof EpubeApp.isOnline != "undefined")
+            return EpubeApp.isOnline;
+        else
+            return navigator.onLine;
+    },
     appCheckOffline: function() {
-        EpubeApp.setOffline(!navigator.onLine);
+        EpubeApp.setOffline(!App.onLine);
     },
     initOfflineEvents: function() {
         if (typeof EpubeApp != "undefined") {
@@ -212,7 +218,7 @@ const App = {
                 EpubeApp.setOffline(true);
             });
 
-            EpubeApp.setOffline(!navigator.onLine);
+            EpubeApp.setOffline(!App.onLine);
         }
     },
     initNightMode: function() {

@@ -3,6 +3,7 @@
 /* global EpubeApp */
 
 let Reader;
+let App;
 
 function enable_swipes() {
 	$(window).off("swipeleft swiperight");
@@ -18,6 +19,7 @@ function enable_swipes() {
 
 $(document).ready(function() {
 	Reader = parent.__get_reader();
+	App = parent.__get_app();
 
 	$(window).on("doubletap", function(/* evt */) {
 		const sel = getSelection().toString().trim();
@@ -57,7 +59,7 @@ $(document).ready(function() {
 	});
 
 	$(window).on("mouseup touchend", function() {
-		if (!navigator.onLine) return;
+		if (!App.onLine) return;
 
 		const sel = getSelection().toString().trim();
 
