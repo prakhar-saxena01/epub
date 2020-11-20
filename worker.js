@@ -87,7 +87,7 @@ this.addEventListener('fetch', function(event) {
 				return resp;
 			}
 
-			if (!navigator.onLine) {
+			/*if (!navigator.onLine) {
 				if (req.url.match("read.html")) {
 					return caches.match("read.html");
 				}
@@ -95,10 +95,9 @@ this.addEventListener('fetch', function(event) {
 				if (req.url.match("offline.html")) {
 					return caches.match("offline.html");
 				}
-			}
+			}*/
 
-			/* global EpubeApp */
-			console.log('cache miss for', req.url, 'OL:', navigator.onLine, 'EA:', typeof EpubeApp);
+			console.log('cache miss for', req.url, 'OL:', navigator.onLine);
 
 			return fetch(req).then(function(resp) {
 
