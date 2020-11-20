@@ -52,17 +52,17 @@ const Reader = {
 
 		if (typeof EpubeApp != "undefined") {
 			EpubeApp.setPage("PAGE_READER");
+		} else {
+			$(window).on('online', function() {
+				Reader.onOfflineModeChanged(false);
+			});
+
+			$(window).on('offline', function() {
+				Reader.onOfflineModeChanged(true);
+			});
 		}
 
 		Reader.applyTheme();
-
-		$(window).on('online', function() {
-			Reader.onOfflineModeChanged(false);
-		});
-
-		$(window).on('offline', function() {
-			Reader.onOfflineModeChanged(true);
-		});
 
 		localforage.getItem(Reader.cacheId("book")).then(function(item) {
 
