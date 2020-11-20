@@ -56,7 +56,7 @@ self.addEventListener('message', function(event){
 
 		return caches.open(CACHE_NAME).then(function(cache) {
 
-			Promise.all(CACHE_URLS.map((url) => {
+			Promise.all(CACHE_URLS.map(function(url) {
 				return fetch(url + "?ts=" + Date.now()).then((resp) => {
 					console.log('got', resp.url, resp);
 
