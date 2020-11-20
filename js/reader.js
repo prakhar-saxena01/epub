@@ -23,15 +23,12 @@ const Reader = {
 
 		Reader.Loader.init();
 	},
-	initSecondStage: function() {
+	onOfflineModeChanged: function(offline) {
+		console.log('onOfflineModeChanged', offline);
 
-		if (typeof EpubeApp != "undefined") {
-			EpubeApp.setPage("PAGE_READER");
-		}
+		if (!offline) {
+			const book = window.book;
 
-		Reader.applyTheme();
-
-		$(window).on('online', function() {
 			console.log("we're online, storing lastread");
 
 			const currentCfi = book.rendition.currentLocation().start.cfi;
@@ -49,6 +46,22 @@ const Reader = {
 						window.location = "index.php";
 					}
 				});
+		}
+	},
+	initSecondStage: function() {
+
+		if (typeof EpubeApp != "undefined") {
+			EpubeApp.setPage("PAGE_READER");
+		}
+
+		Reader.applyTheme();
+
+		$(window).on('online', function() {
+			Reader.onOfflineModeChanged(false);
+		});
+
+		$(window).on('offline', function() {
+			Reader.onOfflineModeChanged(true);
 		});
 
 		localforage.getItem(Reader.cacheId("book")).then(function(item) {

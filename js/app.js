@@ -54,7 +54,6 @@ const App = {
         }
 
         App.initNightMode();
-        App.initOfflineEvents();
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.addEventListener('message', function(event) {
@@ -208,19 +207,6 @@ const App = {
     appCheckOffline: function() {
         EpubeApp.setOffline(!App.onLine);
     },
-    initOfflineEvents: function() {
-        if (typeof EpubeApp != "undefined") {
-            $(window).on('online', function() {
-                EpubeApp.setOffline(false);
-            });
-
-            $(window).on('offline', function() {
-                EpubeApp.setOffline(true);
-            });
-
-            EpubeApp.setOffline(!App.onLine);
-        }
-    },
     initNightMode: function() {
         if (typeof EpubeApp != "undefined") {
             App.applyNightMode(EpubeApp.isNightMode());
@@ -253,7 +239,6 @@ const App = {
             }
 
             App.initNightMode();
-            App.initOfflineEvents();
 
             const query = $.urlParam("query");
 
