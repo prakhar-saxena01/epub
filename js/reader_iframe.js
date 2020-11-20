@@ -19,13 +19,13 @@ function enable_swipes() {
 $(document).ready(function() {
 	Reader = parent.__get_reader();
 
-	$(window).on("doubletap", function(/* evt */) {
+	/*$(window).on("doubletap", function(evt) {
 		const sel = getSelection().toString().trim();
 
 		if (sel.match(/^$/)) {
 			Reader.toggleFullscreen();
 		}
-	});
+	}); */
 
 	$(window).on("click tap", function(evt) {
 		if (evt.button == 0) {
@@ -56,19 +56,26 @@ $(document).ready(function() {
 		}
 	});
 
-	$(window).on("mouseup touchend", function() {
+	let selectionChangeTimeout = null;
+
+	$(document).on("selectionchange", function() {
 		if (!navigator.onLine) return;
 
-		const sel = getSelection().toString().trim();
+		window.clearTimeout(selectionChangeTimeout);
 
-		if (sel.match(/^[\w­]+$/)) {
-			Reader.lookupWord(sel, function() {
-				if (typeof EpubeApp != "undefined")
-					EpubeApp.showActionBar(false);
+		selectionChangeTimeout = window.setTimeout(function() {
+			const sel = getSelection().toString().trim();
 
-				getSelection().removeAllRanges();
-			});
-		}
+			if (sel.match(/^[\w­]+$/)) {
+				Reader.lookupWord(sel, function() {
+					if (typeof EpubeApp != "undefined")
+						EpubeApp.showActionBar(false);
+
+					getSelection().removeAllRanges();
+				});
+			}
+		}, 250);
+
 	});
 
 	enable_swipes();
