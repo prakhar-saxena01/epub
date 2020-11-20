@@ -201,7 +201,7 @@ const App = {
     },
     onLine: function() {
         if (typeof EpubeApp != "undefined" && typeof EpubeApp.isOnline != "undefined")
-            return EpubeApp.isOnline;
+            return EpubeApp.isOnline();
         else
             return navigator.onLine;
     },
