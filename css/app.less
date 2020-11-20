@@ -169,19 +169,37 @@ body.epube-reader {
       .spacer > .toc-bar-entry {
          display : none;
       }
+
+      .footer {
+         width : 100%;
+
+         .chapter_wrapper,
+         .location {
+            min-width : 30%;
+            max-width : 70%;
+         }
+      }
    }
 
    @media (min-width: 540px) {
-      .footer .chapter_wrapper, .footer .location {
-         width : 25%;
+      .footer {
+         .chapter_wrapper,
+         .location {
+            min-width : 25%;
+            max-width : 30%;
+         }
       }
    }
 
-   @media (min-width: 800px) {
-      .footer .chapter_wrapper, .footer .location {
-         width : 20%;
+   /*@media (min-width: 800px) {
+      .footer {
+         .chapter_wrapper,
+         .location {
+            min-width : 20%;
+            max-width : 30%;
+         }
       }
-   }
+   }*/
 
    .toolbar {
       text-align : right;
