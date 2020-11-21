@@ -5,6 +5,7 @@
 	header("Content-type: text/json");
 
 	define('STATIC_EXPIRES', 86400*14);
+	define('PAGE_RESET_PROGRESS', -1);
 
 	require_once "sessions.php";
 	require_once "db.php";
@@ -175,53 +176,56 @@
 		$bookid = (int) $_REQUEST["id"];
 		$lastread = 0;
 		$lastcfi = "";
-		$totalpages = 0;
+		$lastts = 0;
 
 		if ($bookid) {
 
-			$sth = $ldb->prepare("SELECT b.lastread, b.lastcfi, p.total_pages FROM epube_books AS b, epube_pagination AS p
+			$sth = $ldb->prepare("SELECT b.lastread, b.lastcfi, b.lastts FROM epube_books AS b, epube_pagination AS p
 				WHERE b.bookid = p.bookid AND b.bookid = ? AND b.owner = ? LIMIT 1");
 			$sth->execute([$bookid, $owner]);
 
 			if ($line = $sth->fetch()) {
 				$lastread = (int) $line["lastread"];
 				$lastcfi = $line["lastcfi"];
-				$totalpages = (int) $line["total_pages"];
+				$lastts = (int) $line["lastts"];
 			}
 		}
 
-		print json_encode(["page" => $lastread, "cfi" => $lastcfi, "total" => $totalpages]);
+		print json_encode(["page" => $lastread, "cfi" => $lastcfi, "total" => 100, "timestamp" => $lastts]);
 
 		break;
 
 	case "storelastread":
 		$page = (int) $_REQUEST["page"];
 		$bookid = (int) $_REQUEST["id"];
+		$timestamp = (int) $_REQUEST["timestamp"];
 		$cfi = $_REQUEST["cfi"];
 
 		if ($bookid) {
 
 			$ldb->beginTransaction();
 
-			$sth = $ldb->prepare("SELECT id, lastread, lastcfi FROM epube_books
+			$sth = $ldb->prepare("SELECT id, lastread, lastcfi, lastts FROM epube_books
 				WHERE bookid = ? AND owner = ? LIMIT 1");
 			$sth->execute([$bookid, $owner]);
 
 			if ($line = $sth->fetch()) {
 				$id = $line["id"];
-				$lastread = (int) $line["lastread"];
+				$last_timestamp = (int) $line["lastts"];
+				$last_page = (int) $line["lastread"];
 
-				if ($lastread <= $page || $page == -1) {
+				if (($timestamp >= $last_timestamp) && ($page >= $last_page || $page == PAGE_RESET_PROGRESS)) {
 
-					if ($page == -1) $page = 0;
+					if ($page == PAGE_RESET_PROGRESS)
+						$page = 0;
 
-					$sth = $ldb->prepare("UPDATE epube_books SET lastread = ?, lastcfi = ? WHERE id = ?");
-					$sth->execute([$page, $cfi, $id]);
+					$sth = $ldb->prepare("UPDATE epube_books SET lastread = ?, lastcfi = ?, lastts = ? WHERE id = ?");
+					$sth->execute([$page, $cfi, $timestamp, $id]);
 				}
 			} else {
-				$sth = $ldb->prepare("INSERT INTO epube_books (bookid, owner, lastread, lastcfi) VALUES
-					(?, ?, ?, ?)");
-				$sth->execute([$bookid, $owner, $page, $cfi]);
+				$sth = $ldb->prepare("INSERT INTO epube_books (bookid, owner, lastread, lastcfi, lastts) VALUES
+					(?, ?, ?, ?, ?)");
+				$sth->execute([$bookid, $owner, $page, $cfi, $timestamp]);
 			}
 
 			$ldb->commit();

@@ -15,6 +15,7 @@ create table epube_books(
 	id integer not null primary key autoincrement,
 	bookid integer not null,
 	owner varchar(200) not null,
+	lastts integer not null,
 	lastcfi varchar(200) not null,
 	lastread integer not null);
 

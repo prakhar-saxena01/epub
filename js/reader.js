@@ -7,6 +7,8 @@ const DEFAULT_FONT_FAMILY = "Georgia";
 const DEFAULT_LINE_HEIGHT = 140;
 const MIN_LENGTH_TO_JUSTIFY = 32; /* characters */
 
+const PAGE_RESET_PROGRESS = -1;
+
 const Reader = {
 	init: function() {
 		$(document).on("keyup", function(e) {
@@ -35,7 +37,7 @@ const Reader = {
 			const currentPage = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
 
 			$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
-				cfi: currentCfi }, function(data) {
+				cfi: currentCfi, timestamp: new Date().getTime() }, function(data) {
 
 				if (data.cfi) {
 					Reader.Page._last_position_sync = new Date().getTime()/1000;
@@ -639,33 +641,39 @@ const Reader = {
 					$("#chapter_pct").text(parseInt(displayed.page / displayed.total * 100) + '%')
 			}
 
-			if (Reader.Page._store_position && new Date().getTime()/1000 - Reader.Page._last_position_sync > 15) {
-				console.log("storing lastread", currentPct, currentCfi);
+			if (Reader.Page._store_position) {
+				Reader.Page._store_position = 0;
 
-				if (App.isOnline()) {
+				const lastread_timestamp = new Date().getTime();
 
-					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPct,
-						cfi: currentCfi }, function(data) {
+				console.log("storing lastread", currentPct, currentCfi, lastread_timestamp);
 
-						if (data.cfi) {
-							Reader.Page._last_position_sync = new Date().getTime()/1000;
-						}
+				localforage.setItem(Reader.cacheId("lastread"),
+					{cfi: currentCfi, page: currentPct, total: 100, timestamp: lastread_timestamp});
 
-					})
+				if (new Date().getTime()/1000 - Reader.Page._last_position_sync > 15) {
+
+					if (App.isOnline()) {
+						console.log("updating remote lastread...")
+
+						$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPct,
+							cfi: currentCfi, timestamp: lastread_timestamp }, function(data) {
+
+							if (data.cfi) {
+								Reader.Page._last_position_sync = new Date().getTime()/1000;
+							}
+
+						})
 						.fail(function(e) {
 							if (e && e.status == 401) {
 								window.location = "index.php";
 							}
 						});
 
-					Reader.Page._store_position = 0;
-				} else {
-					Reader.Page._last_position_sync = 0;
+					} else {
+						Reader.Page._last_position_sync = 0;
+					}
 				}
-
-				localforage.setItem(Reader.cacheId("lastread"),
-					{cfi: currentCfi, page: currentPct, total: 100});
-
 			}
 		});
 	},
@@ -870,15 +878,16 @@ const Reader = {
 		if (confirm("Mark book as read?")) {
 			const total = 100;
 			const lastCfi = window.book.locations.cfiFromPercentage(1);
+			const lastread_timestamp = new Date().getTime();
 
 			if (App.isOnline()) {
-				$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
+				$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id"), timestamp: lastread_timestamp }, function(data) {
 					$(".lastread_input").val(data.page + '%');
 				});
 			}
 
 			localforage.setItem(Reader.cacheId("lastread"),
-				{cfi: lastCfi, page: total, total: total});
+				{cfi: lastCfi, page: total, total: total, timestamp: lastread_timestamp});
 
 		}
 	},
@@ -888,13 +897,14 @@ const Reader = {
 		const currentCfi = location.start.cfi;
 		const currentPage = parseInt(window.book.locations.percentageFromCfi(currentCfi) * 100);
 		const totalPages = 100;
+		const lastread_timestamp = new Date().getTime();
 
 		localforage.setItem(Reader.cacheId("lastread"),
-			{cfi: currentCfi, page: currentPage, total: totalPages});
+			{cfi: currentCfi, page: currentPage, total: totalPages, timestamp: lastread_timestamp});
 
 		if (App.isOnline()) {
 			$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
-				cfi: currentCfi }, function() {
+				cfi: currentCfi, timestamp: lastread_timestamp }, function() {
 				window.location = $.urlParam("rt") ? "index.php?mode=" + $.urlParam("rt") : "index.php";
 			})
 				.fail(function() {
@@ -1066,15 +1076,16 @@ const Reader = {
 		clearLastRead: function() {
 			if (confirm("Clear stored last read location?")) {
 				const total = window.book.locations.length();
+				const lastread_timestamp = new Date().getTime();
 
 				if (App.isOnline()) {
-					$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
+					$.post("backend.php", { op: "storelastread", page: PAGE_RESET_PROGRESS, cfi: "", id: $.urlParam("id"), timestamp: lastread_timestamp }, function(data) {
 						$(".lastread_input").val(data.page + '%');
 					});
 				}
 
 				localforage.setItem(Reader.cacheId("lastread"),
-					{cfi: "", page: 0, total: total});
+					{cfi: "", page: 0, total: total, timestamp: lastread_timestamp});
 
 				window.setTimeout(function() {
 					window.book.rendition.display(window.book.locations.cfiFromPercentage(0));
@@ -1082,19 +1093,20 @@ const Reader = {
 			}
 		},
 		openLastRead: function(local_only) {
-			localforage.getItem(Reader.cacheId("lastread")).then(function(item) {
-				console.log('lr local', item);
+			localforage.getItem(Reader.cacheId("lastread")).then(function(lr_local) {
+				console.log('lr local', lr_local);
 
-				item = item || {};
+				lr_local = lr_local || {};
 
 				// CFI missing or w/e
 				try {
 
 					// this is ridiculous tbh
-					if (item.cfi) window.book.rendition.display(item.cfi).then(() => {
+					if (lr_local.cfi) window.book.rendition.display(lr_local.cfi).then(() => {
 						$(".loading").hide();
 
-						window.book.rendition.display(item.cfi);
+						if (lr_local.cfi)
+							window.book.rendition.display(lr_local.cfi);
 					});
 
 				} catch (e) {
@@ -1102,20 +1114,21 @@ const Reader = {
 				}
 
 				if (App.isOnline() && !local_only) {
-					$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
-						console.log('lr remote', data);
+					$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(lr_remote) {
+						console.log('lr remote', lr_remote);
 
-						if (App.isOnline() && data) {
+						if (App.isOnline() && lr_remote) {
 							try {
-								if (item.cfi != data.cfi && (!item.page || data.page >= item.page))
-									console.log('using remote lastread...');
+								if (lr_remote.cfi && lr_local.cfi != lr_remote.cfi && lr_remote.timestamp > lr_local.timestamp)
+									console.log('using remote lastread (timestamp is newer)');
 
 									localforage.setItem(Reader.cacheId("lastread"),
-										{cfi: data.cfi, page: data.page, total: data.total});
+										{cfi: lr_remote.cfi, page: lr_remote.page, total: lr_remote.total, timestamp: lr_remote.timestamp});
 
-									window.book.rendition.display(data.cfi).then(() => {
-										window.book.rendition.display(data.cfi);
+									window.book.rendition.display(lr_remote.cfi).then(() => {
+										window.book.rendition.display(lr_remote.cfi);
 									});
+
 							} catch (e) {
 								console.warn(e);
 							}
