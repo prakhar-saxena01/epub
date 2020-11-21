@@ -61,7 +61,7 @@ $(document).ready(function() {
 	let selectionChangeTimeout = null;
 
 	$(document).on("selectionchange", function() {
-		if (!App.onLine()) return;
+		if (!App.isOnline()) return;
 
 		window.clearTimeout(selectionChangeTimeout);
 

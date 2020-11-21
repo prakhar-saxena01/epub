@@ -88,7 +88,7 @@ const Reader = {
 
 				console.log("loading from network");
 
-				if (App.onLine()) {
+				if (App.isOnline()) {
 					const book_url = "backend.php?op=download&id=" + $.urlParam("id");
 
 					$(".loading_message").html("Downloading...");
@@ -277,7 +277,7 @@ const Reader = {
 				else
 					msg += "Unknown";
 
-				msg += " (" + (App.onLine() ? "Online" : "Offline") + ")";
+				msg += " (" + (App.isOnline() ? "Online" : "Offline") + ")";
 
 				$(".last-mod-timestamp").text(msg)
 			});
@@ -529,7 +529,7 @@ const Reader = {
 			console.log("locations ready, stored=", Reader.Page._pagination_stored);
 
 			if (locations) {
-				if (App.onLine() && !Reader.Page._pagination_stored) {
+				if (App.isOnline() && !Reader.Page._pagination_stored) {
 					$.post("backend.php", { op: "storepagination", id: $.urlParam("id"),
 						payload: JSON.stringify(locations), total: 100});
 				}
@@ -642,7 +642,7 @@ const Reader = {
 			if (Reader.Page._store_position && new Date().getTime()/1000 - Reader.Page._last_position_sync > 15) {
 				console.log("storing lastread", currentPct, currentCfi);
 
-				if (App.onLine()) {
+				if (App.isOnline()) {
 
 					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPct,
 						cfi: currentCfi }, function(data) {
@@ -871,7 +871,7 @@ const Reader = {
 			const total = 100;
 			const lastCfi = window.book.locations.cfiFromPercentage(1);
 
-			if (App.onLine()) {
+			if (App.isOnline()) {
 				$.post("backend.php", { op: "storelastread", page: total, cfi: lastCfi, id: $.urlParam("id") }, function(data) {
 					$(".lastread_input").val(data.page + '%');
 				});
@@ -892,7 +892,7 @@ const Reader = {
 		localforage.setItem(Reader.cacheId("lastread"),
 			{cfi: currentCfi, page: currentPage, total: totalPages});
 
-		if (App.onLine()) {
+		if (App.isOnline()) {
 			$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
 				cfi: currentCfi }, function() {
 				window.location = $.urlParam("rt") ? "index.php?mode=" + $.urlParam("rt") : "index.php";
@@ -1067,7 +1067,7 @@ const Reader = {
 			if (confirm("Clear stored last read location?")) {
 				const total = window.book.locations.length();
 
-				if (App.onLine()) {
+				if (App.isOnline()) {
 					$.post("backend.php", { op: "storelastread", page: -1, cfi: "", id: $.urlParam("id") }, function(data) {
 						$(".lastread_input").val(data.page + '%');
 					});
@@ -1101,11 +1101,11 @@ const Reader = {
 					console.warn(e);
 				}
 
-				if (App.onLine() && !local_only) {
+				if (App.isOnline() && !local_only) {
 					$.post("backend.php", { op: "getlastread", id: $.urlParam("id") }, function(data) {
 						console.log('lr remote', data);
 
-						if (App.onLine() && data) {
+						if (App.isOnline() && data) {
 							try {
 								if (item.cfi != data.cfi && (!item.page || data.page >= item.page))
 									console.log('using remote lastread...');

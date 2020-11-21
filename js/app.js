@@ -198,14 +198,14 @@ const App = {
                 .html("Could not communicate with service worker. Try reloading the page.");
         }
     },
-    onLine: function() {
+    isOnline: function() {
         if (typeof EpubeApp != "undefined" && typeof EpubeApp.isOnline != "undefined")
             return EpubeApp.isOnline();
         else
             return navigator.onLine;
     },
     appCheckOffline: function() {
-        EpubeApp.setOffline(!App.onLine);
+        EpubeApp.setOffline(!App.isOnline);
     },
     initNightMode: function() {
         if (typeof EpubeApp != "undefined") {
