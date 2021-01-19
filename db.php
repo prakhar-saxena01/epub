@@ -10,6 +10,7 @@ class Db {
 			die("Unable to initialize database driver (SQLite): $e");
 		}
 		//$this->dbh->busyTimeout(30*1000);
+		$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$this->dbh->query('PRAGMA journal_mode = wal;');
 	}
 
