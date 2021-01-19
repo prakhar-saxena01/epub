@@ -2,6 +2,7 @@ drop table if exists epube_pagination;
 drop table if exists epube_books;
 drop table if exists epube_users;
 drop table if exists epube_sessions;
+drop table if exists epube_favorites;
 
 drop index if exists epube_sessions_expire;
 
