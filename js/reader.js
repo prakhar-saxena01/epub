@@ -481,10 +481,18 @@ const Reader = {
 
 			return localforage.getItem(Reader.cacheId()).then((bookinfo) => {
 
-				console.log('bookinfo', bookinfo, Reader.cacheId());
+				let title;
+				let author;
 
-				const title = bookinfo.title;
-				const author = bookinfo.author_sort;
+				if (bookinfo) {
+					title = bookinfo.title;
+					author = bookinfo.author_sort;
+				} else {
+					const metadata = book.package.metadata;
+
+					title = metadata.title;
+					author = metadata.creator;
+				}
 
 				document.title = title + " – " + author + " – The Epube";
 				$(".title")
