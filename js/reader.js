@@ -479,50 +479,56 @@ const Reader = {
 
 		book.ready.then(function() {
 
-			const meta = book.package.metadata;
+			return localforage.getItem(Reader.cacheId()).then((bookinfo) => {
 
-			document.title = meta.title + " – " + meta.creator + " – The Epube";
-			$(".title").text(meta.title);
+				const title = bookinfo.title;
+				const author = bookinfo.author_sort;
 
-			if (typeof EpubeApp != "undefined") {
-				EpubeApp.setTitle(meta.title);
-				EpubeApp.showActionBar(false);
-			}
+				document.title = title + " – " + author + " – The Epube";
+				$(".title")
+					.text(title)
+					.attr("title", title + " – " + author);
 
-			return localforage.getItem(Reader.cacheId("locations")).then(function(locations) {
+				if (typeof EpubeApp != "undefined") {
+					EpubeApp.setTitle(title);
+					EpubeApp.showActionBar(false);
+				}
 
-				console.log('stored pagination', locations != null);
+				return localforage.getItem(Reader.cacheId("locations")).then(function(locations) {
 
-				// legacy format is array of objects {cfi: ..., page: ...}
-				if (locations && typeof locations[0] == "string") {
-					Reader.Page._pagination_stored = 1;
-					return book.locations.load(locations);
-				} else {
-					console.log("requesting pagination...");
+					console.log('stored pagination', locations != null);
 
-					const url = "backend.php?op=getpagination&id=" + encodeURIComponent($.urlParam("id"));
+					// legacy format is array of objects {cfi: ..., page: ...}
+					if (locations && typeof locations[0] == "string") {
+						Reader.Page._pagination_stored = 1;
+						return book.locations.load(locations);
+					} else {
+						console.log("requesting pagination...");
 
-					return fetch(url, {credentials:'same-origin'}).then(function(resp) {
+						const url = "backend.php?op=getpagination&id=" + encodeURIComponent($.urlParam("id"));
 
-						if (resp.ok) {
-							return resp.json().then(function(locations) {
-								if (locations && typeof locations[0] == "string") {
-									Reader.Page._pagination_stored = 1;
-									return book.locations.load(locations);
-								} else {
-									$(".loading_message").html("Paginating...");
-									return book.locations.generate(1600);
-								}
-							});
-						} else {
+						return fetch(url, {credentials:'same-origin'}).then(function(resp) {
+
+							if (resp.ok) {
+								return resp.json().then(function(locations) {
+									if (locations && typeof locations[0] == "string") {
+										Reader.Page._pagination_stored = 1;
+										return book.locations.load(locations);
+									} else {
+										$(".loading_message").html("Paginating...");
+										return book.locations.generate(1600);
+									}
+								});
+							} else {
+								$(".loading_message").html("Paginating...");
+								return book.locations.generate(1600);
+							}
+						}).catch(function() {
 							$(".loading_message").html("Paginating...");
 							return book.locations.generate(1600);
-						}
-					}).catch(function() {
-						$(".loading_message").html("Paginating...");
-						return book.locations.generate(1600);
-					});
-				}
+						});
+					}
+				});
 
 			});
 
