@@ -481,6 +481,8 @@ const Reader = {
 
 			return localforage.getItem(Reader.cacheId()).then((bookinfo) => {
 
+				console.log('bookinfo', bookinfo, Reader.cacheId());
+
 				const title = bookinfo.title;
 				const author = bookinfo.author_sort;
 
