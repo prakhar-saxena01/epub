@@ -18,6 +18,26 @@
 
    img {
       filter: invert(1) contrast(0.73);
+      transition : filter linear 0.1s;
+   }
+
+   img:hover {
+      filter : none;
+   }
+
+   .modal-dialog {
+      .modal-content {
+         background : #222;
+         color : #ccc;
+
+         button.close {
+            color : #fff;
+         }
+      }
+
+      .modal-header, .modal-footer {
+         border-color : #444;
+      }
    }
 }
 
