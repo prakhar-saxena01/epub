@@ -1,13 +1,25 @@
+.theme-night-common {
+   &, .loading, html:-webkit-full-screen {
+      background : #222;
+      color : #d7cbc1;
+   }
+
+   a, a:hover {
+      color : #00bdaa;
+   }
+
+   .modal {
+      color : #333;
+   }
+
+   .footer .spacer .toc-bar-entry.current-position {
+      background : darkred;
+   }
+}
+
 body.theme-default {
    @media (prefers-color-scheme: dark) {
-      &, .loading, html:-webkit-full-screen {
-         background : #222;
-         color : #ccc;
-      }
-
-      .modal {
-         color : #333;
-      }
+      .theme-night-common;
    }
 }
 
@@ -67,22 +79,7 @@ body.theme-mocca {
 }
 
 body.theme-night {
-   &, .loading, html:-webkit-full-screen {
-      background : #222;
-      color : #ccc;
-   }
-
-   a, a:hover {
-      color : #00bdaa;
-   }
-
-   .modal {
-      color : #333;
-   }
-
-   .footer .spacer .toc-bar-entry.current-position {
-      background : darkred;
-   }
+   .theme-night-common;
 }
 
 body.theme-plan9 {
@@ -124,3 +121,4 @@ body.theme-sepia {
       background : #B85C57;
    }
 }
+
