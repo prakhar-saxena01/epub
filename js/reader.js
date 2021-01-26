@@ -497,6 +497,8 @@ const Reader = {
 
 				$(doc).find("a, p, span, em, i, strong, b, body, div, big, small")
 						.attr("class", "")
+						.css("font-family", "inherit")
+						.css("font-size", "inherit")
 						.css("color", "")
 						.css("background", "")
 						.css("background-color", "");
@@ -858,7 +860,8 @@ const Reader = {
 
 			$("body")
 				.attr("class", typeof EpubeApp != "undefined" ? "is-epube-app" : "")
-				.addClass("epube-reader theme-" + theme);
+				.addClass("epube-reader theme-" + theme)
+				.attr("data-is-loading", "false");
 
 			if (typeof EpubeApp != "undefined") {
 
