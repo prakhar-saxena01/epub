@@ -13,12 +13,14 @@
 	<link type="text/css" rel="stylesheet" media="screen" href="dist/app.min.css" />
 
 	<style type="text/css">
-		@media (prefers-color-scheme: dark) {
-			body[data-is-loading="true"].epube-reader,
-			body[data-is-loading="true"].epube-reader .loading {
-				background: #222;
-				color : #d7cbc1;
-			}
+		body.epube-reader .loading {
+			transition : background 0.2s linear;
+		}
+
+		body[data-is-loading="true"].epube-reader,
+		body[data-is-loading="true"].epube-reader .loading {
+			background: #555;
+			color : #d7cbc1;
 		}
 	</style>
 
