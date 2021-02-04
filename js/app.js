@@ -158,6 +158,8 @@ const App = {
     refreshCache: function(force) {
         if ('serviceWorker' in navigator) {
             localforage.getItem("epube.cache-timestamp").then(function(stamp) {
+                console.log('stamp', stamp, 'last mtime', App.last_mtime);
+
                 if (force || stamp != App.last_mtime) {
                     console.log('asking worker to refresh cache');
 

@@ -5,6 +5,7 @@ const minifyCSS = require('gulp-minify-css');
 const concat = require('gulp-concat');
 const rename = require('gulp-rename');
 const uglify = require('gulp-uglify-es').default;
+const touch = require('gulp-touch-fd');
 
 function swallowError(error) {
 	console.log(error.toString())
@@ -26,7 +27,8 @@ gulp.task('minifyLibsJS', function(cb) {
 		.pipe(concat('app-libs.min.js'))
 		.pipe(uglify())
 		.on('error', swallowError)
-		.pipe(gulp.dest('dist/'));
+		.pipe(gulp.dest('dist/'))
+		.pipe(touch());
 
 		cb();
 });
@@ -44,7 +46,8 @@ gulp.task('minifyJS', function(cb) {
 		.pipe(concat('reader_iframe.min.js'))
 		.pipe(uglify())
 		.on('error', swallowError)
-		.pipe(gulp.dest('dist/'));
+		.pipe(gulp.dest('dist/'))
+		.pipe(touch());
 
 		cb();
 });
@@ -56,7 +59,8 @@ gulp.task('minifyCSS', function(cb) {
 		.pipe(minifyCSS())
 		.pipe(rename("app.min.css"))
 		.on('error', swallowError)
-		.pipe(gulp.dest('dist/'));
+		.pipe(gulp.dest('dist/'))
+		.pipe(touch());
 
 	gulp
 		.src(['css/reader_iframe.less'])
@@ -64,7 +68,8 @@ gulp.task('minifyCSS', function(cb) {
 		.pipe(minifyCSS())
 		.pipe(rename("reader_iframe.min.css"))
 		.on('error', swallowError)
-		.pipe(gulp.dest('dist/'));
+		.pipe(gulp.dest('dist/'))
+		.pipe(touch());
 
   cb();
 });
