@@ -60,6 +60,8 @@
 			'lib/fonts/pmn-caecilia-75.ttf'
  ];
 
+	$check_files_mtime = array_filter($check_files_mtime, "file_exists");
+
 	$last_mtime = array_reduce(
 	            array_map("filemtime", $check_files_mtime),
                 function ($carry, $item) {
