@@ -1,41 +1,27 @@
 <?php
-	if (!file_exists("config.php")) {
-		die("Please copy config.php-dist to config.php and edit it.");
-	}
-
-	if (!is_writable("sessions")) {
-		die("sessions/ directory is not writable.");
-	}
-
-	require_once "config.php";
-	require_once "common.php";
-
-	sanity_check();
+	set_include_path(__DIR__ ."/include" . PATH_SEPARATOR .
+		get_include_path());
 
 	if (!isset($_COOKIE['epube_sid'])) {
 		header("Location: login.php");
 		exit;
 	}
 
+	require_once "common.php";
 	require_once "sessions.php";
-	require_once "db.php";
 
-	@$owner = $_SESSION["owner"];
+	Config::sanity_check();
 
-	if (!$owner) {
-		header("Location: login.php");
+	if (!validate_session()) {
+		header("Location: logout.php");
 		exit;
 	}
+
+	$owner = $_SESSION["owner"] ?? "";
 
 	if (basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) != 'index.php') {
 		header('Location: index.php');
 		exit;
-	}
-
-	if (!$owner) {
-		header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
-		echo "Unauthorized";
-		die;
 	}
 
     // TODO: this should be unified with the service worker cache list
@@ -68,9 +54,9 @@
                        return $item > $carry ? $item : $carry;
                }, 0);
 
-	@$mode = htmlspecialchars($_REQUEST["mode"]);
+	$mode = htmlspecialchars($_REQUEST["mode"] ?? "");
 
-	$ldb = Db::get();
+	$ldb = Db::pdo();
 ?>
 <!DOCTYPE html>
 <html>
@@ -109,7 +95,7 @@
 <body class="epube-index">
 
 <?php
-	@$query = $_REQUEST["query"];
+	$query = $_REQUEST["query"] ?? "";
 ?>
 
 <div class="navbar navbar-default navbar-static-top">
@@ -205,10 +191,7 @@
 <div style="display : none" class="alert alert-info dl-progress"></div>
 
 <?php
-
-	require_once "config.php";
-
-	$db = new PDO('sqlite:' . CALIBRE_DB);
+	$db = new PDO('sqlite:' . Config::get(Config::CALIBRE_DB));
 
 	$ids_qpart = "1";
 
@@ -226,7 +209,7 @@
 	}
 
 	$limit = 60;
-	@$offset = (int) $_REQUEST["offset"];
+	$offset = (int) ($_REQUEST["offset"] ?? 0);
 
 	$order_by = $query ? "author_sort, series_name, series_index, title, books.id" : "books.id DESC";
 
@@ -254,7 +237,7 @@
 		++$rows;
 
 		if ($line['has_cover']) {
-			$cover_filename = BOOKS_DIR . "/" . $line["path"] . "/" . "cover.jpg";
+			$cover_filename = Config::get(Config::BOOKS_DIR) . "/" . $line["path"] . "/" . "cover.jpg";
 
 			if (file_exists($cover_filename))
 				$cover_mtime = filemtime($cover_filename);

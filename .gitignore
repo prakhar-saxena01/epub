@@ -1,10 +1,9 @@
-config.php
-lib/fonts/*.ttf
-db/*.db
-sessions/*
-/tags
-/.tags*
-/.gutentags
+/.app_is_ready
+/config.php
+/lib/fonts/*.ttf
+/db/*.db
+/sessions/*
 .idea/*
 /node_modules
+/vendor/**/.git
 /package-lock.json

@@ -1,39 +1,42 @@
 <?php
+	set_include_path(__DIR__ ."/include" . PATH_SEPARATOR .
+		get_include_path());
 
-	require_once "config.php";
+	if (!isset($_COOKIE['epube_sid'])) {
+		header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
+		echo "Unauthorized";
+		exit;
+	}
 
 	header("Content-type: text/json");
+
+	require_once "common.php";
+	require_once "sessions.php";
+
+	Config::sanity_check();
 
 	define('STATIC_EXPIRES', 86400*14);
 	define('PAGE_RESET_PROGRESS', -1);
 
-	require_once "sessions.php";
-	require_once "db.php";
-
-	@$owner = $_SESSION["owner"];
-
-	if (!$owner) {
+	if (!validate_session()) {
 		header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
 		echo "Unauthorized";
-		die;
+		exit;
 	}
 
-	$op = $_REQUEST["op"];
-
-	$ldb = Db::get();
-
-	ob_start("ob_gzhandler");
+	$owner = $_SESSION["owner"] ?? "";
+	$op = $_REQUEST["op"] ?? "";
 
 	switch ($op) {
 	case "cover":
 		$id = (int) $_REQUEST["id"];
 
-		$db = new PDO('sqlite:' . CALIBRE_DB);
+		$db = new PDO('sqlite:' . Config::get(Config::CALIBRE_DB));
 		$sth = $db->prepare("SELECT has_cover, path FROM books WHERE id = ?");
 		$sth->execute([$id]);
 
 		while ($line = $sth->fetch()) {
-			$filename = BOOKS_DIR . "/" . $line["path"] . "/" . "cover.jpg";
+			$filename = Config::get(Config::BOOKS_DIR) . "/" . $line["path"] . "/" . "cover.jpg";
 
 			if (file_exists($filename)) {
 				$base_filename = basename($filename);
@@ -50,17 +53,18 @@
 				echo "File not found.";
 			}
 		}
-
 		break;
+
 	case "getowner":
 		print json_encode(["owner" => $owner]);
 		break;
+
 	case "getinfo":
 		$id = (int) $_REQUEST["id"];
 
-		$db = new PDO('sqlite:' . CALIBRE_DB);
+		$caldb = new PDO('sqlite:' . Config::get(Config::CALIBRE_DB));
 
-		$sth = $db->prepare("SELECT books.*, s.name AS series_name,
+		$sth = $caldb->prepare("SELECT books.*, s.name AS series_name,
 			(SELECT text FROM comments WHERE book = books.id) AS comment,
 			(SELECT id FROM data WHERE book = books.id AND format = 'EPUB' LIMIT 1) AS epub_id FROM books
 			LEFT JOIN books_series_link AS bsl ON (bsl.book = books.id)
@@ -68,49 +72,49 @@
 			WHERE books.id = ?");
 		$sth->execute([$id]);
 
-		if ($line = $sth->fetch()) {
-			print json_encode($line);
+		if ($row = $sth->fetch()) {
+			print json_encode($row);
+		} else {
+			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+			echo "Not found.";
 		}
-
 		break;
 
 	case "togglefav":
-		$id = (int) $_REQUEST["id"];
+		$bookid = (int) $_REQUEST["id"];
 
-		$sth = $ldb->prepare("SELECT id FROM epube_favorites WHERE bookid = ?
-			AND owner = ? LIMIT 1");
-		$sth->execute([$id, $owner]);
+		$fav = ORM::for_table('epube_favorites')
+			->where('bookid', $bookid)
+			->where('owner', $owner)
+			->find_one();
 
-		$found_id = false;
-		$status = -1;
-
-		while ($line = $sth->fetch()) {
-			$found_id = $line["id"];
-		}
-
-		if ($found_id) {
-			$sth = $ldb->prepare("DELETE FROM epube_favorites WHERE id = ?");
-			$sth->execute([$found_id]);
+		if ($fav) {
+			$fav->delete();
 
 			$status = 0;
 		} else {
-			$sth = $ldb->prepare("INSERT INTO epube_favorites (bookid, owner) VALUES (?, ?)");
-			$sth->execute([$id, $owner]);
+			$fav = ORM::for_table('epube_favorites')
+				->create();
+
+			$fav->bookid = $bookid;
+			$fav->owner = $owner;
+			$fav->save();
 
 			$status = 1;
 		}
 
-		print json_encode(["id" => $id, "status" => $status]);
+		print json_encode(["id" => $bookid, "status" => $status]);
+		break;
 
 	case "download":
-		$id = (int) $_REQUEST["id"];
+		$bookid = (int) $_REQUEST["id"];
 
-		$db = new PDO('sqlite:' . CALIBRE_DB);
-		$sth = $db->prepare("SELECT path, name, format FROM data LEFT JOIN books ON (data.book = books.id) WHERE data.id = ?");
-		$sth->execute([$id]);
+		$caldb = new PDO('sqlite:' . Config::get(Config::CALIBRE_DB));
+		$sth = $caldb->prepare("SELECT path, name, format FROM data LEFT JOIN books ON (data.book = books.id) WHERE data.id = ?");
+		$sth->execute([$bookid]);
 
-		while ($line = $sth->fetch()) {
-			$filename = BOOKS_DIR . "/" . $line["path"] . "/" . $line["name"] . "." . strtolower($line["format"]);
+		while ($row = $sth->fetch()) {
+			$filename = Config::get(Config::BOOKS_DIR) . "/" . $row["path"] . "/" . $row["name"] . "." . strtolower($row["format"]);
 
 			if (file_exists($filename)) {
 				$base_filename = basename($filename);
@@ -124,54 +128,49 @@
 				echo "File not found.";
 			}
 		}
-
 		break;
 
 	case "getpagination":
 		$bookid = (int) $_REQUEST["id"];
 
 		if ($bookid) {
-			$sth = $ldb->prepare("SELECT pagination FROM epube_pagination WHERE bookid = ? LIMIT 1");
-			$sth->execute([$bookid]);
+			$pag = ORM::for_table('epube_pagination')
+				->where('bookid', $bookid)
+				->find_one();
 
-			if ($line = $sth->fetch()) {
-				print $line["pagination"];
+			if ($pag) {
+				print $pag->pagination;
 			} else {
 				header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 				echo "File not found.";
 			}
 		}
-
 		break;
+
 	case "storepagination":
 		$bookid = (int) $_REQUEST["id"];
 		$payload = $_REQUEST["payload"];
-		$total_pages = (int) $_REQUEST["total"];
 
-		if ($bookid && $payload && $total_pages) {
+		if ($bookid && $payload) {
 
-			$ldb->beginTransaction();
+			$pag = ORM::for_table('epube_pagination')
+				->where('bookid', $bookid)
+				->find_one();
 
-			$sth = $ldb->prepare("SELECT id FROM epube_pagination WHERE bookid = ? LIMIT 1");
-			$sth->execute([$bookid]);
+			if (!$pag) {
+				$pag = ORM::for_table('epube_pagination')
+					->create();
 
-			if ($line = $sth->fetch()) {
-				$id = $line["id"];
-
-				$sth = $ldb->prepare("UPDATE epube_pagination SET pagination = ?,
-					total_pages = ? WHERE id = ?");
-				$sth->execute([$payload, $total_pages, $id]);
-
-			} else {
-				$sth = $ldb->prepare("INSERT INTO epube_pagination (bookid, pagination, total_pages) VALUES
-					(?, ?, ?)");
-				$sth->execute([$bookid, $payload, $total_pages]);
+				$pag->bookid = $bookid;
 			}
 
-			$ldb->commit();
-		}
+			$pag->pagination = $payload;
+			$pag->total_pages = 100;
 
+			$pag->save();
+		}
 		break;
+
 	case "getlastread":
 		$bookid = (int) $_REQUEST["id"];
 		$lastread = 0;
@@ -180,19 +179,22 @@
 
 		if ($bookid) {
 
-			$sth = $ldb->prepare("SELECT b.lastread, b.lastcfi, b.lastts FROM epube_books AS b, epube_pagination AS p
-				WHERE b.bookid = p.bookid AND b.bookid = ? AND b.owner = ? LIMIT 1");
-			$sth->execute([$bookid, $owner]);
+			$book = ORM::for_table('epube_books')
+				->where('bookid', $bookid)
+				->where('owner', $owner)
+				->find_one();
 
-			if ($line = $sth->fetch()) {
-				$lastread = (int) $line["lastread"];
-				$lastcfi = $line["lastcfi"];
-				$lastts = (int) $line["lastts"];
+			if ($book) {
+				print json_encode([
+					"page" => (int)$book->lastread,
+					"cfi" => $book->lastcfi,
+					"total" => 100,
+					"timestamp" => (int)$book->lastts]);
+			} else {
+				header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
+				echo "Not found.";
 			}
 		}
-
-		print json_encode(["page" => $lastread, "cfi" => $lastcfi, "total" => 100, "timestamp" => $lastts]);
-
 		break;
 
 	case "storelastread":
@@ -203,36 +205,35 @@
 
 		if ($bookid) {
 
-			$ldb->beginTransaction();
+			$book = ORM::for_table('epube_books')
+				->where('bookid', $bookid)
+				->where('owner', $owner)
+				->find_one();
 
-			$sth = $ldb->prepare("SELECT id, lastread, lastcfi, lastts FROM epube_books
-				WHERE bookid = ? AND owner = ? LIMIT 1");
-			$sth->execute([$bookid, $owner]);
-
-			if ($line = $sth->fetch()) {
-				$id = $line["id"];
-				$last_timestamp = (int) $line["lastts"];
-				$last_page = (int) $line["lastread"];
-
-				if (($timestamp >= $last_timestamp) && ($page >= $last_page || $page == PAGE_RESET_PROGRESS)) {
-
-					if ($page == PAGE_RESET_PROGRESS)
-						$page = 0;
-
-					$sth = $ldb->prepare("UPDATE epube_books SET lastread = ?, lastcfi = ?, lastts = ? WHERE id = ?");
-					$sth->execute([$page, $cfi, $timestamp, $id]);
+			if ($book) {
+				if (($timestamp >= $book->lastts) && ($page >= $book->lastread || $page == PAGE_RESET_PROGRESS)) {
+					$book->set([
+						'lastread' => $page,
+						'lastcfi' => $cfi,
+						'lastts' => $timestamp,
+					]);
 				}
 			} else {
-				$sth = $ldb->prepare("INSERT INTO epube_books (bookid, owner, lastread, lastcfi, lastts) VALUES
-					(?, ?, ?, ?, ?)");
-				$sth->execute([$bookid, $owner, $page, $cfi, $timestamp]);
+				$book = ORM::for_table('epube_books')->create();
+
+				$book->set([
+					'bookid' => $bookid,
+					'owner' => $owner,
+					'lastread' => $page,
+					'lastcfi' => $cfi,
+					'lastts' => $timestamp,
+				]);
 			}
 
-			$ldb->commit();
+			$book->save();
 		}
 
 		print json_encode(["page" => $page, "cfi" => $cfi]);
-
 		break;
 
 	case "wikisearch":
@@ -242,10 +243,10 @@
 		if ($resp = file_get_contents($url)) {
 			print $resp;
 		}
-
 		break;
+
 	case "define":
-		if (defined('DICT_ENABLED') && DICT_ENABLED) {
+		if (Config::get(Config::DICT_SERVER)) {
 			function parse_dict_reply($reply) {
 				$tmp = [];
 
@@ -267,7 +268,7 @@
 
 			for ($i = 0; $i < 3; $i++) {
 				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL, sprintf("dict://%s/define:%s", DICT_SERVER, $word));
+				curl_setopt($ch, CURLOPT_URL, sprintf("dict://%s/define:%s", Config::get(Config::DICT_SERVER), $word));
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 				$dict_reply = curl_exec($ch);
 
@@ -297,13 +298,9 @@
 		} else {
 			print json_encode(["result" => ["Dictionary lookups are disabled."]]);
 		}
-
 		break;
 
 	default:
 		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 		echo "Method not found.";
 	}
-
-
-?>
