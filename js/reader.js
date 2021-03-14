@@ -395,6 +395,8 @@ const Reader = {
 				$.post("backend.php", {op: "wikisearch", query: $(".dict_query").val()})
 					.then((resp) => {
 						try {
+							console.log('wikisearch resp', resp);
+
 							let tmp = "";
 
 							$.each(resp.query.pages, (i,p) => {

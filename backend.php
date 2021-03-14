@@ -249,7 +249,13 @@
 		$url = "https://en.wiktionary.org/w/api.php?titles=${query}&action=query&prop=extracts&format=json&exlimit=1";
 
 		if ($resp = file_get_contents($url)) {
-			print $resp;
+			$resp = json_decode($resp, true);
+
+			foreach ($resp['query']['pages'] as &$page) {
+				$page['extract'] = Sanitizer::sanitize($page['extract']);
+			}
+
+			print json_encode($resp);
 		}
 		break;
 
