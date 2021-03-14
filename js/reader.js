@@ -1,6 +1,6 @@
 'use strict';
 
-/* global localforage, EpubeApp, App */
+/* global localforage, EpubeApp, App, Cookie, $ */
 
 const DEFAULT_FONT_SIZE = 16;
 const DEFAULT_FONT_FAMILY = "Georgia";
@@ -10,7 +10,28 @@ const MIN_LENGTH_TO_JUSTIFY = 32; /* characters */
 const PAGE_RESET_PROGRESS = -1;
 
 const Reader = {
+	csrf_token: "",
 	init: function() {
+		this.csrf_token = Cookie.get('epube_csrf_token');
+
+		console.log('setting prefilter for token', this.csrf_token);
+
+		$.ajaxPrefilter(function(options, originalOptions/*, jqXHR*/) {
+
+			if (originalOptions.type !== 'post' || options.type !== 'post') {
+				return;
+			}
+
+			const datatype = typeof originalOptions.data;
+
+			if (datatype == 'object')
+				options.data = $.param($.extend(originalOptions.data, {"csrf_token": Reader.csrf_token}));
+			else if (datatype == 'string')
+				options.data = originalOptions.data + "&csrf_token=" + encodeURIComponent(Reader.srf_token);
+
+			console.log('>>>', options);
+		});
+
 		$(document).on("keyup", function(e) {
 			Reader.hotkeyHandler(e);
 		});
@@ -492,7 +513,7 @@ const Reader = {
 			book.spine.hooks.content.register(function(doc/*, section */) {
 
 				$(doc).find("p")
-						.filter((i, e) => { if ($(e).text().length >= MIN_LENGTH_TO_JUSTIFY) return e; })
+						.filter((i, e) => (($(e).text().length >= MIN_LENGTH_TO_JUSTIFY) ? e : null))
 							.css("text-align", "justify");
 
 				$(doc).find("a, p, span, em, i, strong, b, body, div, big, small")

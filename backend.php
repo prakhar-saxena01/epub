@@ -27,6 +27,18 @@
 	$owner = $_SESSION["owner"] ?? "";
 	$op = $_REQUEST["op"] ?? "";
 
+	if (!empty($_SESSION['owner'])) {
+		$csrf_ignore = [ "cover", "download", "getpagination" ];
+
+		$csrf_token = $_POST['csrf_token'] ?? "";
+
+		if (!in_array($op, $csrf_ignore) && !validate_csrf($csrf_token)) {
+			header($_SERVER["SERVER_PROTOCOL"]." 401 Unauthorized");
+			echo "Unauthorized (CSRF)";
+			exit;
+		}
+	}
+
 	switch ($op) {
 	case "cover":
 		$id = (int) $_REQUEST["id"];
@@ -53,10 +65,6 @@
 				echo "File not found.";
 			}
 		}
-		break;
-
-	case "getowner":
-		print json_encode(["owner" => $owner]);
 		break;
 
 	case "getinfo":
@@ -298,6 +306,11 @@
 		} else {
 			print json_encode(["result" => ["Dictionary lookups are disabled."]]);
 		}
+		break;
+
+	case "logout":
+		logout_user();
+		print json_encode(["result" => "OK"]);
 		break;
 
 	default:

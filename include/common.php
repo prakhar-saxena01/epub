@@ -13,6 +13,10 @@
 		return sprintf(...$args);
 	}
 
+	function validate_csrf($csrf_token) {
+		return isset($csrf_token) && hash_equals($_SESSION['csrf_token'] ?? "", $csrf_token);
+	}
+
 	function sql_bool_to_bool($s) {
 		return $s && ($s !== "f" && $s !== "false"); //no-op for PDO, backwards compat for legacy layer
 	}

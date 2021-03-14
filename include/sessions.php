@@ -35,6 +35,10 @@
 				setcookie(session_name(), '', time()-42000, '/');
 			}
 
+			if (isset($_COOKIE["epube_csrf_token"])) {
+				setcookie("epube_csrf_token", '', time()-42000, '/');
+			}
+
 			session_commit();
 		}
 	}

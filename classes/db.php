@@ -7,14 +7,21 @@ class Db {
 		try {
 			$this->pdo = new PDO(self::get_dsn());
 		} catch (Exception $e) {
-			die("Unable to initialize database driver (SQLite): $e");
+			user_error($e, E_USER_WARNING);
+			die("Unable to initialize database driver (SQLite).");
 		}
 		//$this->dbh->busyTimeout(30*1000);
 		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$this->pdo->query('PRAGMA journal_mode = wal;');
+		$this->pdo->query('PRAGMA journal_mode = wal');
 
-		ORM::configure(self::get_dsn());
-		ORM::configure('return_result_sets', true);
+		try {
+			ORM::configure(self::get_dsn());
+			ORM::configure('return_result_sets', true);
+			ORM::raw_execute('PRAGMA journal_mode = wal');
+		} catch (Exception $e) {
+			user_error($e, E_USER_WARNING);
+			die("Unable to initialize ORM layer.");
+		}
 	}
 
 	public static function get_dsn() {

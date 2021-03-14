@@ -28,6 +28,7 @@
 
 			$_SESSION["owner"] = $username;
 			$_SESSION["pass_hash"] = sha1($user->pass);
+			$_SESSION["csrf_token"] = bin2hex(random_bytes(16));
 
 			header("Location: index.php");
 			exit;
@@ -35,6 +36,8 @@
 		} else {
 			$login_notice = "Incorrect username or password";
 		}
+	} else {
+		logout_user();
 	}
 ?>
 <!DOCTYPE html>

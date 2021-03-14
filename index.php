@@ -13,7 +13,7 @@
 	Config::sanity_check();
 
 	if (!validate_session()) {
-		header("Location: logout.php");
+		header("Location: login.php");
 		exit;
 	}
 
@@ -23,6 +23,9 @@
 		header('Location: index.php');
 		exit;
 	}
+
+	setcookie("epube_csrf_token", $_SESSION["csrf_token"], time() + Config::get(Config::SESSION_LIFETIME),
+		"/", "", Config::is_server_https());
 
     // TODO: this should be unified with the service worker cache list
     $check_files_mtime = [
@@ -72,10 +75,10 @@
 	<link rel="manifest" href="manifest.json">
 	<meta name="mobile-web-app-capable" content="yes">
 	<script src="dist/app.min.js"></script>
-    <script type="text/javascript">
-        'use strict';
+	<script type="text/javascript">
+			'use strict';
 
-        if ('serviceWorker' in navigator) {
+			if ('serviceWorker' in navigator) {
             navigator.serviceWorker
                 .register('worker.js')
                 .then(function() {
@@ -141,7 +144,7 @@
 				<span class="glyphicon glyphicon-refresh"></span> <span class='hidden-sm hidden-md hidden-lg'>Refresh script cache</span></a></li>
 			</li>
 			<?php if ($mode !== "favorites") { ?>
-				<li><a href="logout.php" title="Log out">
+				<li><a href="#" onclick="App.logout()" title="Log out">
 					<span class="glyphicon glyphicon-log-out"></span> <span class='hidden-sm hidden-md hidden-lg'>Log out</span>
 				</a></li>
 			<?php } ?>
