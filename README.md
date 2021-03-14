@@ -14,10 +14,10 @@ Requirements
 * PDO::sqlite
 * Calibre books directory and metadata.db
 
-Installation
-============
+Host installation
+=================
 
-Always use latest Git code from master branch. Ignore the releases page, it doesn't mean anything.
+Note: Consider using [docker-compose](https://git.tt-rss.org/fox/epube-docker-compose) instead. Most of the stuff below is handled for you automatically then.
 
 ```sh
 git clone https://git.tt-rss.org/fox/the-epube.git the-epube
@@ -34,10 +34,10 @@ location /the-epube/db {
 }
 ```
 
-1. Initialize scratch.db 
+1. Apply database migrations
 
 ```sh
-sqlite3 db/scratch.db < schema.sql
+php ./update.php --update-schema
 ```
     
 2. Ensure both <code>scratch.db</code> and its containing folder (i.e. <code>db/</code>) are writable by the 
@@ -47,19 +47,19 @@ application, normally this means chown-ing them as <code>www-data</code> or what
 chown www-data db/ db/scratch.db
 ```
 
-3. Copy <code>config.php-dist</code> to <code>config.php</code> and edit path to Calibre, etc.
+3. Set path to Calibre, etc, in `config.php`:
 
-4. Setup users via useradm.php (command line)
+```ini
+putenv('EPUBE_BOOKS_DIR=/home/user/calibre/Books');
+```
 
-Upgrading
-=========
+See `classes/config.php` for the list of settings.
 
-When upgrading from an older Git snapshot which used HTTP Authentication:
+4. Setup users via update.php (command line)
 
-1. Disable HTTP Authentication in httpd configuration
-2. Reopen browser to clear HTTP auth 
-3. Add two new tables to scratch.db (epube_users & epube_sessions)
-4. Add users via useradm.php (use same names as http auth, all data will be kept)
+```
+php ./update.php --help
+```
 
 Acknowledgements
 ================
@@ -70,4 +70,3 @@ License
 =======
 
 GNU GPL version 3.
-
