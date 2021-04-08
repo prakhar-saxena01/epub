@@ -58,12 +58,9 @@ const Reader = {
 			const currentPage = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
 
 			$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPage,
-				cfi: currentCfi, timestamp: new Date().getTime() }, function(data) {
-
-				if (data.cfi) {
-					Reader.Page._last_position_sync = new Date().getTime()/1000;
-				}
-			})
+				cfi: currentCfi, timestamp: new Date().getTime() }, function() {
+					//
+				})
 				.fail(function(e) {
 					if (e && e.status == 401) {
 						window.location = "index.php";
@@ -715,39 +712,25 @@ const Reader = {
 						$("#chapter_pct").text(parseInt(displayed.page / displayed.total * 100) + '%')
 				}
 
-				if (Reader.Page._store_position) {
-					Reader.Page._store_position = 0;
+				const lastread_timestamp = new Date().getTime();
 
-					const lastread_timestamp = new Date().getTime();
+				console.log("storing lastread", currentPct, currentCfi, lastread_timestamp);
 
-					console.log("storing lastread", currentPct, currentCfi, lastread_timestamp);
+				localforage.setItem(Reader.cacheId("lastread"),
+					{cfi: currentCfi, page: currentPct, total: 100, timestamp: lastread_timestamp});
 
-					localforage.setItem(Reader.cacheId("lastread"),
-						{cfi: currentCfi, page: currentPct, total: 100, timestamp: lastread_timestamp});
+				if (App.isOnline()) {
+					console.log("updating remote lastread...")
 
-					if (new Date().getTime()/1000 - Reader.Page._last_position_sync > 15) {
-
-						if (App.isOnline()) {
-							console.log("updating remote lastread...")
-
-							$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPct,
-								cfi: currentCfi, timestamp: lastread_timestamp }, function(data) {
-
-								if (data.cfi) {
-									Reader.Page._last_position_sync = new Date().getTime()/1000;
-								}
-
-							})
-							.fail(function(e) {
-								if (e && e.status == 401) {
-									window.location = "index.php";
-								}
-							});
-
-						} else {
-							Reader.Page._last_position_sync = 0;
-						}
-					}
+					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPct,
+						cfi: currentCfi, timestamp: lastread_timestamp }, function() {
+							//
+						})
+						.fail(function(e) {
+							if (e && e.status == 401) {
+								window.location = "index.php";
+							}
+						});
 				}
 			});
 
@@ -1117,12 +1100,8 @@ const Reader = {
 		},
 	},
 	Page: {
-		_store_position: 0,
-		_last_position_sync: 0,
 		_pagination_stored: 0,
 		next: function() {
-			Reader.Page._store_position = 1;
-
 			window.book.rendition.next();
 
 			if (typeof EpubeApp != "undefined")
