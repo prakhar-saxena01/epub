@@ -322,17 +322,17 @@ const Reader = {
 						});
 				});
 
-				localforage.getItem("epube.cache-timestamp").then(function(stamp) {
-					let msg = "V: ";
+				Promise.all([
+					localforage.getItem("epube.cache-timestamp"),
+					localforage.getItem("epube.cache-version")
+				]).then((res) => {
+					const stamp = res[0];
+					const version = res[1];
 
-					if (parseInt(stamp))
-						msg += new Date(stamp*1000).toLocaleString("en-GB");
-					else
-						msg += "Unknown";
-
-					msg += " (" + (App.isOnline() ? "Online" : "Offline") + ")";
-
-					$(".last-mod-timestamp").text(msg)
+					$(".last-mod-timestamp").html(`${version}
+						&mdash; ${parseInt(stamp) ? new Date(stamp*1000).toLocaleString("en-GB") : "Unknown"}
+						(${App.isOnline() ? `<span class='text-success'>Online</span>` : `<span class='text-danger'>Offline</span>`})
+						`);
 				});
 
 				localforage.getItem("epube.fontFamily").then(function(font) {

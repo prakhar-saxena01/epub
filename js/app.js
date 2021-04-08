@@ -39,6 +39,7 @@ const App = {
 	_dl_progress_timeout: false,
 	index_mode: "",
 	last_mtime: -1,
+	version: "UNKNOWN",
 	csrf_token: "",
 	init: function() {
 		let refreshed_files = 0;
@@ -97,6 +98,7 @@ const App = {
 
 				if (event.data == 'client-reload') {
 					localforage.setItem("epube.cache-timestamp", App.last_mtime);
+					localforage.setItem("epube.cache-version", App.version);
 					window.location.reload()
 				}
 
@@ -183,7 +185,7 @@ const App = {
 	refreshCache: function(force) {
 		if ('serviceWorker' in navigator) {
 			localforage.getItem("epube.cache-timestamp").then(function(stamp) {
-				console.log('stamp', stamp, 'last mtime', App.last_mtime);
+				console.log('stamp', stamp, 'last mtime', App.last_mtime, 'version', App.version);
 
 				if (force || stamp != App.last_mtime) {
 					console.log('asking worker to refresh cache');

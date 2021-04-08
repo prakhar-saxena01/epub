@@ -85,8 +85,9 @@
                     console.log("service worker registered");
 
                     $(document).ready(function() {
-                        App.index_mode = "<?php echo $mode ?>";
-                        App.last_mtime = parseInt("<?php echo $last_mtime ?>");
+                        App.index_mode = "<?= $mode ?>";
+                        App.version = "<?= Config::get_version(true) ?>";
+                        App.last_mtime = parseInt("<?= $last_mtime ?>");
                         App.init();
                     });
                 });
