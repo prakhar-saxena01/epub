@@ -101,16 +101,16 @@ const App = {
 				}
 
 			});
+
+			App.showCovers();
+			App.Offline.markBooks();
+			App.refreshCache();
+
 		} else {
 			$(".container-main")
 				.addClass("alert alert-danger")
 				.html("Service worker support missing in browser (are you using plain HTTP?).");
 		}
-
-		App.showCovers();
-		App.Offline.markBooks();
-		App.refreshCache();
-
 	},
 	logout: function() {
 		$.post("backend.php", {op: "logout"}).then(() => {
