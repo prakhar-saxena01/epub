@@ -110,7 +110,7 @@ const Reader = {
 						reject(new Error("unable to load book info: blank"));
 
 					}).error(function(xhr) {
-						$(".loading_message").html("Unable to load book info.<br/><small>" + xhr.status + "</small>");
+						$(".loading-message").html("Unable to load book info.<br/><small>" + xhr.status + "</small>");
 
 						reject(new Error("unable to load book info: " + e));
 					});
@@ -139,7 +139,7 @@ const Reader = {
 									resolve();
 								})
 							} catch (e) {
-								$(".loading_message").html("Unable to load book (local).");
+								$(".loading-message").html("Unable to load book (local).");
 								console.log(e);
 
 								reject(new Error("Unable to load book (local):" + e));
@@ -156,7 +156,7 @@ const Reader = {
 					if (App.isOnline()) {
 						const book_url = "backend.php?op=download&id=" + $.urlParam("id");
 
-						$(".loading_message").html("Downloading...");
+						$(".loading-message").html("Downloading…");
 
 						return fetch(book_url, {credentials: 'same-origin'}).then(function(resp) {
 
@@ -176,7 +176,7 @@ const Reader = {
 												})
 
 											}).catch((e) => {
-												$(".loading_message").html("Unable to open book.<br/><small>" + e + "</small>");
+												$(".loading-message").html("Unable to open book.<br/><small>" + e + "</small>");
 
 												reject(new Error("Unable to open book: " + e));
 											});
@@ -184,7 +184,7 @@ const Reader = {
 
 										fileReader.onerror = function(e) {
 											console.log('filereader error', e);
-											$(".loading_message").html("Unable to open book.<br/><small>" + e + "</small>");
+											$(".loading-message").html("Unable to open book.<br/><small>" + e + "</small>");
 
 											reject(new Error("Unable to open book: " + e));
 										};
@@ -194,21 +194,21 @@ const Reader = {
 
 								}).catch((e) => {
 									console.log('blob error', e);
-									$(".loading_message").html("Unable to download book.<br/><small>" + e + "</small>");
+									$(".loading-message").html("Unable to download book.<br/><small>" + e + "</small>");
 								});
 							} else {
-								$(".loading_message").html("Unable to download book: " + resp.status + ".");
+								$(".loading-message").html("Unable to download book: " + resp.status + ".");
 							}
 						}).catch(function(e) {
 							console.warn(e);
 
 							if ($(".loading").is(":visible")) {
-								$(".loading_message").html("Unable to load book (remote).<br/><small>" + e + "</small>");
+								$(".loading-message").html("Unable to load book (remote).<br/><small>" + e + "</small>");
 							}
 						});
 
 					} else {
-						$(".loading_message").html("This book is not available offline.");
+						$(".loading-message").html("This book is not available offline.");
 					}
 				}
 			});
@@ -580,16 +580,16 @@ const Reader = {
 											Reader.Page._pagination_stored = 1;
 											return book.locations.load(locations);
 										} else {
-											$(".loading_message").html("Paginating...");
+											$(".loading-message").html("Preparing locations…");
 											return book.locations.generate(1600);
 										}
 									});
 								} else {
-									$(".loading_message").html("Paginating...");
+									$(".loading-message").html("Preparing locations…");
 									return book.locations.generate(1600);
 								}
 							}).catch(function() {
-								$(".loading_message").html("Paginating...");
+								$(".loading-message").html("Preparing locations…");
 								return book.locations.generate(1600);
 							});
 						}
@@ -613,7 +613,7 @@ const Reader = {
 					});
 
 				} else {
-					$(".loading_message").html("Pagination failed.");
+					$(".loading-message").html("Could not generate locations.");
 					return;
 				}
 
@@ -644,7 +644,7 @@ const Reader = {
 				console.log('resized');
 
 				$(".loading").show();
-				$(".loading_message").html("Opening chapter...");
+				$(".loading-message").html("Opening chapter…");
 
 				window.setTimeout(function() {
 					Reader.resizeSideColumns();
@@ -1086,7 +1086,7 @@ const Reader = {
 			console.log("check_resource_load", attempt, res_names.length, Object.keys(res_data).length, Reader, Reader.Loader);
 
 			if (attempt == 5) {
-				$(".loading_message").html("Unable to load resources.");
+				$(".loading-message").html("Unable to load resources.");
 				return;
 			}
 
