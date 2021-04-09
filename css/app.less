@@ -76,6 +76,18 @@ body.epube-index {
 body.epube-reader {
 
    .loading {
+      .wrapper {
+         .loading-icon {
+            font-size : 64px;
+            display : block;
+            margin-bottom : 16px;
+            opacity : 0.25;
+         }
+      }
+
+      display : flex;
+      justify-content : center;
+      align-items : center;
       position : absolute;
       color : #999;
       top : 0px;
@@ -87,12 +99,6 @@ body.epube-reader {
       background : white;
       padding : 16px;
       font-size : 18px;
-      display : table;
-   }
-
-   .loading > div {
-      display : table-cell;
-      vertical-align : middle;
    }
 
    .notice {
