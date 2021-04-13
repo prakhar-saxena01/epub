@@ -300,8 +300,9 @@ const Reader = {
 					$(contents.document.head)
 						.append($("<style type='text/css'>")
 							.text(fonts_css));
+				} else {
+					$(".font_family option[value='Caecilia']").hide();
 				}
-
 
 				return localforage.getItem("epube.theme").then(function(theme) {
 					if (!theme) theme = 'default';
