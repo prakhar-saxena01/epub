@@ -114,7 +114,7 @@ const Reader = {
 					}).error(function(xhr) {
 						$(".loading-message").html("Unable to load book info.<br/><small>" + xhr.status + "</small>");
 
-						reject(new Error("unable to load book info: " + e));
+						reject(new Error("unable to load book info: " + xhr.status));
 					});
 
 				});

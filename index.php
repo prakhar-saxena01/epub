@@ -85,6 +85,7 @@
                     console.log("service worker registered");
 
                     $(document).ready(function() {
+							   App.cached_urls = JSON.parse('<?= json_encode($check_files_mtime) ?>');
                         App.index_mode = "<?= $mode ?>";
                         App.version = "<?= Config::get_version(true) ?>";
                         App.last_mtime = parseInt("<?= $last_mtime ?>");

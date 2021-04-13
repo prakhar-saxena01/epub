@@ -1,27 +1,7 @@
 //importScripts('lib/localforage.min.js');
 
 const CACHE_PREFIX = 'epube';
-const CACHE_NAME = CACHE_PREFIX + '-v2';
-const CACHE_URLS = [
-			'manifest.json',
-			'worker.js',
-			'img/ic_launcher_web.png',
-			'img/favicon.png',
-			'read.html',
-			'dist/app.min.js',
-			'dist/app.min.css',
-			'dist/app-libs.min.js',
-			'dist/reader_iframe.min.js',
-			'dist/reader_iframe.min.css',
-			'offline.html',
-			'lib/bootstrap/v3/css/bootstrap-theme.min.css',
-			'lib/bootstrap/v3/css/bootstrap.min.css',
-			'lib/bootstrap/v3/css/theme-dark.min.css',
-			'lib/bootstrap/v3/fonts/glyphicons-halflings-regular.woff2',
-			'lib/fonts/pmn-caecilia-55.ttf',
-			'lib/fonts/pmn-caecilia-56.ttf',
-			'lib/fonts/pmn-caecilia-75.ttf'
-		];
+const CACHE_NAME = CACHE_PREFIX + '-v3';
 
 self.addEventListener('activate', function(event) {
 	event.waitUntil(
@@ -49,25 +29,23 @@ function send_broadcast(msg) {
 }
 
 self.addEventListener('message', function(event){
-	if (event.data == 'refresh-cache') {
-		console.log("refreshing cache...");
+	console.log('got message', event.data);
+
+	if (event.data.msg == 'refresh-cache') {
+		console.log("refreshing cache...", event);
 
 		send_broadcast('refresh-started');
 
 		return caches.open(CACHE_NAME).then(function(cache) {
-
-			Promise.all(CACHE_URLS.map(function(url) {
-				return fetch(url + "?ts=" + Date.now()).then((resp) => {
-					console.log('got', resp.url, resp);
-
-					send_broadcast('refreshed:' + resp.url);
-
-					if (resp.status == 200) {
-						return cache.put(url, resp);
-					} else if (resp.status == 404) {
-						return cache.delete(url);
-					}
-				});
+			Promise.all(event.data.urls.map(async function(url) {
+				const resp = await fetch(url + "?ts=" + Date.now());
+				console.log('got', resp.url, resp);
+				send_broadcast('refreshed:' + resp.url);
+				if (resp.status == 200) {
+					return cache.put(url, resp);
+				} else if (resp.status == 404) {
+					return cache.delete(url);
+				}
 
 			})).then(function() {
 				console.log('all done');

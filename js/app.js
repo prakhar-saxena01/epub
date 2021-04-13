@@ -39,6 +39,7 @@ const App = {
 	_dl_progress_timeout: false,
 	index_mode: "",
 	last_mtime: -1,
+	cached_urls: [],
 	version: "UNKNOWN",
 	csrf_token: "",
 	init: function() {
@@ -191,7 +192,7 @@ const App = {
 					console.log('asking worker to refresh cache');
 
 					if (navigator.serviceWorker.controller) {
-						navigator.serviceWorker.controller.postMessage("refresh-cache");
+						navigator.serviceWorker.controller.postMessage({msg: "refresh-cache", urls: App.cached_urls});
 					} else {
 						localforage.getItem("epube.initial-load-done").then(function(done) {
 
