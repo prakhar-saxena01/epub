@@ -276,6 +276,33 @@ const Reader = {
 					.append($("<style type='text/css'>")
 						.text(Reader.Loader._res_data[base_url + 'dist/reader_iframe.min.css']));
 
+				if (Reader.Loader._res_data[base_url + 'lib/fonts/pmn-caecilia-55.ttf']) {
+					const fonts_css = `
+						@font-face {
+							font-family: Caecilia;
+							src: url(${Reader.Loader._res_data[base_url + 'lib/fonts/pmn-caecilia-55.ttf']});
+							font-weight : normal;
+						}
+
+						@font-face {
+							font-family: Caecilia;
+							src: url(${Reader.Loader._res_data[base_url + 'lib/fonts/pmn-caecilia-75.ttf']});
+							font-weight : bold;
+						}
+
+						@font-face {
+							font-family: Caecilia;
+							src: url(${Reader.Loader._res_data[base_url + 'lib/fonts/pmn-caecilia-56.ttf']});
+							font-style : italic;
+						}
+						`;
+
+					$(contents.document.head)
+						.append($("<style type='text/css'>")
+							.text(fonts_css));
+				}
+
+
 				return localforage.getItem("epube.theme").then(function(theme) {
 					if (!theme) theme = 'default';
 
@@ -1064,39 +1091,66 @@ const Reader = {
 			// we need to preload resources for reader iframe because it can't utilize our
 			// service worker because while offline it is created outside our base server context
 			const res_names = [ "dist/app-libs.min.js",
-				"dist/reader_iframe.min.js", "dist/reader_iframe.min.css" ];
+				"dist/reader_iframe.min.js", "dist/reader_iframe.min.css",
+				"lib/fonts/pmn-caecilia-55.ttf",
+				"lib/fonts/pmn-caecilia-56.ttf",
+				"lib/fonts/pmn-caecilia-75.ttf" ];
 
-			for (let i = 0; i < res_names.length; i++) {
-				fetch(res_names[i], {credentials: 'same-origin'}).then(function(resp) {
+			const promises = [];
+			let load_failed = false;
+
+			res_names.forEach((res_name) => {
+				console.log('loading resource', res_name);
+				const promise = fetch(res_name, {credentials: 'same-origin'}).then(function(resp) {
 					if (resp.status == 200) {
-						resp.text().then(function(data) {
-							const url = new URL(resp.url);
-							url.searchParams.delete("ts");
+						if (resp.url.indexOf('.ttf') != -1) {
+							return resp.blob().then((blob) => new Promise((resolve, reject) => {
+									const reader = new window.FileReader();
 
-							Reader.Loader._res_data[url.toString()] = data;
-						})
+									reader.addEventListener("load", function () {
+										const url = new URL(resp.url);
+										url.searchParams.delete("ts");
+
+										Reader.Loader._res_data[url.toString()] = reader.result
+											.replace("data:application/octet-stream;", "data:font/opentype;charset=utf-8;");
+
+										resolve();
+									}, false);
+
+									reader.readAsDataURL(blob);
+								}))
+						} else {
+							return resp.text().then(function(data) {
+								const url = new URL(resp.url);
+								url.searchParams.delete("ts");
+
+								Reader.Loader._res_data[url.toString()] = data;
+							})
+						}
 					} else {
-						console.warn('loader failed for resource', res_names[i], resp);
+						console.warn('loader failed for resource', res_name, resp);
+
+						// fonts are optional
+						if (res_name.indexOf('.ttf') == -1) {
+							$(".loading-message").html(`Unable to load resource.<br/><small>${res_name}</small>`);
+							load_failed = true;
+							return;
+						}
 					}
 				});
-			}
-			Reader.Loader.checkProgress(res_names, Reader.Loader._res_data, 0);
-		},
-		checkProgress: function(res_names, res_data, attempt) {
-			console.log("check_resource_load", attempt, res_names.length, Object.keys(res_data).length, Reader, Reader.Loader);
 
-			if (attempt == 5) {
-				$(".loading-message").html("Unable to load resources.");
-				return;
-			}
+				promises.push(promise);
+			});
 
-			if (res_names.length != Object.keys(res_data).length) {
-				window.setTimeout(function() {
-					Reader.Loader.checkProgress(res_names, res_data, attempt+1);
-				}, 250);
-			} else {
-				Reader.initSecondStage();
-			}
+			Promise.allSettled(promises).then(() => {
+				console.log('resource load complete');
+
+				if (!load_failed)
+					Reader.initSecondStage();
+				else
+					Reader.applyTheme(); // fade in, etc
+			});
+
 		},
 	},
 	Page: {
