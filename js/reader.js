@@ -11,6 +11,8 @@ const PAGE_RESET_PROGRESS = -1;
 
 const Reader = {
 	csrf_token: "",
+	last_stored_cfi: "",
+	prevent_lastread_update: false,
 	init: function() {
 		this.csrf_token = Cookie.get('epube_csrf_token');
 
@@ -245,6 +247,8 @@ const Reader = {
 
 				contents.on("linkClicked", function(href) {
 					console.log('linkClicked', href);
+
+					Reader.prevent_lastread_update = true;
 
 					if (href.indexOf("://") == -1) {
 						$(".prev_location_btn")
@@ -740,28 +744,32 @@ const Reader = {
 						$("#chapter_pct").text(parseInt(displayed.page / displayed.total * 100) + '%')
 				}
 
-				const lastread_timestamp = new Date().getTime();
+				if (Reader.last_stored_cfi != currentCfi && !Reader.prevent_lastread_update) {
+					const lastread_timestamp = new Date().getTime();
 
-				console.log("storing lastread", currentPct, currentCfi, lastread_timestamp);
+					console.log("storing lastread", currentPct, currentCfi, lastread_timestamp);
 
-				localforage.setItem(Reader.cacheId("lastread"),
-					{cfi: currentCfi, page: currentPct, total: 100, timestamp: lastread_timestamp});
+					localforage.setItem(Reader.cacheId("lastread"),
+						{cfi: currentCfi, page: currentPct, total: 100, timestamp: lastread_timestamp});
 
-				if (App.isOnline()) {
-					console.log("updating remote lastread...")
+					if (App.isOnline()) {
+						console.log("updating remote lastread", currentCfi);
+						Reader.last_stored_cfi = currentCfi;
 
-					$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPct,
-						cfi: currentCfi, timestamp: lastread_timestamp }, function() {
-							//
-						})
-						.fail(function(e) {
-							if (e && e.status == 401) {
-								window.location = "index.php";
-							}
-						});
+						$.post("backend.php", { op: "storelastread", id: $.urlParam("id"), page: currentPct,
+							cfi: currentCfi, timestamp: lastread_timestamp }).then(() => {
+								//
+							})
+							.fail(function(e) {
+								if (e && e.status == 401) {
+									window.location = "index.php";
+								}
+							});
+					}
 				}
-			});
 
+				Reader.prevent_lastread_update = false;
+			});
 		});
 	},
 	flattenTocSubItems: function(entry, nest) {
