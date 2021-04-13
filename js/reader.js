@@ -1113,21 +1113,13 @@ const Reader = {
 				const promise = fetch(res_name, {credentials: 'same-origin'}).then(function(resp) {
 					if (resp.status == 200) {
 						if (resp.url.indexOf('.ttf') != -1) {
-							return resp.blob().then((blob) => new Promise((resolve, reject) => {
-									const reader = new window.FileReader();
+							return resp.blob().then((blob) => {
 
-									reader.addEventListener("load", function () {
-										const url = new URL(resp.url);
-										url.searchParams.delete("ts");
+								const url = new URL(resp.url);
+								url.searchParams.delete("ts");
 
-										Reader.Loader._res_data[url.toString()] = reader.result
-											.replace("data:application/octet-stream;", "data:font/opentype;charset=utf-8;");
-
-										resolve();
-									}, false);
-
-									reader.readAsDataURL(blob);
-								}))
+								Reader.Loader._res_data[url.toString()] = URL.createObjectURL(blob);
+							});
 						} else {
 							return resp.text().then(function(data) {
 								const url = new URL(resp.url);
