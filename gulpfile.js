@@ -22,8 +22,7 @@ gulp.task('minifyLibsJS', function(cb) {
 				'lib/epub.js',
 				'lib/localforage.min.js',
 				'lib/jquery.mobile-events.min.js',
-				'lib/hyphen/*.js',
-				'lib/holder.min.js'])
+				'lib/hyphen/*.js'])
 		.pipe(concat('app-libs.min.js'))
 		.pipe(uglify())
 		.on('error', swallowError)

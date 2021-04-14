@@ -149,13 +149,8 @@ const App = {
 						img.attr("src", null);
 					})
 					.attr("src", e.attr('data-cover-link'));
-			} else {
-				e.attr('src', 'holder.js/130x190?auto=yes').fadeIn();
 			}
 		});
-
-		/* global Holder */
-		Holder.run();
 	},
 	toggleFavorite: function(elem) {
 		const bookId = elem.getAttribute("data-book-id");
@@ -554,7 +549,6 @@ const App = {
 									.fadeIn();
 							} else {
 								cell
-									.find("img").attr("data-src", 'holder.js/130x190?auto=yes')
 									.fadeIn();
 							}
 
@@ -567,8 +561,6 @@ const App = {
 								.attr("href", "offline.html?query=" + encodeURIComponent(info.author_sort));
 
 							books.append(cell);
-
-							Holder.run();
 						}
 					});
 				}
