@@ -1,6 +1,7 @@
 {
-  "name": "tt-irc",
+  "name": "the-epube",
   "version": "1.0.0",
+  "license": "GPL-3.0",
   "description": "",
   "devDependencies": {
     "eslint": "^7.9.0",
@@ -12,5 +13,10 @@
     "gulp-touch-fd": "^2.0.0",
     "gulp-uglify-es": "^2.0.0",
     "less": "^3.12.2"
+  },
+  "dependencies": {
+    "epubjs": "^0.3.88",
+    "jszip": "^3.6.0",
+    "localforage": "^1.9.0"
   }
 }

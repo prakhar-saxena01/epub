@@ -18,9 +18,9 @@ gulp.task('minifyLibsJS', function(cb) {
 		.src([
 				'lib/bootstrap/v3/js/jquery.js',
 				'lib/bootstrap/v3/js/bootstrap.min.js',
-				'lib/zip.min.js',
-				'lib/epub.js',
-				'lib/localforage.min.js',
+				'node_modules/jszip/dist/jszip.min.js',
+				'node_modules/epubjs/dist/epub.js',
+				'node_modules/localforage/dist/localforage.js',
 				'lib/jquery.mobile-events.min.js',
 				'lib/hyphen/*.js'])
 		.pipe(concat('app-libs.min.js'))
@@ -78,7 +78,7 @@ gulp.task(
   function(cb) {
 		gulp.series(['minifyCSS', 'minifyJS', 'minifyLibsJS'])();
 
-		gulp.watch(['lib/**/*.js', 'lib/*.js'], gulp.series('minifyLibsJS'));
+		gulp.watch(['lib/**/*.js', 'lib/*.js', 'node_modules/**/.js'], gulp.series('minifyLibsJS'));
 		gulp.watch(['js/*.js'], gulp.series('minifyJS'));
 		gulp.watch(['css/*.less'], gulp.series('minifyCSS'));
 
