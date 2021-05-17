@@ -557,7 +557,7 @@ const Reader = {
 						.css("background-color", "");
 
 				// same as above except for allowed font-size
-				$(doc).find("h1, h1, h3, h4, h5")
+				$(doc).find("h1, h2, h3, h4, h5")
 					.attr("class", "")
 					.css("font-family", "inherit")
 					.css("color", "")
