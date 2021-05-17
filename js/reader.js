@@ -552,8 +552,18 @@ const Reader = {
 						.css("font-family", "inherit")
 						.css("font-size", "inherit")
 						.css("color", "")
+						.css("border", "none ! important")
 						.css("background", "")
 						.css("background-color", "");
+
+				// same as above except for allowed font-size
+				$(doc).find("h1, h1, h3, h4, h5")
+					.attr("class", "")
+					.css("font-family", "inherit")
+					.css("color", "")
+					.css("border", "none ! important")
+					.css("background", "")
+					.css("background-color", "");
 
 				if (typeof Reader.hyphenateHTML != "undefined") {
 					$(doc).find('p').each((i,p) => {
