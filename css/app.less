@@ -127,7 +127,12 @@ body.epube-reader {
       align-items : center;
    }
 
-   .header .title, .footer .chapter_wrapper {
+   .footer .chapter_wrapper {
+      white-space : nowrap;
+      display : flex;
+   }
+
+   .header .title, .footer .chapter {
       overflow : hidden;
       text-overflow: ellipsis;
       white-space : nowrap;
