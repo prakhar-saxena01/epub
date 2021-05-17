@@ -13,6 +13,7 @@ const Reader = {
 	csrf_token: "",
 	last_stored_cfi: "",
 	prevent_lastread_update: false,
+	hyphenate: {},
 	init: function() {
 		this.csrf_token = Cookie.get('epube_csrf_token');
 
@@ -227,8 +228,9 @@ const Reader = {
 
 			localforage.getItem("epube.enable-hyphens").then(function(enable_hyphens) {
 				if (enable_hyphens) {
-					/* global hyphenationPatternsEnUs, createHyphenator */
-					Reader.hyphenateHTML = createHyphenator(hyphenationPatternsEnUs, { html: true });
+					/* global hyphenationPatternsEnUs, hyphenationPatternsRu, createHyphenator */
+					Reader.hyphenate.en = createHyphenator(hyphenationPatternsEnUs, { html: true });
+					Reader.hyphenate.ru = createHyphenator(hyphenationPatternsRu, { html: true });
 				}
 
 				Reader.applyStyles(true);
@@ -565,11 +567,12 @@ const Reader = {
 					.css("background", "")
 					.css("background-color", "");
 
-				if (typeof Reader.hyphenateHTML != "undefined") {
-					$(doc).find('p').each((i,p) => {
+				if (typeof Reader.hyphenate.en != "undefined") {
+					$(doc).find('p, div').each((i,p) => {
 						p = $(p);
 
-						p.html(Reader.hyphenateHTML(p.html()));
+						p.html(Reader.hyphenate.en(p.html()));
+						p.html(Reader.hyphenate.ru(p.html()));
 					});
 				}
 			});
