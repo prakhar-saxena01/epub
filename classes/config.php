@@ -14,6 +14,7 @@ class Config {
 	const BOOKS_DIR = "BOOKS_DIR";
 	const DICT_SERVER = "DICT_SERVER";
 	const SESSION_LIFETIME = "SESSION_LIFETIME";
+	const SESSION_NAME = "SESSION_NAME";
 
 	private const _DEFAULTS = [
 		Config::DB_TYPE => [ "sqlite", Config::T_STRING ],
@@ -22,6 +23,7 @@ class Config {
 		Config::BOOKS_DIR => [ "", Config::T_STRING ],
 		Config::DICT_SERVER => [ "", Config::T_STRING ],
 		Config::SESSION_LIFETIME => [ 86400*30, Config::T_INT ],
+		Config::SESSION_NAME => [ "epube_sid", Config::T_STRING ],
 	];
 
 	private static $instance;
