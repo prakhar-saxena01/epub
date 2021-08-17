@@ -549,7 +549,10 @@ const Reader = {
 						.filter((i, e) => (($(e).text().length >= MIN_LENGTH_TO_JUSTIFY) ? e : null))
 							.css("text-align", "justify");
 
-				$(doc).find("a, p, span, em, i, strong, b, body, div, big, small")
+				$(doc).find("html")
+						.attr("class", "");
+
+				$(doc).find("a, p, span, em, i, strong, b, body, header, section, div, big, small")
 						.attr("class", "")
 						.css("font-family", "inherit")
 						.css("font-size", "inherit")
