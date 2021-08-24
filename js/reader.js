@@ -554,8 +554,8 @@ const Reader = {
 
 				$(doc).find("a, p, span, em, i, strong, b, body, header, section, div, big, small")
 						.attr("class", "")
-						.css("font-family", "inherit")
-						.css("font-size", "inherit")
+						.css("font-family", "revert")
+						.css("font-size", "revert")
 						.css("color", "")
 						.css("border", "none ! important")
 						.css("background", "")
@@ -564,7 +564,7 @@ const Reader = {
 				// same as above except for allowed font-size
 				$(doc).find("h1, h2, h3, h4, h5")
 					.attr("class", "")
-					.css("font-family", "inherit")
+					.css("font-family", "revert")
 					.css("color", "")
 					.css("border", "none ! important")
 					.css("background", "")
