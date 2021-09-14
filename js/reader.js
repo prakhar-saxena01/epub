@@ -629,16 +629,16 @@ const Reader = {
 											return book.locations.load(locations);
 										} else {
 											$(".loading-message").html("Preparing locations…");
-											return book.locations.generate(1600);
+											return book.locations.generate(100);
 										}
 									});
 								} else {
 									$(".loading-message").html("Preparing locations…");
-									return book.locations.generate(1600);
+									return book.locations.generate(100);
 								}
 							}).catch(function() {
 								$(".loading-message").html("Preparing locations…");
-								return book.locations.generate(1600);
+								return book.locations.generate(100);
 							});
 						}
 					});
@@ -688,7 +688,7 @@ const Reader = {
 				Reader.hotkeyHandler(e);
 			});
 
-			rendition.on('resized', function() {
+			/*rendition.on('resized', function() {
 				console.log('resized');
 
 				$(".loading").show();
@@ -700,7 +700,7 @@ const Reader = {
 
 					$(".loading").hide();
 				}, 250);
-			});
+			});*/
 
 			rendition.on('rendered', function(/*chapter*/) {
 				$(".chapter").html($("<span>").addClass("glyphicon glyphicon-th-list"));
