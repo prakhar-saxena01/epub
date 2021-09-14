@@ -7,6 +7,7 @@ const DEFAULT_FONT_FAMILY = "Georgia";
 const DEFAULT_LINE_HEIGHT = 140;
 const MIN_LENGTH_TO_JUSTIFY = 32; /* characters */
 
+const LOCATION_DIVISOR = 20;
 const PAGE_RESET_PROGRESS = -1;
 
 const Reader = {
@@ -666,13 +667,13 @@ const Reader = {
 				}
 
 				$(".location").click(function() {
-					const current = book.rendition.currentLocation().start.location;
-					const total = book.locations.length();
+					const current = Math.floor(book.rendition.currentLocation().start.location / LOCATION_DIVISOR);
+					const total = Math.floor(book.locations.length() / LOCATION_DIVISOR);
 
 					const page = prompt("Jump to location [1-" + total + "]", current);
 
 					if (page) {
-						book.rendition.display(book.locations._locations[page]);
+						book.rendition.display(book.locations._locations[page * LOCATION_DIVISOR]);
 					}
 				});
 				Reader.Page.openLastRead();
@@ -744,8 +745,8 @@ const Reader = {
 				const currentCfi = location.start.cfi;
 				const currentPct = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
 
-				$("#cur_page").text(location.start.location);
-				$("#total_pages").text(book.locations.length());
+				$("#cur_page").text(Math.floor(location.start.location / LOCATION_DIVISOR));
+				$("#total_pages").text(Math.floor(book.locations.length() / LOCATION_DIVISOR));
 				$("#page_pct").text(parseInt(book.locations.percentageFromCfi(currentCfi)*100) + '%');
 
 				Reader.updateTocBarPosition(book, location);
