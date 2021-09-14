@@ -357,6 +357,15 @@ const Reader = {
 						});
 				});
 
+				localforage.getItem("epube.enable-column-hacks").then(function(enable) {
+					$(".enable_column_hacks_checkbox")
+						.attr("checked", enable)
+						.off("click")
+						.on("click", function(evt) {
+							localforage.setItem("epube.enable-column-hacks", evt.target.checked);
+						});
+				});
+
 				Promise.all([
 					localforage.getItem("epube.cache-timestamp"),
 					localforage.getItem("epube.cache-version")
@@ -741,6 +750,16 @@ const Reader = {
 				// locations not generated yet
 				if (book.locations.length() == 0)
 					return;
+
+				localforage.getItem("epube.enable-column-hacks").then((enable) => {
+					if (enable && Reader.Page._moved_next >= 20) {
+						console.log('forcing re-render because of column hacks');
+
+						window.book.rendition.onResized($("#reader").width());
+
+						Reader.Page._moved_next = 0;
+					}
+				});
 
 				const currentCfi = location.start.cfi;
 				const currentPct = parseInt(book.locations.percentageFromCfi(currentCfi) * 100);
@@ -1173,8 +1192,11 @@ const Reader = {
 	},
 	Page: {
 		_pagination_stored: 0,
+		_moved_next: 0,
 		next: function() {
 			window.book.rendition.next();
+
+			Reader.Page._moved_next += 1;
 
 			if (typeof EpubeApp != "undefined")
 				EpubeApp.showActionBar(false);
