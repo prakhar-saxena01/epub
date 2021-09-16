@@ -715,9 +715,10 @@ const Reader = {
 			rendition.on('rendered', function(/*chapter*/) {
 				$(".chapter").html($("<span>").addClass("glyphicon glyphicon-th-list"));
 
-				//console.log('rendered');
-
-				Reader.Page._moved_next = 0;
+				// TODO: this needs a proper implementation instead of a timeout hack
+				setTimeout(() => {
+					Reader.Page._moved_next = 0;
+				}, 150);
 
 				Reader.applyTheme();
 
