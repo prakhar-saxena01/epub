@@ -715,6 +715,10 @@ const Reader = {
 			rendition.on('rendered', function(/*chapter*/) {
 				$(".chapter").html($("<span>").addClass("glyphicon glyphicon-th-list"));
 
+				//console.log('rendered');
+
+				Reader.Page._moved_next = 0;
+
 				Reader.applyTheme();
 
 				Reader.resizeSideColumns();
