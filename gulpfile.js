@@ -19,7 +19,8 @@ gulp.task('minifyLibsJS', function(cb) {
 				'lib/bootstrap/v3/js/jquery.js',
 				'lib/bootstrap/v3/js/bootstrap.min.js',
 				'node_modules/jszip/dist/jszip.min.js',
-				'node_modules/epubjs/dist/epub.js',
+				'lib/epub.js/dist/epub.js',
+				//'node_modules/epubjs/dist/epub.js',
 				'node_modules/localforage/dist/localforage.js',
 				'lib/jquery.mobile-events.min.js',
 				'lib/hyphen/*.js'])

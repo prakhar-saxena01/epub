@@ -1,6 +1,7 @@
 /.app_is_ready
 /config.php
 /lib/fonts/*.ttf
+/lib/epub.js/.git
 /db/*.db
 /sessions/*
 .idea/*
