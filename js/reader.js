@@ -349,12 +349,16 @@ const Reader = {
 				});
 
 				localforage.getItem("epube.keep-ui-visible").then(function(keep) {
-					$(".keep_ui_checkbox")
+					if (typeof EpubeApp != "undefined") {
+						$(".keep_ui_checkbox").parent().parent().hide();
+					} else {
+						$(".keep_ui_checkbox")
 						.attr("checked", keep)
 						.off("click")
 						.on("click", function(evt) {
 							localforage.setItem("epube.keep-ui-visible", evt.target.checked);
 						});
+					}
 				});
 
 				localforage.getItem("epube.enable-column-hacks").then(function(enable) {
