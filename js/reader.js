@@ -7,7 +7,7 @@ const DEFAULT_FONT_FAMILY = "Georgia";
 const DEFAULT_LINE_HEIGHT = 140;
 const MIN_LENGTH_TO_JUSTIFY = 32; /* characters */
 
-const LOCATION_DIVISOR = 20;
+const LOCATION_DIVISOR = 10;
 const PAGE_RESET_PROGRESS = -1;
 
 const Reader = {
@@ -464,7 +464,7 @@ const Reader = {
 						return k.indexOf(cfiBase) != -1
 					});
 
-					return window.book.locations.locationFromCfi(loc);
+					return parseInt(window.book.locations.locationFromCfi(loc) / LOCATION_DIVISOR);
 
 				} catch (e) {
 					console.warn(e);
