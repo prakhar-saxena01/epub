@@ -566,14 +566,19 @@ const Reader = {
 				$(doc).find("html")
 						.attr("class", "");
 
-				$(doc).find("a, p, span, em, i, strong, b, body, header, section, div, big, small")
+				$(doc).find("pre")
+						.css("white-space", "pre-wrap");
+
+				$(doc).find("a, p, span, em, i, strong, b, body, header, section, div, big, small, table, tr, td")
 						.attr("class", "")
 						.css("font-family", "inherit")
 						.css("font-size", "inherit")
 						.css("color", "")
 						.css("border", "none ! important")
 						.css("background", "")
-						.css("background-color", "");
+						.css("background-color", "")
+						.attr("width", "")
+						.attr("height", "");
 
 				// same as above except for allowed font-size
 				$(doc).find("h1, h2, h3, h4, h5")
