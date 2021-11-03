@@ -1,75 +1,132 @@
-{
-    "packages": [
-        {
-            "name": "j4mie/idiorm",
-            "version": "v1.5.7",
-            "version_normalized": "1.5.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/j4mie/idiorm.git",
-                "reference": "d23f97053ef5d0b988a02c6a71eb5c6118b2f5b4"
+[
+    {
+        "name": "j4mie/idiorm",
+        "version": "v1.5.7",
+        "version_normalized": "1.5.7.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/j4mie/idiorm.git",
+            "reference": "d23f97053ef5d0b988a02c6a71eb5c6118b2f5b4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/j4mie/idiorm/zipball/d23f97053ef5d0b988a02c6a71eb5c6118b2f5b4",
+            "reference": "d23f97053ef5d0b988a02c6a71eb5c6118b2f5b4",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.0"
+        },
+        "require-dev": {
+            "ext-pdo_sqlite": "*",
+            "phpunit/phpunit": "^4.8"
+        },
+        "time": "2020-04-29T00:37:09+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "idiorm.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-2-Clause",
+            "BSD-3-Clause",
+            "BSD-4-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Jamie Matthews",
+                "email": "jamie.matthews@gmail.com",
+                "homepage": "http://j4mie.org",
+                "role": "Developer"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/j4mie/idiorm/zipball/d23f97053ef5d0b988a02c6a71eb5c6118b2f5b4",
-                "reference": "d23f97053ef5d0b988a02c6a71eb5c6118b2f5b4",
-                "shasum": ""
+            {
+                "name": "Simon Holywell",
+                "email": "treffynnon@php.net",
+                "homepage": "http://simonholywell.com",
+                "role": "Maintainer"
             },
-            "require": {
-                "php": ">=5.2.0"
-            },
-            "require-dev": {
-                "ext-pdo_sqlite": "*",
-                "phpunit/phpunit": "^4.8"
-            },
-            "time": "2020-04-29T00:37:09+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "classmap": [
-                    "idiorm.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-2-Clause",
-                "BSD-3-Clause",
-                "BSD-4-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Jamie Matthews",
-                    "email": "jamie.matthews@gmail.com",
-                    "homepage": "http://j4mie.org",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Simon Holywell",
-                    "email": "treffynnon@php.net",
-                    "homepage": "http://simonholywell.com",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Durham Hale",
-                    "email": "me@durhamhale.com",
-                    "homepage": "http://durhamhale.com",
-                    "role": "Maintainer"
-                }
-            ],
-            "description": "A lightweight nearly-zero-configuration object-relational mapper and fluent query builder for PHP5",
-            "homepage": "http://j4mie.github.com/idiormandparis",
-            "keywords": [
-                "idiorm",
-                "orm",
-                "query builder"
-            ],
-            "support": {
-                "issues": "https://github.com/j4mie/idiorm/issues",
-                "source": "https://github.com/j4mie/idiorm"
-            },
-            "install-path": "../j4mie/idiorm"
+            {
+                "name": "Durham Hale",
+                "email": "me@durhamhale.com",
+                "homepage": "http://durhamhale.com",
+                "role": "Maintainer"
+            }
+        ],
+        "description": "A lightweight nearly-zero-configuration object-relational mapper and fluent query builder for PHP5",
+        "homepage": "http://j4mie.github.com/idiormandparis",
+        "keywords": [
+            "idiorm",
+            "orm",
+            "query builder"
+        ],
+        "support": {
+            "issues": "https://github.com/j4mie/idiorm/issues",
+            "source": "https://github.com/j4mie/idiorm"
         }
-    ],
-    "dev": true,
-    "dev-package-names": []
-}
+    },
+    {
+        "name": "phpstan/phpstan",
+        "version": "1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/phpstan/phpstan.git",
+            "reference": "0eb6ecdfbcebf2207668087dfb2e215581a75023"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/phpstan/phpstan/zipball/0eb6ecdfbcebf2207668087dfb2e215581a75023",
+            "reference": "0eb6ecdfbcebf2207668087dfb2e215581a75023",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^7.1|^8.0"
+        },
+        "conflict": {
+            "phpstan/phpstan-shim": "*"
+        },
+        "time": "2021-11-02T10:25:31+00:00",
+        "bin": [
+            "phpstan",
+            "phpstan.phar"
+        ],
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "bootstrap.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "PHPStan - PHP Static Analysis Tool",
+        "funding": [
+            {
+                "url": "https://github.com/ondrejmirtes",
+                "type": "github"
+            },
+            {
+                "url": "https://github.com/phpstan",
+                "type": "github"
+            },
+            {
+                "url": "https://www.patreon.com/phpstan",
+                "type": "patreon"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
+                "type": "tidelift"
+            }
+        ]
+    }
+]
