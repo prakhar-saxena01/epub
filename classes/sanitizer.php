@@ -19,6 +19,7 @@ class Sanitizer {
 			$rel_parts['host'] = $parts['host'];
 			$rel_parts['scheme'] = $parts['scheme'];
 
+			/** @phpstan-ignore-next-line */
 			if (isset($rel_parts['path'])) {
 				if (strpos($rel_parts['path'], '/') !== 0)
 					$rel_parts['path'] = '/' . $rel_parts['path'];
