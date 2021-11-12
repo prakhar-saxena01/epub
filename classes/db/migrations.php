@@ -1,22 +1,22 @@
 <?php
 class Db_Migrations {
 
-	private $base_filename = "schema.sql";
-	private $base_path;
-	private $migrations_path;
-	private $migrations_table;
-	private $base_is_latest;
+	private string $base_filename = "schema.sql";
+	private string $base_path;
+	private string $migrations_path;
+	private string $migrations_table;
+	private bool $base_is_latest;
 	private PDO $pdo;
 
-	private $cached_version;
-	private $cached_max_version;
-	private $max_version_override;
+	private int $cached_version;
+	private int $cached_max_version;
+	private int $max_version_override;
 
 	function __construct() {
 		$this->pdo = Db::pdo();
 	}
 
-	function initialize(string $root_path, string $migrations_table, bool $base_is_latest = true, int $max_version_override = 0) {
+	function initialize(string $root_path, string $migrations_table, bool $base_is_latest = true, int $max_version_override = 0) : void {
 		$this->base_path = "$root_path/" . Config::get(Config::DB_TYPE);
 		$this->migrations_path = $this->base_path . "/migrations";
 		$this->migrations_table = $migrations_table;
@@ -24,7 +24,7 @@ class Db_Migrations {
 		$this->max_version_override =  $max_version_override;
 	}
 
-	private function set_version(int $version) {
+	private function set_version(int $version) : void {
 		Debug::log("Updating table {$this->migrations_table} with version ${version}...", Debug::LOG_EXTENDED);
 
 		$sth = $this->pdo->query("SELECT * FROM {$this->migrations_table}");
@@ -59,11 +59,11 @@ class Db_Migrations {
 		}
 	}
 
-	private function create_migrations_table() {
+	private function create_migrations_table() : void {
 		$this->pdo->query("CREATE TABLE IF NOT EXISTS {$this->migrations_table} (schema_version integer not null)");
 	}
 
-	private function migrate_to(int $version) {
+	private function migrate_to(int $version) : bool {
 		try {
 			if ($version <= $this->get_version()) {
 				Debug::log("Refusing to apply version $version: current version is higher", Debug::LOG_VERBOSE);
@@ -101,6 +101,8 @@ class Db_Migrations {
 					$this->pdo->commit();
 
 				Debug::log("Migration finished, current version: " . $this->get_version(), Debug::LOG_VERBOSE);
+
+				return true;
 			} else {
 				Debug::log("Migration failed: schema file is empty or missing.", Debug::LOG_VERBOSE);
 			}
@@ -114,6 +116,8 @@ class Db_Migrations {
 			}
 			throw $e;
 		}
+
+		return false;
 	}
 
 	function get_max_version() : int {
@@ -165,6 +169,7 @@ class Db_Migrations {
 		return !$this->is_migration_needed();
 	}
 
+	/** @return array<string> */
 	private function get_lines(int $version) : array {
 		if ($version > 0)
 			$filename = "{$this->migrations_path}/${version}.sql";
