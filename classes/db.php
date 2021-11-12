@@ -1,7 +1,9 @@
 <?php
 class Db {
+	/** @var Db|null */
 	private static $instance;
-	private $pdo;
+
+	private PDO $pdo;
 
 	private function __construct() {
 		try {
@@ -24,7 +26,7 @@ class Db {
 		}
 	}
 
-	public static function get_dsn() {
+	public static function get_dsn() : string {
 		return Config::get(Config::DB_TYPE) . ':' . Config::get(Config::SCRATCH_DB);
 	}
 

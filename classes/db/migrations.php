@@ -6,7 +6,7 @@ class Db_Migrations {
 	private $migrations_path;
 	private $migrations_table;
 	private $base_is_latest;
-	private $pdo;
+	private PDO $pdo;
 
 	private $cached_version;
 	private $cached_max_version;

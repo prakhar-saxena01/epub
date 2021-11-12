@@ -1,7 +1,7 @@
 <?php
 class Sanitizer {
 
-	public static function rewrite_relative($url, $rel_url) {
+	public static function rewrite_relative(string $url, string $rel_url) : string {
 
 		$rel_parts = parse_url($rel_url);
 
@@ -31,7 +31,7 @@ class Sanitizer {
 		}
 	}
 
-	public static function sanitize($str, $force_remove_images = false) {
+	public static function sanitize(string $str) : string {
 
 		$res = trim($str); if (!$res) return '';
 
@@ -99,7 +99,11 @@ class Sanitizer {
 		}
 	}
 
-	private static function strip_harmful_tags($doc, $allowed_elements, $disallowed_attributes) {
+	/**
+	 * 	@param array<string> $allowed_elements
+	 * 	@param array<string> $disallowed_attributes
+	 * */
+	private static function strip_harmful_tags(DOMDocument $doc, array $allowed_elements, array $disallowed_attributes) : DOMDocument {
 		$xpath = new DOMXPath($doc);
 		$entries = $xpath->query('//*');
 
@@ -140,7 +144,8 @@ class Sanitizer {
 	}
 
 	// extended filtering involves validation for safe ports and loopback
-	static function validate($url, $extended_filtering = false) {
+	/** @return string|bool */
+	static function validate(string $url, bool $extended_filtering = false) : mixed {
 
 		$url = trim($url);
 
@@ -197,7 +202,8 @@ class Sanitizer {
 		return $url;
 	}
 
-	static function build_url($parts) {
+	/** @param array<string, int|string|false> $parts */
+	static function build_url(array $parts) : string {
 		$tmp = $parts['scheme'] . "://" . $parts['host'];
 
 		if (isset($parts['path'])) $tmp .= $parts['path'];
@@ -207,7 +213,8 @@ class Sanitizer {
 		return $tmp;
 	}
 
-	static function resolve_redirects($url, $timeout, $nest = 0) {
+	/** @return string|bool */
+	static function resolve_redirects(string $url, int $timeout, int $nest = 0) : mixed {
 
 		// too many redirects
 		if ($nest > 10)

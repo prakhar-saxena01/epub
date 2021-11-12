@@ -261,7 +261,8 @@
 
 	case "define":
 		if (Config::get(Config::DICT_SERVER)) {
-			function parse_dict_reply($reply) {
+			/** @return array<string> */
+			function parse_dict_reply(string $reply) : array {
 				$tmp = [];
 
 				foreach (explode("\n", $reply) as $line) {

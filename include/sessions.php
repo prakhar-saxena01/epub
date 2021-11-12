@@ -26,7 +26,7 @@
 		ini_get("session.cookie_secure"),
 		ini_get("session.cookie_httponly"));
 
-	function validate_session() {
+	function validate_session() : bool {
 		if (!empty($_SESSION["owner"])) {
 
 			$user = ORM::for_table('epube_users')
@@ -41,7 +41,7 @@
 		return false;
 	}
 
-	function logout_user() {
+	function logout_user() : void {
 		if (session_status() == PHP_SESSION_ACTIVE) {
 			session_destroy();
 

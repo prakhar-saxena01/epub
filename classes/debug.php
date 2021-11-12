@@ -5,43 +5,43 @@ class Debug {
     const LOG_VERBOSE = 1;
     const LOG_EXTENDED = 2;
 
-	public static $LOG_DISABLED = -1;
-    public static $LOG_NORMAL = 0;
-    public static $LOG_VERBOSE = 1;
-    public static $LOG_EXTENDED = 2;
+	public static int $LOG_DISABLED = -1;
+    public static int $LOG_NORMAL = 0;
+    public static int $LOG_VERBOSE = 1;
+    public static int $LOG_EXTENDED = 2;
 
-    private static $enabled = false;
-    private static $quiet = false;
-    private static $logfile = false;
-    private static $loglevel = 0;
+    private static bool $enabled = false;
+    private static bool $quiet = false;
+    private static string $logfile = "";
+    private static int $loglevel = 0;
 
-	public static function set_logfile($logfile) {
+	public static function set_logfile(string $logfile) : void {
         self::$logfile = $logfile;
     }
 
-    public static function enabled() {
+    public static function enabled() : bool {
         return self::$enabled;
     }
 
-    public static function set_enabled($enable) {
+    public static function set_enabled(bool $enable) : void {
         self::$enabled = $enable;
     }
 
-    public static function set_quiet($quiet) {
+    public static function set_quiet(bool $quiet) : void {
         self::$quiet = $quiet;
     }
 
-    public static function set_loglevel($level) {
+    public static function set_loglevel(int $level) : void {
         self::$loglevel = $level;
     }
 
-    public static function get_loglevel() {
+    public static function get_loglevel() : int {
         return self::$loglevel;
     }
 
-    public static function log($message, $level = 0) {
+    public static function log(string $message, int $level = 0) : void {
 
-        if (!self::$enabled || self::$loglevel < $level) return false;
+        if (!self::$enabled || self::$loglevel < $level) return;
 
         $ts = strftime("%H:%M:%S", time());
         if (function_exists('posix_getpid')) {

@@ -26,12 +26,16 @@ class Config {
 		Config::SESSION_NAME => [ "epube_sid", Config::T_STRING ],
 	];
 
+	/** @var Config|null */
 	private static $instance;
 
-	private $params = [];
-	private $version = [];
+	/** @var array<string, array<bool|int|string>> */
+	private array $params = [];
 
-	/** @var Db_Migrations|null $migrations */
+	/** @var array<string, mixed> */
+	private array $version = [];
+
+	/** @var Db_Migrations|null */
 	private $migrations;
 
 	public static function get_instance() : Config {
@@ -63,11 +67,13 @@ class Config {
 		directory, its contents are displayed instead of git commit-based version, this could be generated
 		based on source git tree commit used when creating the package */
 
-	static function get_version(bool $as_string = true) {
+	/** @return string|array<string, mixed> */
+	static function get_version(bool $as_string = true) : mixed {
 		return self::get_instance()->_get_version($as_string);
 	}
 
-	private function _get_version(bool $as_string = true) {
+	/** @return string|array<string, mixed> */
+	private function _get_version(bool $as_string = true) : mixed {
 		$root_dir = dirname(__DIR__);
 
 		if (empty($this->version)) {
@@ -93,7 +99,8 @@ class Config {
 		return $as_string ? $this->version["version"] : $this->version;
 	}
 
-	static function get_version_from_git(string $dir) {
+	/** @return array<string, mixed> */
+	static function get_version_from_git(string $dir) : array {
 		$descriptorspec = [
 			1 => ["pipe", "w"], // STDOUT
 			2 => ["pipe", "w"], // STDERR
@@ -159,7 +166,8 @@ class Config {
 		return self::get_migrations()->get_version();
 	}
 
-	static function cast_to(string $value, int $type_hint) {
+	/** @return int|bool|string */
+	static function cast_to(string $value, int $type_hint) : mixed {
 		switch ($type_hint) {
 			case self::T_BOOL:
 				return sql_bool_to_bool($value);
@@ -170,24 +178,26 @@ class Config {
 		}
 	}
 
-	private function _get(string $param) {
+	/** @return int|bool|string */
+	private function _get(string $param) : mixed {
 		list ($value, $type_hint) = $this->params[$param];
 
 		return $this->cast_to($value, $type_hint);
 	}
 
-	private function _add(string $param, string $default, int $type_hint) {
+	private function _add(string $param, string $default, int $type_hint) : void {
 		$override = getenv($this::_ENVVAR_PREFIX . $param);
 
 		$this->params[$param] = [ self::cast_to(!empty($override) ? $override : $default, $type_hint), $type_hint ];
 	}
 
-	static function add(string $param, string $default, int $type_hint = Config::T_STRING) {
+	static function add(string $param, string $default, int $type_hint = Config::T_STRING) : void {
 		$instance = self::get_instance();
 
-		return $instance->_add($param, $default, $type_hint);
+		$instance->_add($param, $default, $type_hint);
 	}
 
+	/** @return int|bool|string */
 	static function get(string $param) {
 		$instance = self::get_instance();
 
@@ -214,7 +224,7 @@ class Config {
 	}
 
 	/** also initializes Db and ORM */
-	static function sanity_check() {
+	static function sanity_check() : void {
 
 		/*
 			we don't actually need the DB object right now but some checks below might use ORM which won't be initialized
@@ -399,7 +409,7 @@ class Config {
 		}
 	}
 
-	private static function format_error($msg) {
+	private static function format_error(string $msg) : string {
 		return "<div class=\"alert alert-danger\">$msg</div>";
 	}
 }

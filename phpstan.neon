@@ -1,5 +1,5 @@
 parameters:
-   level: 5
+   level: 6
    ignoreErrors:
       #- '#Comparison operation ">" between int<1, max> and 0 is always true.#'
       #- '#Access to an undefined property DOMNode::\$tagName.#'
