@@ -1,7 +1,6 @@
 <?php
 class Db {
-	/** @var Db|null */
-	private static $instance;
+	private static ?Db $instance = null;
 
 	private PDO $pdo;
 

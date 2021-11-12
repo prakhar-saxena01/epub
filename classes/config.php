@@ -26,8 +26,7 @@ class Config {
 		Config::SESSION_NAME => [ "epube_sid", Config::T_STRING ],
 	];
 
-	/** @var Config|null */
-	private static $instance;
+	private static ?Config $instance = null;
 
 	/** @var array<string, array<bool|int|string>> */
 	private array $params = [];
@@ -35,8 +34,7 @@ class Config {
 	/** @var array<string, mixed> */
 	private array $version = [];
 
-	/** @var Db_Migrations|null */
-	private $migrations;
+	private Db_Migrations $migrations;
 
 	public static function get_instance() : Config {
 		if (self::$instance == null)
