@@ -569,10 +569,11 @@ const Reader = {
 				$(doc).find("pre")
 						.css("white-space", "pre-wrap");
 
-				$(doc).find("a, p, span, em, i, strong, b, body, header, section, div, big, small, table, tr, td")
+				$(doc).find("a, p, span, em, i, strong, b, body, header, section, div, big, small, table, tr, td, ul, ol, li")
 						.attr("class", "")
 						.css("font-family", "inherit")
 						.css("font-size", "inherit")
+						.css("line-height", "inherit")
 						.css("color", "")
 						.css("border", "none ! important")
 						.css("background", "")
